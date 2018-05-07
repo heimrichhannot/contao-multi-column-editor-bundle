@@ -6,7 +6,9 @@
  * @license LGPL-3.0-or-later
  */
 
-namespace HeimrichHannot\MultiColumnEditor;
+namespace HeimrichHannot\MultiColumnEditorBundle\Form;
+
+use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
 
 class FormMultiColumnEditor extends MultiColumnEditor
 {

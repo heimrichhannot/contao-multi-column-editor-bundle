@@ -15,7 +15,7 @@ use HeimrichHannot\Haste\Util\Container;
 use HeimrichHannot\Haste\Util\Widget;
 use HeimrichHannot\Request\Request;
 
-class MultiColumnEditor extends \Widget
+class MultiColumnEditor extends \Contao\Widget
 {
     const ACTION_ADD_ROW = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
