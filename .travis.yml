@@ -1,0 +1,57 @@
+language: php
+git:
+  depth: 1
+cache:
+  directories:
+  - "$HOME/.composer/cache"
+sudo: false
+env:
+  global:
+  - COMPOSER_ALLOW_XDEBUG=0
+matrix:
+  include:
+    - php: 7.1
+      env: CONTAO_VERSION='4.4.*'
+    - php: 7.2
+      env: CONTAO_VERSION='4.4.*'
+    - php: 7.1
+      env: CONTAO_VERSION='4.5.*'
+    - php: 7.2
+      env: CONTAO_VERSION='4.5.*'
+    - php: 7.2
+      env: COVERAGE=1 CONTAO_VERSION='4.5.*'
+  allow_failures:
+    - env: COVERAGE=1 UPDATEDOC=1 DEFAULT=0
+  fast_finish: true
+before_install:
+- if [[ "$COVERAGE" != "1" ]]; then phpenv config-rm xdebug.ini || true; fi
+install:
+  - composer require contao/core-bundle:${CONTAO_VERSION}
+  - if [[ "$UPDATEDOC" = "1" ]]; then wget -O sami.phar http://get.sensiolabs.org/sami.phar; fi
+notifications:
+  email:
+    recipients:
+    - digitales@heimrich-hannot.de
+    on_success: never
+    on_failure: always
+  hipchat:
+    rooms:
+      secure: mmb9pcAJByTZV/YrbL0pS4lHUboBpEIdTmFw+OZnfOyqa+P2hr/L6hnJ87UpIrXe17PLlxTy1viimVPTxUXTWHS8N6dNJW5C6erqbJUZLvLL5l2rxUHcig2rJ2hiHXv5RzxfM49uqH2zd9FWdgjGoKe1vaTS7RieJIt51mhsPJ29ZMJW3Aj0Inu+cQHrGPb1Mraart7FsU6a7jnJ9i5GdDX8tOOq1Y0Vid94Oi2V+HERgBgFmcUv0443FfrRBWI4asqKpKAS0qqBPkuECb45ewejd2OTwOd+KcWksMFZErUIwtp6LBshYrk8bqhK07SVwgZ5yEBO6+NtcGPE48WV7CzgNJqnyJVt3udU4ck/Y++Sj+Y2F30XU8tPzpu4i5cJYVy9AJCmRnmduMX44Xjr2ovKcAKFCvDls6eC+F2PtFik1jYvaWqG5EnY+ZJH82lB6wo4hzlocmTKvEyfKOQoXhqrxnT5LlrE4ld3uhpnAN4fRrIHHn897gbgoic7wk8uRbPJmNnU2TdowlZDzVvU17IxydUwRgc2OsDxZB4h9s8SOyGEXYe5jtBVunuwo4yjrhEmm/u5q7S18vJuqMmBNdrzf1MBwSYHfKXBKebg7bjQAjVUE7sjCFq8Os3Dnrs446M4owAvdJQ07CDTl29157TuztG7c04cX7vT/3bTlIg=
+before_script:
+  - travis_wait composer install --no-interaction
+script:
+  - if [[ "$COVERAGE" = "1" ]]; then travis_retry mkdir -p build/logs; fi
+  - if [[ "$COVERAGE" = "1" ]]; then travis_retry php vendor/bin/phpunit --coverage-clover build/logs/clover.xml || true; fi
+  - if [[ "$UPDATEDOC" = "1" ]]; then travis_retry php sami.phar update ./docs/config/SamiDocConfig.php || true; fi
+after_script:
+  - if [[ "$COVERAGE" = "1" ]]; then travis_retry php vendor/bin/php-coveralls -v; fi
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: docs/build
+  on:
+    branch: master
+    condition: "$UPDATEDOC == '1'"

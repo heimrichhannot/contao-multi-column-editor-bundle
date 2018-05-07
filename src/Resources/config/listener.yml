@@ -1,0 +1,5 @@
+services:
+    huh.multicolumneditor.listener.hooks:
+        class: HeimrichHannot\MultiColumnEditorBundle\EventListener\HookListener
+        arguments:
+            - "@contao.framework"

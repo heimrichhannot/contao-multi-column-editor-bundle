@@ -1,0 +1,67 @@
+<div class="multi-column-editor<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if (\HeimrichHannot\Haste\Util\Container::isFrontend()): ?> fe<?php endif; ?>"
+     data-field="<?= $this->fieldName ?>" data-table="<?= $this->table ?>" data-min-row-count="<?= $this->minRowCount ?>" data-max-row-count="<?= $this->maxRowCount ?>">
+    <?= $this->rowCount->parse(); ?>
+
+    <?php if (!$this->rowCount->value): ?>
+        <?php if (\HeimrichHannot\Haste\Util\Container::isBackend()): ?>
+            <a href="<?= $this->ajaxAddUrl ?>" class="add first tl_submit"><?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add']; ?></a>
+        <?php else: ?>
+            <a href="<?= $this->ajaxAddUrl ?>" class="add first btn btn-primary">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>
+            </a>
+        <?php endif; ?>
+    <?php else: ?>
+        <div class="rows<?php if ($this->sortable): ?> sortable<?php endif; ?>">
+            <?php foreach ($this->rows as $i => $arrRow): ?>
+                <div class="mce-row row_<?= ++$i ?>" data-index="<?= $i ?>">
+                    <?php foreach ($arrRow as $strField => $objWidget): ?>
+                        <?php if ($objWidget->type == 'hidden'): ?>
+                            <?= $objWidget->parse(); ?>
+                        <?php else: ?>
+                            <div class="form-group <?= $strField ?><?php if ($objWidget->datepicker): ?> wizard<?php endif; ?>" data-name="<?= $objWidget->noIndex ?>"<?= $objWidget->groupStyle ? ' style="' . $objWidget->groupStyle .'"' : ''; ?>>
+                                <?= $objWidget->parse(); ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                    <div class="actions">
+                        <?php if (\HeimrichHannot\Haste\Util\Container::isBackend()): ?>
+                            <a href="<?= $this->ajaxAddUrl ?>" class="add" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>">
+                                <?php if (version_compare(VERSION, '4.0', '<')): ?>
+                                    <img src="/system/themes/flexible/images/copy.gif">
+                                <?php else: ?>
+                                    <img src="/system/themes/flexible/icons/copy.svg" width="16" height="16">
+                                <?php endif; ?>
+                            </a>
+
+                            <a href="<?= $this->ajaxDeleteUrl ?>" class="delete" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['delete'] ?>">
+                                <?php if (version_compare(VERSION, '4.0', '<')): ?>
+                                    <img src="/system/themes/flexible/images/delete.gif">
+                                <?php else: ?>
+                                    <img src="/system/themes/flexible/icons/delete.svg" width="16" height="16">
+                                <?php endif; ?>
+                            </a>
+
+                            <?php if ($this->sortable): ?>
+                                <a class="drag-handle" href="<?= $this->ajaxSortUrl ?>" title="<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['sort'] ?>">
+                                    <?php if (version_compare(VERSION, '4.0', '<')): ?>
+                                        <img src="/system/themes/flexible/images/drag.gif">
+                                    <?php else: ?>
+                                        <img src="/system/themes/flexible/icons/drag.svg" width="16" height="16" alt="">
+                                    <?php endif; ?>
+                                </a>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <a href="<?= $this->ajaxAddUrl ?>" class="add btn btn-primary btn-xs">
+                                <i class="fa fa-plus"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['add'] ?>
+                            </a>
+
+                            <a href="<?= $this->ajaxDeleteUrl ?>" class="delete btn btn-primary btn-xs">
+                                <i class="fa fa-times"></i>&nbsp;&nbsp;<?= $GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['delete'] ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>

@@ -1,0 +1,68 @@
+{
+  "name": "heimrichhannot/contao-multi_column_editor-bundle",
+  "description": "This module offers an input type for editing one or more records in frontend and backend.",
+  "keywords": [
+    "contao",
+    "multi",
+    "column",
+    "wizard",
+    "editor",
+    "edit"
+  ],
+  "type": "contao-bundle",
+  "homepage": "https://github.com/heimrichhannot/contao-multi_column_editor-bundle",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Heimrich & Hannot",
+      "email": "digitales@heimrich-hannot.de",
+      "homepage": "http://www.heimrich-hannot.de",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/heimrichhannot/contao-multi_column_editor-bundle/issues"
+  },
+ "require": {
+    "php": "^7.1",
+    "contao/core-bundle": "^4.4",
+    "symfony/framework-bundle": "^3.4",
+    "heimrichhannot/contao-utils-bundle": "^2.0",
+    "heimrichhannot/contao-ajax-bundle": "~1.1"
+  },
+  "require-dev": {
+    "contao/test-case": "^1.1",
+    "contao/manager-plugin": "^2.0",
+    "friendsofphp/php-cs-fixer": "^2.2",
+    "phpunit/phpunit": ">=6.0 <6.5",
+    "php-http/guzzle6-adapter": "^1.1",
+    "php-http/message-factory": "^1.0.2",
+    "php-coveralls/php-coveralls": "^2.0",
+    "symfony/phpunit-bridge": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "HeimrichHannot\\MultiColumnEditorBundle\\": "src/"
+    },
+    "classmap": [
+      "src/"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/config/",
+      "src/Resources/contao/dca/",
+      "src/Resources/contao/languages/",
+      "src/Resources/contao/templates/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HeimrichHannot\\MultiColumnEditorBundle\\Test\\": "tests/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "extra": {
+    "contao-manager-plugin": "HeimrichHannot\\MultiColumnEditorBundle\\ContaoManager\\Plugin"
+  }
+}

@@ -1,0 +1,84 @@
+/* line 1, multi_column_editor.scss */
+.multi-column-editor-label {
+  clear: left;
+}
+
+/* line 7, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .add {
+  margin: 10px 0;
+}
+/* line 11, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row {
+  clear: left;
+}
+/* line 15, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .tl_checkbox_single_container {
+  margin-top: 39px !important;
+}
+/* line 20, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group {
+  display: inline-block;
+  margin-right: 10px;
+  position: relative;
+  margin-bottom: 10px;
+  vertical-align: top;
+}
+/* line 27, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="text"], .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group input[type="password"] {
+  width: 100% !important;
+}
+/* line 32, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group.wizard input[type="text"], .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group.wizard input[type="password"] {
+  width: 83% !important;
+}
+/* line 37, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group .tl_checkbox_single_container {
+  margin-top: 6px;
+}
+/* line 41, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3, .multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > .tl_help {
+  display: none;
+}
+/* line 45, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .form-group > h3 {
+  padding-top: 0;
+}
+/* line 52, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3, .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > .tl_help {
+  display: block;
+}
+/* line 56, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .form-group > h3 {
+  padding-top: 14px;
+}
+/* line 61, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .actions {
+  margin-top: 33px;
+  margin-left: 5px;
+}
+/* line 67, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .actions {
+  display: inline-block;
+  margin-top: 3px;
+  margin-left: 5px;
+}
+/* line 72, multi_column_editor.scss */
+.multi-column-editor-wrapper .multi-column-editor .mce-row .actions .drag-handle {
+  background: none;
+  border: none;
+}
+/* line 80, multi_column_editor.scss */
+.multi-column-editor-wrapper + .tl_tip {
+  clear: left;
+}
+
+/* line 91, multi_column_editor.scss */
+.isContao4 .multi-column-editor-wrapper .multi-column-editor .mce-row.row_1 .actions {
+  margin-top: 39px;
+  margin-left: 0;
+}
+/* line 97, multi_column_editor.scss */
+.isContao4 .multi-column-editor-wrapper .multi-column-editor .mce-row .actions {
+  margin-left: 0;
+  margin-top: 8px;
+}

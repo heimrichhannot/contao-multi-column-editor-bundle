@@ -1,0 +1,2 @@
+<h3 class="multi-column-editor-label"><?= $this->generateLabel() . $this->xlabel ?></h3>
+<?= $this->generateWithError(true) ?>

@@ -1,0 +1,104 @@
+.multi-column-editor-label {
+  clear: left;
+}
+
+.multi-column-editor-wrapper {
+  .multi-column-editor {
+    .add {
+      margin: 10px 0;
+    }
+
+    .mce-row {
+      clear: left;
+
+      &.row_1 {
+        .tl_checkbox_single_container {
+          margin-top: 39px !important;
+        }
+      }
+
+      .form-group {
+        display: inline-block;
+        margin-right: 10px;
+        position: relative;
+        margin-bottom: 10px;
+        vertical-align: top;
+
+        input[type="text"], input[type="password"] {
+          width: 100% !important;
+        }
+
+        &.wizard {
+          input[type="text"], input[type="password"] {
+            width: 83% !important;
+          }
+        }
+
+        .tl_checkbox_single_container {
+          margin-top: 6px;
+        }
+
+        > h3, > .tl_help {
+          display: none;
+        }
+
+        > h3 {
+          padding-top: 0;
+        }
+      }
+
+      &.row_1 {
+        .form-group {
+          > h3, > .tl_help {
+            display: block;
+          }
+
+          > h3 {
+            padding-top: 14px;
+          }
+        }
+
+        .actions {
+          margin-top: 33px;
+          margin-left: 5px;
+        }
+      }
+
+      .actions {
+        display: inline-block;
+        margin-top: 3px;
+        margin-left: 5px;
+
+        .drag-handle {
+          background: none;
+          border: none;
+        }
+      }
+    }
+  }
+
+  & + .tl_tip {
+    clear: left;
+  }
+}
+
+.isContao4 {
+  .multi-column-editor-wrapper {
+    .multi-column-editor {
+      .mce-row {
+
+        &.row_1 {
+          .actions {
+            margin-top: 39px;
+            margin-left: 0;
+          }
+        }
+
+        .actions {
+          margin-left: 0;
+          margin-top: 8px;
+        }
+      }
+    }
+  }
+}

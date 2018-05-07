@@ -1,0 +1,7 @@
+huh:
+    encore:
+        entries:
+            - { name: contao-multi-column-editor-bundle, file: 'vendor/heimrichhannot/contao-multi-column-editor-bundle/src/Resources/public/js/contao-multi-column-editor-bundle.es6.js' }
+        legacy:
+            js:
+                - multi_column_editor
