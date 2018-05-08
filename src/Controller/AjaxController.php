@@ -9,8 +9,8 @@
 namespace HeimrichHannot\MultiColumnEditorBundle\Controller;
 
 use Contao\System;
-use HeimrichHannot\Ajax\Response\ResponseError;
 use HeimrichHannot\AjaxBundle\Response\ResponseData;
+use HeimrichHannot\AjaxBundle\Response\ResponseError;
 use HeimrichHannot\AjaxBundle\Response\ResponseSuccess;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
 

@@ -1,0 +1,8 @@
+/composer.lock
+/vendor
+.idea
+Thumbs.db
+.DS_Store
+.sass-cache
+/build
+/node_module

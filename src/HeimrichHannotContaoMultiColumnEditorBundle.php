@@ -8,7 +8,7 @@
 
 namespace HeimrichHannot\MultiColumnEditorBundle;
 
-use HeimrichHannot\MultiColumnEditorBundle\DependencyInjection\HeimrichHannotContaoMuliColumnEditorExtension;
+use HeimrichHannot\MultiColumnEditorBundle\DependencyInjection\HeimrichHannotContaoMultiColumnEditorExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoMultiColumnEditorBundle extends Bundle
@@ -18,6 +18,6 @@ class HeimrichHannotContaoMultiColumnEditorBundle extends Bundle
      */
     public function getContainerExtension()
     {
-        return new HeimrichHannotContaoMuliColumnEditorExtension();
+        return new HeimrichHannotContaoMultiColumnEditorExtension();
     }
 }

@@ -12,7 +12,7 @@ use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
 
-class HookListener extends \Controller
+class HookListener
 {
     /**
      * @var ContaoFrameworkInterface

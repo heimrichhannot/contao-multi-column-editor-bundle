@@ -30,12 +30,12 @@ Use the inputType "multiColumnEditor" for your field.
             'maxRowCount' => 5,
             // defaults to false
             'skipCopyValuesOnAdd' => false,
-            'editorTemplate' => 'multi_column_editor_backend_default'
+            'editorTemplate' => 'multi_column_editor_backend_default',
             'fields' => array(
                 // place your fields here as you would normally in your DCA
                 // (sql is not required)
                 'field1' => [
-                	'label' => 'field 1'
+                	'label' => 'field 1',
                 	'inputType' => 'text',
                 	'eval' => ['groupStyle' => 'width:150px']
                 ]

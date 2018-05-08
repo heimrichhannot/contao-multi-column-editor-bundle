@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class HeimrichHannotContaoMuliColumnEditorExtension extends Extension
+class HeimrichHannotContaoMultiColumnEditorExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -26,6 +26,5 @@ class HeimrichHannotContaoMuliColumnEditorExtension extends Extension
         );
 
         $loader->load('listener.yml');
-        $loader->load('services.yml');
     }
 }
