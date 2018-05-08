@@ -38,36 +38,36 @@
           margin-top: 6px;
         }
 
-        > h3, > .tl_help {
-          display: none;
-        }
-
         > h3 {
           padding-top: 0;
         }
       }
 
-      &.row_1 {
+      &:not(:first-child){
         .form-group {
-          > h3, > .tl_help {
-            display: block;
+          > h3{
+            display: none;
           }
+        }
+      }
 
+      &:first-child {
+        .form-group {
           > h3 {
             padding-top: 14px;
           }
         }
 
         .actions {
-          margin-top: 33px;
-          margin-left: 5px;
+          margin-top: 39px;
+          margin-left: 0;
         }
       }
 
       .actions {
         display: inline-block;
-        margin-top: 3px;
-        margin-left: 5px;
+        margin-top: 8px;
+        margin-left: 0;
 
         .drag-handle {
           background: none;
@@ -79,26 +79,5 @@
 
   & + .tl_tip {
     clear: left;
-  }
-}
-
-.isContao4 {
-  .multi-column-editor-wrapper {
-    .multi-column-editor {
-      .mce-row {
-
-        &.row_1 {
-          .actions {
-            margin-top: 39px;
-            margin-left: 0;
-          }
-        }
-
-        .actions {
-          margin-left: 0;
-          margin-top: 8px;
-        }
-      }
-    }
   }
 }

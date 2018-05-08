@@ -23,7 +23,7 @@
   "support": {
     "issues": "https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues"
   },
- "require": {
+  "require": {
     "php": "^7.1",
     "contao/core-bundle": "^4.4",
     "symfony/framework-bundle": "^3.4",
@@ -63,6 +63,10 @@
     "preferred-install": "dist"
   },
   "extra": {
-    "contao-manager-plugin": "HeimrichHannot\\MultiColumnEditorBundle\\ContaoManager\\Plugin"
+    "contao-manager-plugin": "HeimrichHannot\\MultiColumnEditorBundle\\ContaoManager\\Plugin",
+    "foxy": true
+  },
+  "suggest": {
+    "heimrichhannot/contao-encore-bundle": "Provide webpack encore asset support."
   }
 }

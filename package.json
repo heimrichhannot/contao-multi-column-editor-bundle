@@ -1,0 +1,8 @@
+{
+  "name": "contao-multi-column-editor-bundle",
+  "version": "1.0.0",
+  "licence": "LGPL-3.0-or-later",
+  "dependencies": {
+    "sortablejs": "^1.7.0"
+  }
+}

@@ -48,7 +48,8 @@ class HookListener extends \Controller
                 die('Bad Request');
             }
 
-            die(MultiColumnEditor::generateEditorForm('multi_column_editor', $objDc->table, $objDc->field, $objDc->value, $objDc));
+            $editor = new MultiColumnEditor(['strField' => $objDc->field, 'varValue' => $objDc->value, 'strTable' => $objDc->table, 'dataContainer' => $objDc]);
+            die($editor->generate());
         }
     }
 

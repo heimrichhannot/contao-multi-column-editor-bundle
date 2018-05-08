@@ -17,33 +17,31 @@ $GLOBALS['TL_HOOKS']['executePostActions']['multiColumnEditor'] = ['huh.multicol
 $GLOBALS['TL_HOOKS']['loadDataContainer']['multiColumnEditor']  = ['huh.multicolumneditor.listener.hooks', 'loadDataContainerHook'];
 
 /**
- * CSS
- */
-if (\Contao\System::getContainer()->get('huh.utils.container')->isBackend()) {
-    $GLOBALS['TL_CSS']['multi_column_editor'] = 'bundles/heimrichhannotmulticolumneditor/js/contao-multi-column-editor-bundle.min.css|static';
-}
-
-/**
- * JS
+ * Assets
  */
 if (\HeimrichHannot\Haste\Util\Container::isBackend()) {
-    $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'bundles/heimrichhannotmulticolumneditor/js/jquery.multi_column_editor.be.min.js|static';
+    $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'bundles/heimrichhannotcontaomulticolumneditor/js/multi_column_editor.be.js|static';
+    $GLOBALS['TL_CSS']['multi_column_editor'] = 'bundles/heimrichhannotcontaomulticolumneditor/css/contao-multi-column-editor-bundle.min.css|static';
 }
 else
 {
-    $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'bundles/heimrichhannotmulticolumneditor/js/jquery.multi_column_editor.fe.min.js|static';
+    $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'bundles/heimrichhannotcontaomulticolumneditor/js/multi_column_editor.min.js|static';
 }
 
 /**
  * Ajax
  */
-$GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditor\MultiColumnEditor::NAME] = [
+$GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::NAME] = [
     'actions' => [
-        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_ADD_ROW    => [
+        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_ADD_ROW    => [
             'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
             'optional'  => [],
         ],
-        \HeimrichHannot\MultiColumnEditor\MultiColumnEditor::ACTION_DELETE_ROW => [
+        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_DELETE_ROW => [
+            'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
+            'optional'  => [],
+        ],
+        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_SORT_ROWS => [
             'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
             'optional'  => [],
         ],

@@ -1,10 +1,13 @@
 # Multi Column Editor bundle
 
+![](https://img.shields.io/packagist/v/heimrichhannot/contao-multi-column-editor-bundle.svg)
+![](https://img.shields.io/packagist/dt/heimrichhannot/contao-multi-column-editor-bundle.svg)
+[![](https://img.shields.io/travis/heimrichhannot/contao-multi-column-editor-bundle/master.svg)](https://travis-ci.org/heimrichhannot/contao-multi-column-editor-bundle/)
+[![](https://img.shields.io/coveralls/heimrichhannot/contao-multi-column-editor-bundle/master.svg)](https://coveralls.io/github/heimrichhannot/contao-multi-column-editor-bundle)
+
 This module offers an input type for editing one or more records in backend and frontend.
 
-The module is similar to [menatwork/MultiColumnWizard](https://github.com/menatwork/MultiColumnWizard) but works in frontend as well (in combination with the form generator module [heimrichhannot/contao-formhybrid](https://github.com/heimrichhannot/contao-formhybrid ).
-
-![alt text](./docs/screenshot.png "Demo in the backend")
+![alt text](./docs/example.png "Demo in the backend")
 
 ## Features
 
@@ -19,7 +22,7 @@ Use the inputType "multiColumnEditor" for your field.
     'eval'      => array(
         'multiColumnEditor' => array(
             // set to true if the rows should be sortable (backend only atm)
-            'sortable' => false,
+            'sortable' => true,
             'class' => 'some-class',
             // set to 0 if it should also be possible to have *no* row (default: 1)
             'minRowCount' => 2,
@@ -27,6 +30,7 @@ Use the inputType "multiColumnEditor" for your field.
             'maxRowCount' => 5,
             // defaults to false
             'skipCopyValuesOnAdd' => false,
+            'editorTemplate' => 'multi_column_editor_backend_default'
             'fields' => array(
                 // place your fields here as you would normally in your DCA
                 // (sql is not required)

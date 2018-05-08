@@ -25,7 +25,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(HeimrichHannotContaoMultiColumnEditorBundle::class)->setLoadAfter([ContaoCoreBundle::class]),
+            BundleConfig::create(HeimrichHannotContaoMultiColumnEditorBundle::class)->setLoadAfter([ContaoCoreBundle::class, 'multi_column_editor']),
         ];
     }
 

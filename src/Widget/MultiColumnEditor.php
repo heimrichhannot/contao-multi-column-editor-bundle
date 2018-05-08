@@ -9,11 +9,12 @@
 namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 
 use Contao\BackendTemplate;
-use HeimrichHannot\Ajax\Ajax;
-use HeimrichHannot\Ajax\AjaxAction;
-use HeimrichHannot\Haste\Util\Container;
-use HeimrichHannot\Haste\Util\Widget;
-use HeimrichHannot\Request\Request;
+use Contao\Controller;
+use Contao\DataContainer;
+use Contao\Date;
+use Contao\System;
+use Contao\Widget;
+use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
 
 class MultiColumnEditor extends \Contao\Widget
 {
@@ -23,23 +24,54 @@ class MultiColumnEditor extends \Contao\Widget
 
     const NAME = 'multicolumneditor';
 
+    /**
+     * @var bool
+     */
     protected $blnSubmitInput = true;
+
+    /**
+     * @var bool
+     */
     protected $blnForAttribute = true;
+
+    /**
+     * @var string
+     */
     protected $strTemplate = 'be_multi_column_editor';
-    protected $strEditorTemplate = 'multi_column_editor';
+
+    /**
+     * @var string
+     */
+    protected $editorTemplate = 'multi_column_editor_backend_default';
+
+    /**
+     * @var array
+     */
     protected $arrDca;
+
+    /**
+     * @var array
+     */
     protected $arrWidgetErrors = [];
+
+    /**
+     * @var string
+     */
+    protected $action;
 
     public function __construct($arrData)
     {
-        \Controller::loadDataContainer($arrData['strTable']);
-        $this->arrDca = $GLOBALS['TL_DCA'][$arrData['strTable']]['fields'][$arrData['strField']]['eval']['multiColumnEditor'];
-
         parent::__construct($arrData);
 
-        if (Container::isFrontend()) {
-            Ajax::runActiveAction(static::NAME, static::ACTION_ADD_ROW, new MceAjax($this->objDca));
-            Ajax::runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new MceAjax($this->objDca));
+        Controller::loadDataContainer($this->strTable);
+        $this->arrDca = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiColumnEditor'];
+        $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
+
+        if (System::getContainer()->get('huh.utils.container')->isFrontend()) {
+            $this->editorTemplate = 'multi_column_editor_backend_default' === $this->editorTemplate ? 'multi_column_editor_frontend_default' : $this->editorTemplate;
+            System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this));
+            System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this));
+            System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this));
         }
     }
 
@@ -50,7 +82,26 @@ class MultiColumnEditor extends \Contao\Widget
      */
     public function generate()
     {
-        if (Container::isBackend()) {
+        return '<div class="multi-column-editor-wrapper">'.$this->generateEditorForm().'</div>';
+    }
+
+    /**
+     * @param string        $strEditorTemplate
+     * @param string        $strTable
+     * @param string        $strFieldName
+     * @param mixed         $varValue
+     * @param DataContainer $objDc
+     * @param array|null    $arrDca
+     * @param array         $arrErrors
+     *
+     * @return string
+     */
+    public function generateEditorForm(): string
+    {
+        $arrDca = $this->arrDca;
+        $objDc = $this->objDca;
+
+        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
             $strTable = $this->objDca->table;
             $strFieldName = $this->objDca->field;
             $varValue = $this->objDca->value;
@@ -60,86 +111,71 @@ class MultiColumnEditor extends \Contao\Widget
             $varValue = $this->varValue;
         }
 
-        return '<div class="multi-column-editor-wrapper">'.static::generateEditorForm(
-                $this->strEditorTemplate,
-                $strTable,
-                $strFieldName,
-                $varValue,
-                $this->objDca,
-                $this->arrDca,
-                $this->arrWidgetErrors
-            ).'</div>';
-    }
-
-    public static function generateEditorForm(
-        $strEditorTemplate,
-        $strTable,
-        $strFieldName,
-        $varValue,
-        $objDc,
-        $arrDca = null,
-        $arrErrors = [],
-        $strAction = null
-    ) {
         if (null === $arrDca) {
             $arrDca = $GLOBALS['TL_DCA'][$strTable]['fields'][$strFieldName]['eval']['multiColumnEditor'];
         }
 
-        $objTemplate = new \BackendTemplate($strEditorTemplate);
-        $objTemplate->fieldName = $strFieldName;
-        $objTemplate->table = $strTable;
-        $objTemplate->class = $arrDca['class'];
-        $objTemplate->sortable = $arrDca['sortable'];
+        $arrErrors = $this->arrWidgetErrors;
+        $strAction = $this->getAction();
+
+        $data = [];
+        $data['fieldName'] = $strFieldName;
+        $data['table'] = $strTable;
+        $data['cssClass'] = $arrDca['class'];
+        $data['sortable'] = $arrDca['sortable'];
         $intMinRowCount = isset($arrDca['minRowCount']) ? $arrDca['minRowCount'] : 1;
         $intMaxRowCount = isset($arrDca['maxRowCount']) ? $arrDca['maxRowCount'] : 0;
         $blnSkipCopyValuesOnAdd = isset($arrDca['skipCopyValuesOnAdd']) ? $arrDca['skipCopyValuesOnAdd'] : false;
-        $objTemplate->minRowCount = $intMinRowCount;
-        $objTemplate->maxRowCount = $intMaxRowCount;
+        $data['minRowCount'] = $intMinRowCount;
+        $data['maxRowCount'] = $intMaxRowCount;
 
         // actions
-        $objTemplate->ajaxAddUrl =
-            Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_ADD_ROW);
-        $objTemplate->ajaxDeleteUrl =
-            Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_DELETE_ROW);
-        $objTemplate->ajaxSortUrl =
-            Container::isBackend() ? \Environment::get('request') : AjaxAction::generateUrl(static::NAME, static::ACTION_SORT_ROWS);
+        $data['ajaxAddUrl'] =
+            System::getContainer()->get('huh.utils.container')->isBackend() ? System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri() : System::getContainer()->get('huh.ajax.action')->generateUrl(static::NAME, static::ACTION_ADD_ROW);
+        $data['ajaxDeleteUrl'] =
+            System::getContainer()->get('huh.utils.container')->isBackend() ? System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri() : System::getContainer()->get('huh.ajax.action')->generateUrl(static::NAME, static::ACTION_DELETE_ROW);
+        $data['ajaxSortUrl'] =
+            System::getContainer()->get('huh.utils.container')->isBackend() ? System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri() : System::getContainer()->get('huh.ajax.action')->generateUrl(static::NAME, static::ACTION_SORT_ROWS);
 
-        $intRowCount = Request::getPost($strFieldName.'_rowCount') ?: $intMinRowCount;
-        $strAction = $strAction ?: Request::getPost('action');
+        $intRowCount = System::getContainer()->get('huh.request')->getPost($strFieldName.'_rowCount') ?: $intMinRowCount;
+        $strAction = $strAction ?: System::getContainer()->get('huh.request')->getPost('action');
 
         if ($varValue) {
             // restore from entity
-            $arrValues = static::prefixValuesWithFieldName(deserialize($varValue, true), $strFieldName);
-        } elseif (is_array($_POST)) {
+            $arrValues = $this->prefixValuesWithFieldName(deserialize($varValue, true), $strFieldName);
+        } elseif (System::getContainer()->get('huh.request')->request->count() > 0) {
             // restore from post
-            $arrValues = static::prefixValuesWithFieldName(static::restoreValueFromPost($_POST, $strFieldName, $arrDca), $strFieldName);
+            $arrValues = $this->prefixValuesWithFieldName($this->restoreValueFromPost(System::getContainer()->get('huh.request')->getAllPost(), $strFieldName, $arrDca), $strFieldName);
         } else {
             $arrValues = [];
         }
 
         // handle ajax requests
-        if (Container::isBackend() && \Environment::get('isAjaxRequest')) {
+        if (System::getContainer()->get('huh.utils.container')->isBackend() && \Environment::get('isAjaxRequest')) {
             switch ($strAction) {
                 case static::ACTION_ADD_ROW:
-                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
+                    $arrValues = $this->addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
                     break;
 
                 case static::ACTION_DELETE_ROW:
-                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+                    $arrValues = $this->deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
 
                 case static::ACTION_SORT_ROWS:
-                    $arrValues = static::sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+                    $arrValues = $this->sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
             }
-        } elseif (Ajax::isRelated(static::NAME)) {
+        } elseif (System::getContainer()->get('huh.ajax')->isRelated(static::NAME)) {
             switch ($strAction) {
                 case static::ACTION_ADD_ROW:
-                    $arrValues = static::addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
+                    $arrValues = $this->addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
                     break;
 
                 case static::ACTION_DELETE_ROW:
-                    $arrValues = static::deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+                    $arrValues = $this->deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+                    break;
+                case static::ACTION_SORT_ROWS:
+                    $arrValues = $this->sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
                     break;
             }
         }
@@ -155,26 +191,36 @@ class MultiColumnEditor extends \Contao\Widget
             $intCount = $intMaxRowCount;
         }
 
-        $objWidget = Widget::getFrontendFormField(
-            $strFieldName.'_rowCount',
-            [
-                'inputType' => 'hidden',
-            ],
-            $intCount
-        );
+        $objWidget = System::getContainer()->get('huh.utils.form')->getWidgetFromAttributes($strFieldName.'_rowCount', ['inputType' => 'hidden'], $intCount);
 
-        $objTemplate->rowCount = $objWidget;
+        $data['rowCount'] = $objWidget;
+        $data['renderedRowCount'] = $objWidget->parse();
+        $data['isBackend'] = System::getContainer()->get('huh.utils.container')->isBackend();
+        $data['isFrontend'] = System::getContainer()->get('huh.utils.container')->isFrontend();
 
         // add rows
-        $objTemplate->editorFormAction = \Environment::get('request');
-        $objTemplate->rows = static::generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
+        $data['editorFormAction'] = System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri();
+        $data['rows'] = $this->generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
 
-        return $objTemplate->parse();
+        return System::getContainer()->get('twig')->render(
+            System::getContainer()->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
+            $data
+        );
     }
 
-    public static function addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd = false)
+    /**
+     * @param array  $arrValues
+     * @param array  $arrDca
+     * @param int    $intRowCount
+     * @param int    $intMaxRowCount
+     * @param string $strFieldName
+     * @param bool   $blnSkipCopyValuesOnAdd
+     *
+     * @return array
+     */
+    public function addRow(array $arrValues, array $arrDca, int $intRowCount, int $intMaxRowCount, string $strFieldName, bool $blnSkipCopyValuesOnAdd = false)
     {
-        if (!($intIndex = Request::getPost('row'))) {
+        if (!($intIndex = (int) System::getContainer()->get('huh.request')->getPost('row'))) {
             $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField) {
@@ -192,7 +238,7 @@ class MultiColumnEditor extends \Contao\Widget
             $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = Request::getPost($strFieldName.'_'.$strField.'_'.$i);
+                $arrRow[$strFieldName.'_'.$strField] = System::getContainer()->get('huh.request')->getPost($strFieldName.'_'.$strField.'_'.$i);
             }
 
             $arrValues[] = $arrRow;
@@ -211,9 +257,18 @@ class MultiColumnEditor extends \Contao\Widget
         return $arrValues;
     }
 
-    public static function deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName)
+    /**
+     * @param array  $arrValues
+     * @param array  $arrDca
+     * @param int    $intRowCount
+     * @param int    $intMinRowCount
+     * @param string $strFieldName
+     *
+     * @return array
+     */
+    public function deleteRow(array $arrValues, array $arrDca, int $intRowCount, int $intMinRowCount, string $strFieldName): array
     {
-        if (!($intIndex = Request::getPost('row'))) {
+        if (!($intIndex = (int) System::getContainer()->get('huh.request')->getPost('row'))) {
             return $arrValues;
         }
 
@@ -227,7 +282,7 @@ class MultiColumnEditor extends \Contao\Widget
             $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = Request::getPost($strFieldName.'_'.$strField.'_'.$i);
+                $arrRow[$strFieldName.'_'.$strField] = System::getContainer()->get('huh.request')->getPost($strFieldName.'_'.$strField.'_'.$i);
             }
 
             $arrValues[] = $arrRow;
@@ -236,9 +291,18 @@ class MultiColumnEditor extends \Contao\Widget
         return $arrValues;
     }
 
-    public static function sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName)
+    /**
+     * @param array  $arrValues
+     * @param array  $arrDca
+     * @param int    $intRowCount
+     * @param int    $intMinRowCount
+     * @param string $strFieldName
+     *
+     * @return array
+     */
+    public function sortRows(array $arrValues, array $arrDca, int $intRowCount, int $intMinRowCount, string $strFieldName): array
     {
-        if (Request::getPost('action') !== static::ACTION_SORT_ROWS || !($varNewIndices = Request::getPost('newIndices'))) {
+        if (!($varNewIndices = System::getContainer()->get('huh.request')->getPost('newIndices'))) {
             return $arrValues;
         }
 
@@ -254,7 +318,7 @@ class MultiColumnEditor extends \Contao\Widget
             $arrRow = [];
 
             foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = Request::getPost($strFieldName.'_'.$strField.'_'.$intIndex);
+                $arrRow[$strFieldName.'_'.$strField] = System::getContainer()->get('huh.request')->getPost($strFieldName.'_'.$strField.'_'.$intIndex);
             }
 
             $arrValues[] = $arrRow;
@@ -263,7 +327,18 @@ class MultiColumnEditor extends \Contao\Widget
         return $arrValues;
     }
 
-    public static function generateRows($intRowCount, $arrDca, $strTable, $objDc, array $arrValues, $arrErrors, $strFieldName)
+    /**
+     * @param int           $intRowCount
+     * @param array         $arrDca
+     * @param string        $strTable
+     * @param DataContainer $objDc
+     * @param array         $arrValues
+     * @param array         $arrErrors
+     * @param string        $strFieldName
+     *
+     * @return array
+     */
+    public function generateRows(int $intRowCount, array $arrDca, string $strTable, DataContainer $objDc, array $arrValues, array $arrErrors, string $strFieldName): array
     {
         $arrRows = [];
 
@@ -271,15 +346,13 @@ class MultiColumnEditor extends \Contao\Widget
             $arrFields = [];
 
             foreach ($arrDca['fields'] as $strField => $arrData) {
-                $strMethod = Container::isFrontend() ? 'getFrontendFormField' : 'getBackendFormField';
-
                 $values = null;
 
                 if (is_array($arrValues) && isset($arrValues[$i - 1]) && isset($arrValues[$i - 1][$strFieldName.'_'.$strField])) {
                     $values = $arrValues[$i - 1][$strFieldName.'_'.$strField];
                 }
 
-                if (!($objWidget = Widget::$strMethod($strFieldName.'_'.$strField.'_'.$i, $arrData, $values, $strField, $strTable, $objDc))) {
+                if (null === ($objWidget = System::getContainer()->get('huh.utils.form')->getWidgetFromAttributes($strFieldName.'_'.$strField.'_'.$i, $arrData, $values, $strField, $strTable, $objDc, TL_MODE))) {
                     continue;
                 }
 
@@ -291,11 +364,11 @@ class MultiColumnEditor extends \Contao\Widget
                 if (is_numeric($objWidget->value)) {
                     // date/time fields
                     if ($arrData['eval']['rgxp'] === 'date') {
-                        $objWidget->value = \Date::parse(\Config::get('dateFormat'), $objWidget->value);
+                        $objWidget->value = Date::parse(\Config::get('dateFormat'), $objWidget->value);
                     } elseif ($arrData['eval']['rgxp'] === 'time') {
-                        $objWidget->value = \Date::parse(\Config::get('timeFormat'), $objWidget->value);
+                        $objWidget->value = Date::parse(\Config::get('timeFormat'), $objWidget->value);
                     } elseif ($arrData['eval']['rgxp'] === 'datim') {
-                        $objWidget->value = \Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                        $objWidget->value = Date::parse(\Config::get('datimFormat'), $objWidget->value);
                     }
                 }
 
@@ -303,7 +376,7 @@ class MultiColumnEditor extends \Contao\Widget
                     $objWidget->addError(implode('', $arrErrors[$strFieldName.'_'.$strField.'_'.$i]));
                 }
 
-                static::handleSpecialFields($objWidget, $arrData, $strFieldName, $strTable);
+                $this->handleSpecialFields($objWidget, $arrData, $strFieldName, $strTable);
 
                 $arrFields[$strFieldName.'_'.$strField.'_'.$i] = $objWidget;
             }
@@ -314,7 +387,53 @@ class MultiColumnEditor extends \Contao\Widget
         return $arrRows;
     }
 
-    public static function handleSpecialFields($objWidget, $arrData, $strField, $strTable)
+    /**
+     * @return string
+     */
+    public function getAction(): ? string
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param string $action
+     *
+     * @return MultiColumnEditor
+     */
+    public function setAction(string $action): self
+    {
+        $this->action = $action;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEditorTemplate(): string
+    {
+        return $this->editorTemplate;
+    }
+
+    /**
+     * @param string $editorTemplate
+     *
+     * @return MultiColumnEditor
+     */
+    public function setEditorTemplate(string $editorTemplate): self
+    {
+        $this->editorTemplate = $editorTemplate;
+
+        return $this;
+    }
+
+    /**
+     * @param Widget $objWidget
+     * @param array  $arrData
+     * @param string $strField
+     * @param string $strTable
+     */
+    protected function handleSpecialFields(Widget $objWidget, array $arrData, string $strField, string $strTable): void
     {
         $wizard = '';
 
@@ -421,7 +540,13 @@ class MultiColumnEditor extends \Contao\Widget
         $objWidget->wizard = $strHelp ? $wizard.$strHelp : $wizard;
     }
 
-    public static function help($arrData, $strClass = '')
+    /**
+     * @param array  $arrData
+     * @param string $strClass
+     *
+     * @return string
+     */
+    protected function help(array $arrData, string $strClass = ''): string
     {
         $return = $arrData['label'][1];
 
@@ -432,20 +557,21 @@ class MultiColumnEditor extends \Contao\Widget
         return '<p class="tl_help tl_tip'.$strClass.'">'.$return.'</p>';
     }
 
+    /**
+     * @param mixed $varInput
+     *
+     * @return mixed
+     */
     protected function validator($varInput)
     {
         // validate every field
         $varInput = [];
-        $intRowCount = Request::getPost($this->strName.'_'.'rowCount');
+        $intRowCount = System::getContainer()->get('huh.request')->getPost($this->strName.'_'.'rowCount');
         $blnHasErrors = false;
 
         for ($i = 1; $i <= $intRowCount; ++$i) {
             foreach ($this->arrDca['fields'] as $strField => $arrData) {
-                $strMethod = Container::isFrontend() ? 'getFrontendFormField' : 'getBackendFormField';
-
-                if (!($objWidget =
-                    Widget::$strMethod($this->strName.'_'.$strField.'_'.$i, $arrData, null, $strField, $this->strTable, $this->objDca))
-                ) {
+                if (null === ($objWidget = System::getContainer()->get('huh.utils.form')->getWidgetFromAttributes($this->strName.'_'.$strField.'_'.$i, $arrData, null, $strField, $this->strTable, $this->objDca))) {
                     continue;
                 }
 
@@ -492,7 +618,13 @@ class MultiColumnEditor extends \Contao\Widget
         return parent::validator(serialize($varInput));
     }
 
-    private static function prefixValuesWithFieldName(array $arrValues, $strFieldName)
+    /**
+     * @param array  $arrValues
+     * @param string $strFieldName
+     *
+     * @return array
+     */
+    protected function prefixValuesWithFieldName(array $arrValues, string $strFieldName): array
     {
         $arrResult = [];
 
@@ -513,10 +645,17 @@ class MultiColumnEditor extends \Contao\Widget
         return $arrResult;
     }
 
-    private static function restoreValueFromPost(array $arrPost, $strFieldName, $arrDca)
+    /**
+     * @param array  $arrPost
+     * @param string $strFieldName
+     * @param array  $arrDca
+     *
+     * @return array
+     */
+    protected function restoreValueFromPost(array $arrPost, string $strFieldName, array $arrDca): array
     {
         $arrResult = [];
-        $intRowCount = Request::getPost($strFieldName.'_rowCount');
+        $intRowCount = System::getContainer()->get('huh.request')->getPost($strFieldName.'_rowCount');
 
         for ($i = 0; $i < $intRowCount; ++$i) {
             $arrRow = [];
