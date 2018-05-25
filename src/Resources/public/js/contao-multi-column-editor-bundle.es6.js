@@ -74,7 +74,9 @@ let MultiColumnEditorBundle = {
             }
         }
 
-        formData.set('row', link.closest('.mce-row').dataset.index);
+        let row = link.closest('.mce-row');
+
+        formData.set('row', typeof row !== 'undefined' && row !== null ? row.dataset.index : 0);
         formData.set('field', editor.dataset.field);
         formData.set('table', editor.dataset.table);
 
