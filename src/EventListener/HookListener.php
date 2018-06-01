@@ -37,16 +37,21 @@ class HookListener
      */
     public function executePostActionsHook($strAction, \DataContainer $objDc)
     {
+        $request = System::getContainer()->get('huh.request');
+        $modelUtil = System::getContainer()->get('huh.utils.model');
+
         if (MultiColumnEditor::ACTION_ADD_ROW === $strAction || MultiColumnEditor::ACTION_DELETE_ROW === $strAction ||
             MultiColumnEditor::ACTION_SORT_ROWS === $strAction
         ) {
-            $objDc->field = System::getContainer()->get('huh.request')->getPost('field');
-            $objDc->table = System::getContainer()->get('huh.request')->getPost('table');
+            $objDc->field = $request->getPost('field');
+            $objDc->table = $request->getPost('table');
 
             if (!$objDc->field || !$objDc->table) {
                 header('HTTP/1.1 400 Bad Request');
                 die('Bad Request');
             }
+
+            $objDc->activeRecord = $modelUtil->findModelInstanceByPk($objDc->table, $objDc->id);
 
             $editor = new MultiColumnEditor(['strField' => $objDc->field, 'varValue' => $objDc->value, 'strTable' => $objDc->table, 'dataContainer' => $objDc]);
             die($editor->generate());
