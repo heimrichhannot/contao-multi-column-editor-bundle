@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2018-06-18
+
+### Fixed
+- javascript issue with checkboxes and adding rows
+
 ## [1.0.3] - 2018-06-01
 
 ### Fixed

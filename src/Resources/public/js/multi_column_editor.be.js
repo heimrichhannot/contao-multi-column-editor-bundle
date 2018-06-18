@@ -69,7 +69,15 @@ var MultiColumnEditor = {
 
             // remove FORM_SUBMIT -> no submit callbacks should be fired
             if (input.name !== 'FORM_SUBMIT') {
-                formData.append(input.name, input.value);
+                switch (input.type)
+                {
+                    case 'checkbox':
+                    case 'radio':
+                        formData.append(input.name, input.checked ? input.value : '');
+                        break;
+                    default:
+                        formData.append(input.name, input.value);
+                }
             }
         }
 
@@ -86,7 +94,15 @@ var MultiColumnEditor = {
 
                 // remove FORM_SUBMIT -> no submit callbacks should be fired
                 if (input.name !== 'FORM_SUBMIT') {
-                    formData.append(input.name, input.value);
+                    switch (input.type)
+                    {
+                        case 'checkbox':
+                        case 'radio':
+                            formData.append(input.name, input.checked ? input.value : '');
+                            break;
+                        default:
+                            formData.append(input.name, input.value);
+                    }
                 }
             }
         }
