@@ -8,6 +8,7 @@
 
 namespace HeimrichHannot\MultiColumnEditorBundle\EventListener;
 
+use Contao\Config;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
@@ -51,7 +52,7 @@ class HookListener
                 die('Bad Request');
             }
 
-            $objDc->activeRecord = $modelUtil->findModelInstanceByPk($objDc->table, $objDc->id);
+            $objDc->activeRecord = 'tl_settings' === $objDc->table ? Config::getInstance() : $modelUtil->findModelInstanceByPk($objDc->table, $objDc->id);
 
             $editor = new MultiColumnEditor(['strField' => $objDc->field, 'varValue' => $objDc->value, 'strTable' => $objDc->table, 'dataContainer' => $objDc]);
             die($editor->generate());
