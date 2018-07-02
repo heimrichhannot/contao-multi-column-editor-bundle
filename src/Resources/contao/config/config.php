@@ -19,7 +19,7 @@ $GLOBALS['TL_HOOKS']['loadDataContainer']['multiColumnEditor']  = ['huh.multicol
 /**
  * Assets
  */
-if (\HeimrichHannot\Haste\Util\Container::isBackend()) {
+if (\Contao\System::getContainer()->get('huh.utils.container')->isBackend()) {
     $GLOBALS['TL_JAVASCRIPT']['multi_column_editor'] = 'bundles/heimrichhannotcontaomulticolumneditor/js/multi_column_editor.be.js|static';
     $GLOBALS['TL_CSS']['multi_column_editor'] = 'bundles/heimrichhannotcontaomulticolumneditor/css/contao-multi-column-editor-bundle.min.css|static';
 }
