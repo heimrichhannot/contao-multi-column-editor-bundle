@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2018-07-02
+
+### Fixed
+- replaced missing `Containter` class from `heimrichhannot/contao-haste` with `heimrichhannot/contao-utils-bundle`
+
 ## [1.0.5] - 2018-06-22
 
 ### Fixed
