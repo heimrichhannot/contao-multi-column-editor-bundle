@@ -119,9 +119,16 @@ var MultiColumnEditor = {
                     var response = document.createElement('div');
                     response.innerHTML = xhr.responseText;
 
+                    var scriptElems = response.childNodes[0].getElementsByTagName('script');
+
                     link.closest('.multi-column-editor-wrapper').replaceWith(response.childNodes[0]);
                     MultiColumnEditor.registerEvents();
                     MultiColumnEditor.initChosen();
+
+                    for (var n = 0; n < scriptElems.length; n++)
+                    {
+                        eval(arr[n].innerHTML);
+                    }
 
                     if (typeof callback === 'function') {
                         callback.apply(this, Array.prototype.slice.call(arguments, 1));

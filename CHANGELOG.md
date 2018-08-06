@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2018-08-06
+
+### Fixed
+- script execution after adding rows
+
 ## [1.0.6] - 2018-07-02
 
 ### Fixed
