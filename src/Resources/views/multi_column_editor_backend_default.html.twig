@@ -1,4 +1,4 @@
-<div class="{{ ('multi-column-editor' ~ cssClass)| trim }}" data-field="{{ fieldName }}" data-table="{{ table }}" data-min-row-count="{{ minRowCount }}" data-max-row-count="{{ maxRowCount }}">
+<div class="{{ ('multi-column-editor ' ~ cssClass)| trim }}" data-field="{{ fieldName }}" data-table="{{ table }}" data-min-row-count="{{ minRowCount }}" data-max-row-count="{{ maxRowCount }}">
     {{ renderedRowCount|raw }}
 
     {% if(rowCount.value < 1 ) %}
