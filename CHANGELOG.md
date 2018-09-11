@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2018-09-11
+
+### Fixed
+- contao 4.6 support for `huh.multicolumneditor.listener.hooks` service (added `public: true`)
+
 ## [1.0.8] - 2018-09-06
 
 ### Fixed
