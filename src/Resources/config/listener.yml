@@ -1,6 +1,6 @@
 services:
-    huh.multicolumneditor.listener.hooks:
-        class: HeimrichHannot\MultiColumnEditorBundle\EventListener\HookListener
-	public: true
-        arguments:
-            - "@contao.framework"
+  huh.multicolumneditor.listener.hooks:
+    class: HeimrichHannot\MultiColumnEditorBundle\EventListener\HookListener
+    public: true
+    arguments:
+      - "@contao.framework"
