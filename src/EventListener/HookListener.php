@@ -66,11 +66,13 @@ class HookListener
      */
     public function loadDataContainerHook($strTable)
     {
+        $dca = &$GLOBALS['TL_DCA'][$strTable];
+
         if (!($name = System::getContainer()->get('huh.request')->getPost('name'))) {
             return;
         }
 
-        if (isset($GLOBALS['TL_DCA'][$strTable]['fields'][$name])) {
+        if (isset($dca['fields'][$name])) {
             return;
         }
 
@@ -81,6 +83,35 @@ class HookListener
             return;
         }
 
-        $GLOBALS['TL_DCA'][$strTable]['fields'][$name] = true;
+        if ($this->isMceField($name, $dca)) {
+            $dca['fields'][$name] = true;
+        }
+    }
+
+    protected function isMceField($name, $dca)
+    {
+        $isMce = false;
+        $cleanedName = preg_replace('/_\d+$/i', '', $name);
+        $mceFieldArrays = [];
+
+        foreach ($dca['fields'] as $field => $data) {
+            if ('multiColumnEditor' !== $data['inputType'] || !isset($data['eval']['multiColumnEditor']['fields'])) {
+                continue;
+            }
+
+            $mceFieldArrays[$field] = $data;
+        }
+
+        if (empty($mceFieldArrays)) {
+            return false;
+        }
+
+        foreach ($mceFieldArrays as $field => $mceData) {
+            if (in_array(preg_replace('/^'.$field.'_/', '', $cleanedName), array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
+                $isMce = true;
+            }
+        }
+
+        return $isMce;
     }
 }
