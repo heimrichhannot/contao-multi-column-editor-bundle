@@ -49,12 +49,14 @@ class HookListener
 
             if (!$objDc->field || !$objDc->table) {
                 header('HTTP/1.1 400 Bad Request');
+
                 die('Bad Request');
             }
 
             $objDc->activeRecord = 'tl_settings' === $objDc->table ? Config::getInstance() : $modelUtil->findModelInstanceByPk($objDc->table, $objDc->id);
 
             $editor = new MultiColumnEditor(['strField' => $objDc->field, 'varValue' => $objDc->value, 'strTable' => $objDc->table, 'dataContainer' => $objDc]);
+
             die($editor->generate());
         }
     }
@@ -66,6 +68,10 @@ class HookListener
      */
     public function loadDataContainerHook($strTable)
     {
+        if (!isset($GLOBALS['TL_DCA'][$strTable])) {
+            return;
+        }
+
         $dca = &$GLOBALS['TL_DCA'][$strTable];
 
         if (!($name = System::getContainer()->get('huh.request')->getPost('name'))) {
@@ -84,7 +90,7 @@ class HookListener
         }
 
         if ($this->isMceField($name, $dca)) {
-            $dca['fields'][$name] = true;
+            $dca['fields'][$name] = [];
         }
     }
 
@@ -107,7 +113,7 @@ class HookListener
         }
 
         foreach ($mceFieldArrays as $field => $mceData) {
-            if (in_array(preg_replace('/^'.$field.'_/', '', $cleanedName), array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
+            if (\in_array(preg_replace('/^'.$field.'_/', '', $cleanedName), array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
                 $isMce = true;
             }
         }

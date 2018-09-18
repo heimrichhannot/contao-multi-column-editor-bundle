@@ -12,6 +12,9 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude('Resources')
     ->exclude('Fixtures')
     ->in([__DIR__.'/src', __DIR__.'/tests'])
+    ->exclude('vendor')
+    ->exclude('docs')
+    ->in([__DIR__])
 ;
 
 return PhpCsFixer\Config::create()
@@ -19,14 +22,14 @@ return PhpCsFixer\Config::create()
         '@Symfony' => true,
         '@Symfony:risky' => true,
         'psr0' => false,
-        'strict_comparison' => true,
+        'strict_comparison' => false,
         'strict_param' => true,
         'array_syntax' => ['syntax' => 'short'],
         'heredoc_to_nowdoc' => true,
         'header_comment' => ['header' => $header],
         'ordered_imports' => true,
         'ordered_class_elements' => true,
-        'php_unit_strict' => false,
+        'php_unit_strict' => true,
         'phpdoc_order' => true,
         'no_useless_return' => true,
         'no_useless_else' => true,
@@ -36,6 +39,7 @@ return PhpCsFixer\Config::create()
             'expectedException',
             'expectedExceptionMessage',
         ],
+        'blank_line_before_statement' => ['statements' => ['break', 'case', 'continue', 'declare', 'default', 'die', 'do', 'exit', 'for', 'foreach', 'goto', 'if', 'include', 'include_once', 'require', 'require_once', 'return', 'switch', 'throw', 'try', 'while', 'yield']]
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(true)

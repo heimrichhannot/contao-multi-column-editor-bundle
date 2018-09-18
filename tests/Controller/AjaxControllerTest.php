@@ -62,11 +62,11 @@ class AjaxControllerTest extends ContaoTestCase
     {
         parent::setUp();
 
-        if (!defined('TL_ROOT')) {
+        if (!\defined('TL_ROOT')) {
             \define('TL_ROOT', $this->getFixturesDir());
         }
 
-        if (!defined('TL_MODE')) {
+        if (!\defined('TL_MODE')) {
             \define('TL_MODE', 'FE');
         }
 
@@ -282,7 +282,7 @@ class AjaxControllerTest extends ContaoTestCase
         $response = $instance->addRow();
         $this->assertInstanceOf(Response::class, $response);
 
-        $this->assertEquals('<div class="multi-column-editor-wrapper">foo</div>', $response->getResult()->getHtml());
+        $this->assertSame('<div class="multi-column-editor-wrapper">foo</div>', $response->getResult()->getHtml());
     }
 
     /**
@@ -343,7 +343,7 @@ class AjaxControllerTest extends ContaoTestCase
         $response = $instance->deleteRow();
         $this->assertInstanceOf(Response::class, $response);
 
-        $this->assertEquals('<div class="multi-column-editor-wrapper">foo</div>', $response->getResult()->getHtml());
+        $this->assertSame('<div class="multi-column-editor-wrapper">foo</div>', $response->getResult()->getHtml());
     }
 
     /**
@@ -404,7 +404,7 @@ class AjaxControllerTest extends ContaoTestCase
         $response = $instance->sortRows();
         $this->assertInstanceOf(Response::class, $response);
 
-        $this->assertEquals('<div class="multi-column-editor-wrapper">foo</div>', $response->getResult()->getHtml());
+        $this->assertSame('<div class="multi-column-editor-wrapper">foo</div>', $response->getResult()->getHtml());
     }
 
     /**
@@ -412,6 +412,6 @@ class AjaxControllerTest extends ContaoTestCase
      */
     protected function getFixturesDir(): string
     {
-        return __DIR__.DIRECTORY_SEPARATOR.'../Fixtures';
+        return __DIR__.\DIRECTORY_SEPARATOR.'../Fixtures';
     }
 }

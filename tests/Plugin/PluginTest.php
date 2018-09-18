@@ -58,8 +58,8 @@ class PluginTest extends ContaoTestCase
 
         static::assertCount(1, $bundles);
         static::assertInstanceOf(BundleConfig::class, $bundles[0]);
-        static::assertEquals(HeimrichHannotContaoMultiColumnEditorBundle::class, $bundles[0]->getName());
-        static::assertEquals([ContaoCoreBundle::class, 'multi_column_editor'], $bundles[0]->getLoadAfter());
+        static::assertSame(HeimrichHannotContaoMultiColumnEditorBundle::class, $bundles[0]->getName());
+        static::assertSame([ContaoCoreBundle::class, 'multi_column_editor'], $bundles[0]->getLoadAfter());
     }
 
     /**
@@ -76,8 +76,8 @@ class PluginTest extends ContaoTestCase
         $this->assertArrayHasKey('huh', $extensionConfigs);
         $this->assertArrayHasKey('encore', $extensionConfigs['huh']);
         $this->assertNotEmpty($extensionConfigs['huh']['encore']['entries']);
-        $this->assertEquals(['name' => 'contao-multi-column-editor-bundle', 'file' => 'vendor/heimrichhannot/contao-multi-column-editor-bundle/src/Resources/public/js/contao-multi-column-editor-bundle.es6.js'], $extensionConfigs['huh']['encore']['entries'][0]);
-        $this->assertEquals('multi_column_editor', $extensionConfigs['huh']['encore']['legacy']['js'][0]);
+        $this->assertSame(['name' => 'contao-multi-column-editor-bundle', 'file' => 'vendor/heimrichhannot/contao-multi-column-editor-bundle/src/Resources/public/js/contao-multi-column-editor-bundle.es6.js'], $extensionConfigs['huh']['encore']['entries'][0]);
+        $this->assertSame('multi_column_editor', $extensionConfigs['huh']['encore']['legacy']['js'][0]);
     }
 
     /**

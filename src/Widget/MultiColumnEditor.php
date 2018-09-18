@@ -155,33 +155,40 @@ class MultiColumnEditor extends \Contao\Widget
             switch ($strAction) {
                 case static::ACTION_ADD_ROW:
                     $arrValues = $this->addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
+
                     break;
 
                 case static::ACTION_DELETE_ROW:
                     $arrValues = $this->deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+
                     break;
 
                 case static::ACTION_SORT_ROWS:
                     $arrValues = $this->sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+
                     break;
             }
         } elseif (System::getContainer()->get('huh.ajax')->isRelated(static::NAME)) {
             switch ($strAction) {
                 case static::ACTION_ADD_ROW:
                     $arrValues = $this->addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
+
                     break;
 
                 case static::ACTION_DELETE_ROW:
                     $arrValues = $this->deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+
                     break;
+
                 case static::ACTION_SORT_ROWS:
                     $arrValues = $this->sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
+
                     break;
             }
         }
 
         // add row count field
-        $intCount = count($arrValues);
+        $intCount = \count($arrValues);
 
         if ($intMinRowCount && $intCount < $intMinRowCount || $intCount < 0) {
             $intCount = $intMinRowCount;
@@ -342,13 +349,13 @@ class MultiColumnEditor extends \Contao\Widget
     {
         $arrRows = [];
 
-        for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : count($arrValues)); ++$i) {
+        for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : \count($arrValues)); ++$i) {
             $arrFields = [];
 
             foreach ($arrDca['fields'] as $strField => $arrData) {
                 $values = null;
 
-                if (is_array($arrValues) && isset($arrValues[$i - 1]) && isset($arrValues[$i - 1][$strFieldName.'_'.$strField])) {
+                if (\is_array($arrValues) && isset($arrValues[$i - 1]) && isset($arrValues[$i - 1][$strFieldName.'_'.$strField])) {
                     $values = $arrValues[$i - 1][$strFieldName.'_'.$strField];
                 }
 
@@ -363,11 +370,11 @@ class MultiColumnEditor extends \Contao\Widget
 
                 if (is_numeric($objWidget->value)) {
                     // date/time fields
-                    if ($arrData['eval']['rgxp'] === 'date') {
+                    if ('date' === $arrData['eval']['rgxp']) {
                         $objWidget->value = Date::parse(\Config::get('dateFormat'), $objWidget->value);
-                    } elseif ($arrData['eval']['rgxp'] === 'time') {
+                    } elseif ('time' === $arrData['eval']['rgxp']) {
                         $objWidget->value = Date::parse(\Config::get('timeFormat'), $objWidget->value);
-                    } elseif ($arrData['eval']['rgxp'] === 'datim') {
+                    } elseif ('datim' === $arrData['eval']['rgxp']) {
                         $objWidget->value = Date::parse(\Config::get('datimFormat'), $objWidget->value);
                     }
                 }
@@ -444,14 +451,17 @@ class MultiColumnEditor extends \Contao\Widget
             switch ($rgxp) {
                 case 'datim':
                     $time = ",\n        timePicker: true";
+
                     break;
 
                 case 'time':
                     $time = ",\n        pickOnly: \"time\"";
+
                     break;
 
                 default:
                     $time = '';
+
                     break;
             }
 
@@ -580,13 +590,14 @@ class MultiColumnEditor extends \Contao\Widget
 
                 // Convert date formats into timestamps (check the eval setting first -> #3063)
                 $rgxp = $arrData['eval']['rgxp'];
+
                 if (('date' === $rgxp || 'time' === $rgxp || 'datim' === $rgxp) && '' !== $varValue) {
                     $objDate = new \Date($varValue, $GLOBALS['TL_CONFIG'][$rgxp.'Format']);
                     $varValue = $objDate->tstamp;
                 }
 
                 // Save callback
-                if (is_array($arrData['save_callback'])) {
+                if (\is_array($arrData['save_callback'])) {
                     foreach ($arrData['save_callback'] as $callback) {
                         $this->import($callback[0]);
 
@@ -631,7 +642,7 @@ class MultiColumnEditor extends \Contao\Widget
         foreach ($arrValues as $arrValue) {
             $arrRow = [];
 
-            if (!is_array($arrValue)) {
+            if (!\is_array($arrValue)) {
                 continue;
             }
 
