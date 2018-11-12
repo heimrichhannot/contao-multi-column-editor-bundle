@@ -209,10 +209,10 @@ class MultiColumnEditor extends \Contao\Widget
         $data['editorFormAction'] = System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri();
         $data['rows'] = $this->generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
 
-        return System::getContainer()->get('twig')->render(
+        return Controller::replaceInsertTags(System::getContainer()->get('twig')->render(
             System::getContainer()->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
             $data
-        );
+        ));
     }
 
     /**

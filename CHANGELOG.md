@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.13] - 2018-11-12
+
+### Fixed
+- Replace contao inserttags after render `editorTemplate`
+
 ## [1.0.12] - 2018-09-18
 
 ### Fixed
