@@ -2,14 +2,14 @@
     {{ renderedRowCount|raw }}
 
     {% if(rowCount.value < 1 ) %}
-        <a href="{{ ajaxAddUrl }}" class="fa fa-plus add first btn btn-primary" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
+        <a href="{{ ajaxAddUrl }}" class="add first" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
             <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
         </a>
     {% else %}
         <div class="{{ 'rows ' ~ (sortable|default() ? 'sortable' : '') | trim }}">
             {% for iterator, row in rows %}
                 {% set index = ( iterator + 1 ) %}
-                <div class="{{ 'mce-row row row_' ~ index | trim }}" data-index="{{ index }}">
+                <div class="{{ 'mce-row row_' ~ index | trim }}" data-index="{{ index }}">
                     {% for field, widget in row %}
                         {% if widget.type == "hidden" %}
                             {{ widget.parse()|raw }}
@@ -20,16 +20,16 @@
                         {% endif %}
                     {% endfor %}
                     <div class="actions">
-                        <a href="{{ ajaxAddUrl }}" class="fa fa-plus add btn btn-primary btn-xs" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
+                        <a href="{{ ajaxAddUrl }}" class="add" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
                             <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
                         </a>
 
-                        <a href="{{ ajaxDeleteUrl }}" class="fa fa-times delete btn btn-primary btn-xs" title="{{ 'huh.multicolumneditor.delete.default'|trans }}">
+                        <a href="{{ ajaxDeleteUrl }}" class="delete" title="{{ 'huh.multicolumneditor.delete.default'|trans }}">
                             <span>{{ 'huh.multicolumneditor.delete.default'|trans }}</span>
                         </a>
 
                         {% if sortable|default() %}
-                            <a class="drag-handle fa fa-sort btn btn-primary btn-xs" href="{{ ajaxSortUrl }}" title="{{ 'huh.multicolumneditor.sort.default'|trans }}">
+                            <a class="drag-handle" href="{{ ajaxSortUrl }}" title="{{ 'huh.multicolumneditor.sort.default'|trans }}">
                                 <span>{{ 'huh.multicolumneditor.sort.default'|trans }}</span>
                             </a>
                         {% endif %}

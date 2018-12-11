@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2018-12-11
+
+### Removed
+- font awesome classes from frontend template
+
 ## [1.0.13] - 2018-11-12
 
 ### Fixed
