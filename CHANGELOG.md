@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2019-01-10
+
+### Changed
+- now replaces multi column editor bundle
+- reverted change from 1.0.13
+- removed symfony 3 dependency
+
 ## [1.1.0] - 2018-12-11
 
 ### Removed

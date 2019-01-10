@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2018 Heimrich & Hannot GmbH
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -16,7 +16,7 @@ use Contao\System;
 use Contao\Widget;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
 
-class MultiColumnEditor extends \Contao\Widget
+class MultiColumnEditor extends Widget
 {
     const ACTION_ADD_ROW = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
@@ -86,13 +86,10 @@ class MultiColumnEditor extends \Contao\Widget
     }
 
     /**
-     * @param string        $strEditorTemplate
-     * @param string        $strTable
-     * @param string        $strFieldName
-     * @param mixed         $varValue
-     * @param DataContainer $objDc
-     * @param array|null    $arrDca
-     * @param array         $arrErrors
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      *
      * @return string
      */
@@ -209,10 +206,10 @@ class MultiColumnEditor extends \Contao\Widget
         $data['editorFormAction'] = System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri();
         $data['rows'] = $this->generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
 
-        return Controller::replaceInsertTags(System::getContainer()->get('twig')->render(
+        return System::getContainer()->get('twig')->render(
             System::getContainer()->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
             $data
-        ));
+        );
     }
 
     /**

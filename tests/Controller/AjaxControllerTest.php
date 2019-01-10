@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2018 Heimrich & Hannot GmbH
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpKernel\Config\FileLocator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -123,18 +124,23 @@ class AjaxControllerTest extends ContaoTestCase
 
         $GLOBALS['TL_FFL']['hidden'] = 'Contao\FormHidden';
 
-        $this->container->set('huh.utils.container', new ContainerUtil($this->framework));
-
         $this->kernel = $this->createMock(Kernel::class);
         $this->kernel->method('getContainer')->willReturn($this->container);
+
+        $fileLocator = new FileLocator($this->kernel);
+
+        $backendMatcher = new RequestMatcher('/contao', 'test.com', null, ['192.168.1.0']);
+        $frontendMatcher = new RequestMatcher('/index', 'test.com', null, ['192.168.1.0']);
+        $scopeMatcher = new ScopeMatcher($backendMatcher, $frontendMatcher);
+        $this->container->set('huh.utils.container', new ContainerUtil($this->framework, $fileLocator, $scopeMatcher));
 
         $this->container->set('kernel', $this->kernel);
 
         $this->container->set('huh.ajax.action', new AjaxActionManager());
         $this->container->set('huh.ajax', new AjaxManager());
         $this->container->set('huh.utils.url', new UrlUtil($this->framework));
-        $this->container->set('huh.utils.form', new FormUtil($this->framework));
-        $this->container->set('huh.utils.template', new TemplateUtil($this->framework));
+        $this->container->set('huh.utils.form', new FormUtil($this->container, $this->framework));
+        $this->container->set('huh.utils.template', new TemplateUtil($this->framework, $this->kernel));
 
         $twig = $this->createMock('Twig_Environment');
 
@@ -167,7 +173,9 @@ class AjaxControllerTest extends ContaoTestCase
         $this->container->set('request_stack', new RequestStack());
         System::setContainer($this->container);
 
-        $extension = new AjaxController(new MultiColumnEditor(['strTable' => 'tl_test', 'strField' => 'test']));
+        $multicolumnMock = $this->createMock(MultiColumnEditor::class);
+
+        $extension = new AjaxController($multicolumnMock);
         $this->assertInstanceOf('HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController', $extension);
     }
 
