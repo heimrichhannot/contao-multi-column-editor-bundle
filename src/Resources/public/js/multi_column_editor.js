@@ -5,7 +5,7 @@ var MultiColumnEditor = {
         script.onload = function () {
             MultiColumnEditor.registerEvents();
         };
-        script.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js';
+        script.src = 'bundles/heimrichhannotcontaomulticolumneditor/js/Sortable.min.js';
         document.head.appendChild(script);
     },
     registerEvents: function() {

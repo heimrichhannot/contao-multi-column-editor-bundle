@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2019-01-10
+
+### Fixed
+- load Sortable js library locally, not from CDN (privacy related)
+
 ## [1.2.0] - 2019-01-10
 
 ### Changed
