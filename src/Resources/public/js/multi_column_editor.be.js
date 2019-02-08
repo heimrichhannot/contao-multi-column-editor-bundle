@@ -1,25 +1,17 @@
 var MultiColumnEditor = {
-
     init: function() {
         this.registerEvents();
     },
     registerEvents: function() {
-        var addLinks = document.querySelectorAll('.multi-column-editor .add');
-        var deleteLinks = document.querySelectorAll('.multi-column-editor .delete');
+        utilsBundle.event.addDynamicEventListener('click', '.multi-column-editor .add', function(item, event) {
+            event.preventDefault();
+            MultiColumnEditor.triggerAction(item, 'addRow');
+        });
 
-        for (var i = 0; i < addLinks.length; i++) {
-            addLinks[i].addEventListener('click', function(event) {
-                event.preventDefault();
-                MultiColumnEditor.triggerAction(this, 'addRow');
-            });
-        }
-
-        for (var i = 0; i < deleteLinks.length; i++) {
-            deleteLinks[i].addEventListener('click', function(event) {
-                event.preventDefault();
-                MultiColumnEditor.triggerAction(this, 'deleteRow');
-            });
-        }
+        utilsBundle.event.addDynamicEventListener('click', '.multi-column-editor .delete', function(item, event) {
+            event.preventDefault();
+            MultiColumnEditor.triggerAction(item, 'deleteRow');
+        });
 
         function makeSortable(selector) {
             new Sortables(selector, {

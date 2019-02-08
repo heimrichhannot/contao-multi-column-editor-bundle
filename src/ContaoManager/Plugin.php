@@ -16,6 +16,7 @@ use Contao\ManagerPlugin\Config\ContainerBuilder;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use HeimrichHannot\MultiColumnEditorBundle\HeimrichHannotContaoMultiColumnEditorBundle;
 use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
+use HeimrichHannot\UtilsBundle\HeimrichHannotContaoUtilsBundle;
 
 class Plugin implements BundlePluginInterface, ExtensionPluginInterface
 {
@@ -25,7 +26,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(HeimrichHannotContaoMultiColumnEditorBundle::class)->setLoadAfter([ContaoCoreBundle::class, 'multi_column_editor']),
+            BundleConfig::create(HeimrichHannotContaoMultiColumnEditorBundle::class)->setLoadAfter([ContaoCoreBundle::class, 'multi_column_editor', HeimrichHannotContaoUtilsBundle::class]),
         ];
     }
 

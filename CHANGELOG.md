@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2019-02-08
+
+### Fixed
+- backend javascript issues in sub palettes
+
 ## [1.2.1] - 2019-01-10
 
 ### Fixed
