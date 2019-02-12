@@ -57,6 +57,8 @@ class HookListener
 
             $editor = new MultiColumnEditor(['strField' => $objDc->field, 'varValue' => $objDc->value, 'strTable' => $objDc->table, 'dataContainer' => $objDc]);
 
+			ob_end_clean(); // clear output buffer
+            
             die($editor->generate());
         }
     }
