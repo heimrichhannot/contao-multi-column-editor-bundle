@@ -1,0 +1,53 @@
+<div class="{{ ('multi-column-editor ' ~ cssClass)| trim }}" data-env="{{ isBackend ? 'backend' : 'frontend' }}" data-field="{{ fieldName }}" data-table="{{ table }}" data-min-row-count="{{ minRowCount }}" data-max-row-count="{{ maxRowCount }}">
+    {{ renderedRowCount|raw }}
+
+    {% if(rowCount.value < 1 ) %}
+        <a href="{{ ajaxAddUrl }}" class="add first{% if isBackend %} tl_submit{% endif %}" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
+            <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
+        </a>
+    {% else %}
+        <div class="{{ 'rows ' ~ (sortable|default() ? 'sortable' : '') | trim }}">
+            {% for iterator, row in rows %}
+                {% set index = ( iterator + 1 ) %}
+                <div class="{{ 'mce-row row_' ~ index | trim }}" data-index="{{ index }}">
+                    {% for field, widget in row %}
+                        {% if widget.type == "hidden" %}
+                            {{ widget.parse()|raw }}
+                        {% else %}
+                            <div class="{{ ('form-group ' ~ field  ~ (widget.datepicker|default() ? ' wizard' : '') ~ (isBackend ? ' col' : '')) | trim }}" data-name="{{ widget.noIndex }}"{% if widget.groupStyle|default() %} style="{{ widget.groupStyle }}"{% endif %}>
+                                {{ widget.parse()|raw }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="actions">
+                        <a href="{{ ajaxAddUrl }}" class="add" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
+                            {% if isBackend %}
+                                <img src="system/themes/flexible/icons/copy.svg" width="16" height="16">
+                            {% else %}
+                                <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
+                            {% endif %}
+                        </a>
+
+                        <a href="{{ ajaxDeleteUrl }}" class="delete" title="{{ 'huh.multicolumneditor.delete.default'|trans }}">
+                            {% if isBackend %}
+                                <img src="system/themes/flexible/icons/delete.svg" width="16" height="16">
+                            {% else %}
+                                <span>{{ 'huh.multicolumneditor.delete.default'|trans }}</span>
+                            {% endif %}
+                        </a>
+
+                        {% if sortable|default() %}
+                            <a class="drag-handle" href="{{ ajaxSortUrl }}" title="{{ 'huh.multicolumneditor.sort.default'|trans }}">
+                                {% if isBackend %}
+                                    <img src="system/themes/flexible/icons/drag.svg" width="16" height="16" alt="">
+                                {% else %}
+                                    <span>{{ 'huh.multicolumneditor.sort.default'|trans }}</span>
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

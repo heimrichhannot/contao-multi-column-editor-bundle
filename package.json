@@ -1,8 +1,17 @@
 {
   "name": "contao-multi-column-editor-bundle",
-  "version": "1.0.1",
-  "licence": "LGPL-3.0-or-later",
+  "version": "1.0.0",
+  "description": "This module offers an input type for editing one or more records in frontend and backend.",
+  "author": "Heimrich & Hannot GmbH <digitales@heimrich-hannot.de>",
+  "license": "LGPL-3.0-or-later",
   "dependencies": {
-    "sortablejs": "^1.7.0"
+    "@hundh/contao-multi-column-editor-bundle": "^1.0"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.24"
+  },
+  "scripts": {
+    "build-dev": "yarn encore dev",
+    "build-production": "yarn encore production"
   }
 }

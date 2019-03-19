@@ -42,7 +42,7 @@ class MultiColumnEditor extends Widget
     /**
      * @var string
      */
-    protected $editorTemplate = 'multi_column_editor_backend_default';
+    protected $editorTemplate = 'multi_column_editor_default';
 
     /**
      * @var array
@@ -68,7 +68,6 @@ class MultiColumnEditor extends Widget
         $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
 
         if (System::getContainer()->get('huh.utils.container')->isFrontend()) {
-            $this->editorTemplate = 'multi_column_editor_backend_default' === $this->editorTemplate ? 'multi_column_editor_frontend_default' : $this->editorTemplate;
             System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this));
             System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this));
             System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this));

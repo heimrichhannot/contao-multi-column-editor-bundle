@@ -7,7 +7,7 @@
 
 This module offers an input type for editing one or more records in backend and frontend.
 
-![alt text](./docs/example.png "Demo in the backend")
+![alt text](doc/images/example.png "Demo in the backend")
 
 ## Features
 

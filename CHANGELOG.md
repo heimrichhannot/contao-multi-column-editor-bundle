@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2019-02-12
+
+### Changed
+- unified twig templates and javascript for frontend and backend
+- js handling -> js is now a separate node module importable in other modules
+
+### Fixed
+- multiple listener issue
+
 ## [1.2.3] - 2019-02-12
 
 ### Fixed
