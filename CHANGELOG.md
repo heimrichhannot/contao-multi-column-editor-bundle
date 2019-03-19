@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - 2019-02-12
+## [2.0.1] - 2019-03-19
+
+### Added
+- `formdata-polyfill` for IE and Edge
+
+## [2.0.0] - 2019-03-19
 
 ### Changed
 - unified twig templates and javascript for frontend and backend

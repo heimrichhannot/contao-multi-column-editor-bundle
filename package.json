@@ -8,6 +8,7 @@
     "@hundh/contao-multi-column-editor-bundle": "^1.0"
   },
   "devDependencies": {
+    "formdata-polyfill": "^3.0",
     "@symfony/webpack-encore": "^0.24"
   },
   "scripts": {
