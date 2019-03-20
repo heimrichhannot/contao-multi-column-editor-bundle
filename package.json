@@ -5,10 +5,10 @@
   "author": "Heimrich & Hannot GmbH <digitales@heimrich-hannot.de>",
   "license": "LGPL-3.0-or-later",
   "dependencies": {
-    "@hundh/contao-multi-column-editor-bundle": "^1.0"
+    "@hundh/contao-multi-column-editor-bundle": "^1.0",
+    "formdata-polyfill": "^3.0"
   },
   "devDependencies": {
-    "formdata-polyfill": "^3.0",
     "@symfony/webpack-encore": "^0.24"
   },
   "scripts": {
