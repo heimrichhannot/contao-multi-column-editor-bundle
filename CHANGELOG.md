@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.3] - 2019-03-20
+
+### Fixed
+- js issues in Firefox and IE
+
 ## [2.0.2] - 2019-03-20
 
 ### Added
