@@ -35,15 +35,19 @@ $GLOBALS['TL_JAVASCRIPT']['contao-multi-column-editor-bundle'] = 'bundles/heimri
 $GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::NAME] = [
     'actions' => [
         \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_ADD_ROW    => [
-            'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
+            'arguments' => ['row', 'field', 'table'],
             'optional'  => [],
         ],
         \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_DELETE_ROW => [
-            'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
+            'arguments' => ['row', 'field', 'table'],
             'optional'  => [],
         ],
         \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_SORT_ROWS => [
-            'arguments' => ['.*_rowCount', '.*_row', 'field', 'table'],
+            'arguments' => ['field', 'table'],
+            'optional'  => [],
+        ],
+        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_UPDATE_ROWS    => [
+            'arguments' => ['row', 'field', 'table'],
             'optional'  => [],
         ],
     ],

@@ -10,19 +10,20 @@ namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 
 use Contao\BackendTemplate;
 use Contao\Controller;
-use Contao\DataContainer;
 use Contao\Date;
+use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MultiColumnEditor extends Widget
 {
+    const NAME = '_mce';
     const ACTION_ADD_ROW = 'addRow';
     const ACTION_DELETE_ROW = 'deleteRow';
     const ACTION_SORT_ROWS = 'sortRows';
-
-    const NAME = 'multicolumneditor';
+    const ACTION_UPDATE_ROWS = 'updateRows';
 
     /**
      * @var bool
@@ -54,10 +55,8 @@ class MultiColumnEditor extends Widget
      */
     protected $arrWidgetErrors = [];
 
-    /**
-     * @var string
-     */
-    protected $action;
+    /** @var ContainerInterface */
+    protected $container;
 
     public function __construct($arrData)
     {
@@ -66,11 +65,13 @@ class MultiColumnEditor extends Widget
         Controller::loadDataContainer($this->strTable);
         $this->arrDca = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiColumnEditor'];
         $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
+        $this->container = System::getContainer();
 
-        if (System::getContainer()->get('huh.utils.container')->isFrontend()) {
-            System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this));
-            System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this));
-            System::getContainer()->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this));
+        if ($this->container->get('huh.utils.container')->isFrontend()) {
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_UPDATE_ROWS, new AjaxController($this, $this->container));
         }
     }
 
@@ -79,335 +80,192 @@ class MultiColumnEditor extends Widget
      *
      * @return string
      */
-    public function generate()
+    public function generate(): string
     {
+        if ($this->container->get('huh.utils.container')->isBackend()) {
+            return '<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$this->generateEditorForm().$this->getErrorAsHTML().'</div>';
+        }
+
         return '<div class="multi-column-editor-wrapper">'.$this->generateEditorForm().'</div>';
     }
 
     /**
-     * @throws \Psr\Cache\InvalidArgumentException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * Generate the editor form.
      *
      * @return string
      */
     public function generateEditorForm(): string
     {
-        $arrDca = $this->arrDca;
-        $objDc = $this->objDca;
-
-        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
-            $strTable = $this->objDca->table;
-            $strFieldName = $this->objDca->field;
-            $varValue = $this->objDca->value;
-        } else {
-            $strTable = $this->strTable;
-            $strFieldName = $this->strName;
-            $varValue = $this->varValue;
-        }
-
-        if (null === $arrDca) {
-            $arrDca = $GLOBALS['TL_DCA'][$strTable]['fields'][$strFieldName]['eval']['multiColumnEditor'];
-        }
-
-        $arrErrors = $this->arrWidgetErrors;
-        $strAction = $this->getAction();
-
         $data = [];
-        $data['fieldName'] = $strFieldName;
-        $data['table'] = $strTable;
-        $data['cssClass'] = $arrDca['class'];
-        $data['sortable'] = $arrDca['sortable'];
-        $intMinRowCount = isset($arrDca['minRowCount']) ? $arrDca['minRowCount'] : 1;
-        $intMaxRowCount = isset($arrDca['maxRowCount']) ? $arrDca['maxRowCount'] : 0;
-        $blnSkipCopyValuesOnAdd = isset($arrDca['skipCopyValuesOnAdd']) ? $arrDca['skipCopyValuesOnAdd'] : false;
-        $data['minRowCount'] = $intMinRowCount;
-        $data['maxRowCount'] = $intMaxRowCount;
+        $data['fieldName'] = $this->strName;
+        $data['table'] = $this->strTable;
+        $data['cssClass'] = $this->arrDca['class'];
+        $data['sortable'] = $this->arrDca['sortable'];
+        $data['minRowCount'] = $this->getMinRowCount();
+        $data['maxRowCount'] = $this->getMaxRowCount();
 
         // actions
-        $data['ajaxAddUrl'] =
-            System::getContainer()->get('huh.utils.container')->isBackend() ? System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri() : System::getContainer()->get('huh.ajax.action')->generateUrl(static::NAME, static::ACTION_ADD_ROW);
-        $data['ajaxDeleteUrl'] =
-            System::getContainer()->get('huh.utils.container')->isBackend() ? System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri() : System::getContainer()->get('huh.ajax.action')->generateUrl(static::NAME, static::ACTION_DELETE_ROW);
-        $data['ajaxSortUrl'] =
-            System::getContainer()->get('huh.utils.container')->isBackend() ? System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri() : System::getContainer()->get('huh.ajax.action')->generateUrl(static::NAME, static::ACTION_SORT_ROWS);
+        $data['ajaxAddUrl'] = $this->getActionUrl(static::ACTION_ADD_ROW);
+        $data['ajaxDeleteUrl'] = $this->getActionUrl(static::ACTION_DELETE_ROW);
+        $data['ajaxSortUrl'] = $this->getActionUrl(static::ACTION_SORT_ROWS);
 
-        $intRowCount = System::getContainer()->get('huh.request')->getPost($strFieldName.'_rowCount') ?: $intMinRowCount;
-        $strAction = $strAction ?: System::getContainer()->get('huh.request')->getPost('action');
-
-        if ($varValue) {
-            // restore from entity
-            $arrValues = $this->prefixValuesWithFieldName(deserialize($varValue, true), $strFieldName);
-        } elseif (System::getContainer()->get('huh.request')->request->count() > 0) {
-            // restore from post
-            $arrValues = $this->prefixValuesWithFieldName($this->restoreValueFromPost(System::getContainer()->get('huh.request')->getAllPost(), $strFieldName, $arrDca), $strFieldName);
-        } else {
-            $arrValues = [];
-        }
-
-        // handle ajax requests
-        if (System::getContainer()->get('huh.utils.container')->isBackend() && \Environment::get('isAjaxRequest')) {
-            switch ($strAction) {
-                case static::ACTION_ADD_ROW:
-                    $arrValues = $this->addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
-
-                    break;
-
-                case static::ACTION_DELETE_ROW:
-                    $arrValues = $this->deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
-
-                    break;
-
-                case static::ACTION_SORT_ROWS:
-                    $arrValues = $this->sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
-
-                    break;
-            }
-        } elseif (System::getContainer()->get('huh.ajax')->isRelated(static::NAME)) {
-            switch ($strAction) {
-                case static::ACTION_ADD_ROW:
-                    $arrValues = $this->addRow($arrValues, $arrDca, $intRowCount, $intMaxRowCount, $strFieldName, $blnSkipCopyValuesOnAdd);
-
-                    break;
-
-                case static::ACTION_DELETE_ROW:
-                    $arrValues = $this->deleteRow($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
-
-                    break;
-
-                case static::ACTION_SORT_ROWS:
-                    $arrValues = $this->sortRows($arrValues, $arrDca, $intRowCount, $intMinRowCount, $strFieldName);
-
-                    break;
-            }
-        }
-
-        // add row count field
-        $intCount = \count($arrValues);
-
-        if ($intMinRowCount && $intCount < $intMinRowCount || $intCount < 0) {
-            $intCount = $intMinRowCount;
-        }
-
-        if ($intMaxRowCount && $intCount > $intMaxRowCount) {
-            $intCount = $intMaxRowCount;
-        }
-
-        $objWidget = System::getContainer()->get('huh.utils.form')->getWidgetFromAttributes($strFieldName.'_rowCount', ['inputType' => 'hidden'], $intCount);
-
-        $data['rowCount'] = $objWidget;
-        $data['renderedRowCount'] = $objWidget->parse();
-        $data['isBackend'] = System::getContainer()->get('huh.utils.container')->isBackend();
-        $data['isFrontend'] = System::getContainer()->get('huh.utils.container')->isFrontend();
+        $data['isBackend'] = $this->container->get('huh.utils.container')->isBackend();
+        $data['isFrontend'] = $this->container->get('huh.utils.container')->isFrontend();
 
         // add rows
-        $data['editorFormAction'] = System::getContainer()->get('request_stack')->getMasterRequest()->getRequestUri();
-        $data['rows'] = $this->generateRows($intRowCount, $arrDca, $strTable, $objDc, $arrValues, $arrErrors, $strFieldName);
+        $data['editorFormAction'] = $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
+        $data['rows'] = $this->generateRows();
 
-        return System::getContainer()->get('twig')->render(
-            System::getContainer()->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
+        return $this->container->get('twig')->render(
+            $this->container->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
             $data
         );
     }
 
     /**
-     * @param array  $arrValues
-     * @param array  $arrDca
-     * @param int    $intRowCount
-     * @param int    $intMaxRowCount
-     * @param string $strFieldName
-     * @param bool   $blnSkipCopyValuesOnAdd
+     * Get the action url.
      *
-     * @return array
+     * @param string $action
+     *
+     * @return string
      */
-    public function addRow(array $arrValues, array $arrDca, int $intRowCount, int $intMaxRowCount, string $strFieldName, bool $blnSkipCopyValuesOnAdd = false)
+    public function getActionUrl(string $action): string
     {
-        if (!($intIndex = (int) System::getContainer()->get('huh.request')->getPost('row'))) {
-            $arrRow = [];
-
-            foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = null;
-            }
-
-            $arrValues[] = $arrRow;
-
-            return $arrValues;
+        if ($this->container->get('huh.utils.container')->isBackend()) {
+            return $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
         }
 
-        $arrValues = [];
-
-        for ($i = 1; $i <= $intRowCount; ++$i) {
-            $arrRow = [];
-
-            foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = System::getContainer()->get('huh.request')->getPost($strFieldName.'_'.$strField.'_'.$i);
-            }
-
-            $arrValues[] = $arrRow;
-
-            if ($i === $intIndex && (0 === $intMaxRowCount || ($intRowCount + 1 <= $intMaxRowCount))) {
-                if ($blnSkipCopyValuesOnAdd) {
-                    foreach ($arrRow as $strField => &$varValue) {
-                        $varValue = '';
-                    }
-                }
-
-                $arrValues[] = $arrRow;
-            }
-        }
-
-        return $arrValues;
+        return $this->container->get('huh.ajax.action')->generateUrl(static::NAME, $action);
     }
 
     /**
-     * @param array  $arrValues
-     * @param array  $arrDca
-     * @param int    $intRowCount
-     * @param int    $intMinRowCount
-     * @param string $strFieldName
+     * Add row after given position.
      *
-     * @return array
+     * @param int $offset
      */
-    public function deleteRow(array $arrValues, array $arrDca, int $intRowCount, int $intMinRowCount, string $strFieldName): array
+    public function addRow(int $offset = 0)
     {
-        if (!($intIndex = (int) System::getContainer()->get('huh.request')->getPost('row'))) {
-            return $arrValues;
+        if (($max = $this->getMaxRowCount()) > 0 && $offset >= $max) {
+            return;
         }
 
-        $arrValues = [];
+        $doNotCopyValues = $this->arrDca['skipCopyValuesOnAdd'] ?? false;
 
-        for ($i = 1; $i <= $intRowCount; ++$i) {
-            if ($i === $intIndex && $intRowCount - 1 >= $intMinRowCount) {
-                continue;
-            }
-
-            $arrRow = [];
-
-            foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = System::getContainer()->get('huh.request')->getPost($strFieldName.'_'.$strField.'_'.$i);
-            }
-
-            $arrValues[] = $arrRow;
+        if (\is_array($this->varValue) && !empty($this->varValue)) {
+            $new = $this->varValue[$offset];
+        } // first element
+        else {
+            $new = array_flip(array_keys($this->arrDca['fields']));
+            $doNotCopyValues = true;
         }
 
-        return $arrValues;
+        foreach ($new as $field => &$value) {
+            if ($doNotCopyValues) {
+                $value = $this->getDefaultValue($field);
+            }
+        }
+
+        array_insert($this->varValue, $offset, [$new]);
     }
 
     /**
-     * @param array  $arrValues
-     * @param array  $arrDca
-     * @param int    $intRowCount
-     * @param int    $intMinRowCount
-     * @param string $strFieldName
+     * Delete Row at given position.
      *
-     * @return array
+     * @param int $offset
      */
-    public function sortRows(array $arrValues, array $arrDca, int $intRowCount, int $intMinRowCount, string $strFieldName): array
+    public function deleteRow(int $offset = 0)
     {
-        if (!($varNewIndices = System::getContainer()->get('huh.request')->getPost('newIndices'))) {
-            return $arrValues;
+        if (!\is_array($this->varValue) || empty($this->varValue)) {
+            return;
         }
 
-        $arrNewIndices = explode(',', $varNewIndices);
-
-        if (empty($arrNewIndices)) {
-            return $arrValues;
-        }
-
-        $arrValues = [];
-
-        foreach ($arrNewIndices as $intIndex) {
-            $arrRow = [];
-
-            foreach (array_keys($arrDca['fields']) as $strField) {
-                $arrRow[$strFieldName.'_'.$strField] = System::getContainer()->get('huh.request')->getPost($strFieldName.'_'.$strField.'_'.$intIndex);
-            }
-
-            $arrValues[] = $arrRow;
-        }
-
-        return $arrValues;
+        array_splice($this->varValue, $offset, 1);
     }
 
     /**
-     * @param int           $intRowCount
-     * @param array         $arrDca
-     * @param string        $strTable
-     * @param DataContainer $objDc
-     * @param array         $arrValues
-     * @param array         $arrErrors
-     * @param string        $strFieldName
+     * Sort current values.
+     */
+    public function sortRows()
+    {
+        // update indexes
+        $this->varValue = array_values($this->varValue);
+    }
+
+    /**
+     * Update rows (submitOnChange).
+     */
+    public function updateRows()
+    {
+    }
+
+    /**
+     * Generate rows based on current values.
      *
      * @return array
      */
-    public function generateRows(int $intRowCount, array $arrDca, string $strTable, DataContainer $objDc, array $arrValues, array $arrErrors, string $strFieldName): array
+    public function generateRows(): array
     {
-        $arrRows = [];
+        $rows = [];
 
-        for ($i = 1; $i <= (empty($arrValues) ? $intRowCount : \count($arrValues)); ++$i) {
-            $arrFields = [];
+        if (empty($this->varValue)) {
+            if ($this->getMinRowCount() > 0) {
+                $this->addRow(0);
+            }
+        }
 
-            foreach ($arrDca['fields'] as $strField => $arrData) {
-                $values = null;
+        if (empty($this->varValue)) {
+            return $rows;
+        }
 
-                if (\is_array($arrValues) && isset($arrValues[$i - 1]) && isset($arrValues[$i - 1][$strFieldName.'_'.$strField])) {
-                    $values = $arrValues[$i - 1][$strFieldName.'_'.$strField];
-                }
+        foreach ($this->varValue as $i => $row) {
+            $fields = [];
 
-                if (null === ($objWidget = System::getContainer()->get('huh.utils.form')->getWidgetFromAttributes($strFieldName.'_'.$strField.'_'.$i, $arrData, $values, $strField, $strTable, $objDc, TL_MODE))) {
+            foreach ($this->getRow($row) as $field => $value) {
+                if (!isset($this->arrDca['fields'][$field]) || !\is_array($this->arrDca['fields'][$field])) {
                     continue;
                 }
 
-                // add correct dca for bootstrapper since by normal behavior retrieval of the dca is impossible
-                $objWidget->arrDca = $arrData;
+                $config = $this->arrDca['fields'][$field];
+                $id = $this->strName.'_'.$i.'_'.$field;
+                $name = $this->strName.'['.$i.']['.$field.']';
 
-                $objWidget->noIndex = $strField;
+                /** @var Widget $objWidget */
+                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name, $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
+                    continue;
+                }
+
+                // contao does not convert array field names to css id compatible selectors
+                $objWidget->strId = $id;
+
+                // add correct dca for bootstrapper since by normal behavior retrieval of the dca is impossible
+                $objWidget->arrDca = $config;
+
+                $objWidget->noIndex = $field;
 
                 if (is_numeric($objWidget->value)) {
                     // date/time fields
-                    if ('date' === $arrData['eval']['rgxp']) {
+                    if ('date' === $config['eval']['rgxp']) {
                         $objWidget->value = Date::parse(\Config::get('dateFormat'), $objWidget->value);
-                    } elseif ('time' === $arrData['eval']['rgxp']) {
+                    } elseif ('time' === $config['eval']['rgxp']) {
                         $objWidget->value = Date::parse(\Config::get('timeFormat'), $objWidget->value);
-                    } elseif ('datim' === $arrData['eval']['rgxp']) {
+                    } elseif ('datim' === $config['eval']['rgxp']) {
                         $objWidget->value = Date::parse(\Config::get('datimFormat'), $objWidget->value);
                     }
                 }
 
-                if (isset($arrErrors[$strFieldName.'_'.$strField.'_'.$i])) {
-                    $objWidget->addError(implode('', $arrErrors[$strFieldName.'_'.$strField.'_'.$i]));
+                if (isset($this->arrWidgetErrors[$id])) {
+                    $objWidget->addError(implode('', $this->arrWidgetErrors[$id]));
                 }
 
-                $this->handleSpecialFields($objWidget, $arrData, $strFieldName, $strTable);
+                $this->handleSpecialFields($objWidget, $config, $field, $this->strTable);
 
-                $arrFields[$strFieldName.'_'.$strField.'_'.$i] = $objWidget;
+                $fields[$id] = $objWidget;
             }
 
-            $arrRows[] = $arrFields;
+            $rows[$i] = $fields;
         }
 
-        return $arrRows;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAction(): ? string
-    {
-        return $this->action;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return MultiColumnEditor
-     */
-    public function setAction(string $action): self
-    {
-        $this->action = $action;
-
-        return $this;
+        return $rows;
     }
 
     /**
@@ -428,6 +286,120 @@ class MultiColumnEditor extends Widget
         $this->editorTemplate = $editorTemplate;
 
         return $this;
+    }
+
+    /**
+     * Get row fields based on current palette.
+     *
+     * @param array  $row
+     * @param string $palette
+     *
+     * @return array
+     */
+    protected function getRow(array $row, $palette = 'default')
+    {
+        if (!isset($this->arrDca['palettes']) || !\is_array($this->arrDca['palettes']) || !isset($this->arrDca['palettes'][$palette])) {
+            return array_keys($this->arrDca['fields']);
+        }
+
+        $boxes = \StringUtil::trimsplit(';', $this->arrDca['palettes'][$palette]);
+        $fields = [];
+
+        foreach ($boxes as $k => $v) {
+            $eCount = 1;
+            $boxes[$k] = \StringUtil::trimsplit(',', $v);
+
+            foreach ($boxes[$k] as $kk => $vv) {
+                if (preg_match('/^\[.*\]$/', $vv)) {
+                    ++$eCount;
+
+                    continue;
+                }
+
+                if (preg_match('/^\{.*\}$/', $vv)) {
+                    $legends[$k] = substr($vv, 1, -1);
+                    unset($boxes[$k][$kk]);
+                }
+
+                $fields[] = $vv;
+            }
+
+            // Unset a box if it does not contain any fields
+            if (\count($boxes[$k]) < $eCount) {
+                unset($boxes[$k]);
+            }
+        }
+
+        $existing = [];
+
+        foreach ($fields as $name) {
+            $existing[$name] = $row[$name] ?? $this->getDefaultValue($name);
+
+            if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($name, $this->arrDca['palettes']['__selector__'])) {
+                $subPalette = null;
+
+                if ('checkbox' == $this->arrDca['fields'][$name]['inputType'] && !$this->arrDca['fields'][$name]['eval']['multiple']) {
+                    // Look for a subpalette
+                    if (\strlen($this->arrDca['subpalettes'][$name])) {
+                        $subPalette = $this->arrDca['subpalettes'][$name];
+                    }
+                } else {
+                    $key = $name.'_'.$row[$name];
+                    // Look for a subpalette
+                    if (\strlen($this->arrDca['subpalettes'][$key])) {
+                        $subPalette = $this->arrDca['subpalettes'][$key];
+                    }
+                }
+
+                if (null === $subPalette) {
+                    continue;
+                }
+
+                $sFields = StringUtil::trimsplit(',', $subPalette);
+
+                foreach ($sFields as $sName) {
+                    if (!isset($this->arrDca['fields'][$sName])) {
+                        continue;
+                    }
+
+                    $sValue = null;
+
+                    $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
+                }
+            }
+        }
+
+        return $existing;
+    }
+
+    /**
+     * Get the default field value.
+     *
+     * @param $field
+     *
+     * @return mixed
+     */
+    protected function getDefaultValue($field)
+    {
+        $value = '';
+
+        if (!isset($this->arrDca['fields'][$field]) || !\is_array($this->arrDca['fields'][$field])) {
+            return $value;
+        }
+
+        $config = $this->arrDca['fields'][$field];
+
+        // Use array_key_exists here (see #5252)
+        if (\array_key_exists('default', $config)) {
+            $value = $config['default'];
+
+            // Encrypt the default value (see #3740)
+            if ($config['eval']['encrypt']) {
+                $value = $this->container->get('huh.utils.encryption')->encrypt($value);
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -521,7 +493,7 @@ class MultiColumnEditor extends Widget
             list($file, $type) = explode('|', $arrData['eval']['rte'], 2);
 
             $fileBrowserTypes = [];
-            $pickerBuilder = \System::getContainer()->get('contao.picker.builder');
+            $pickerBuilder = $this->container->get('contao.picker.builder');
 
             foreach (['file' => 'image', 'link' => 'file'] as $context => $fileBrowserType) {
                 if ($pickerBuilder->supportsContext($context)) {
@@ -539,6 +511,18 @@ class MultiColumnEditor extends Widget
             $objTemplate->language = \Backend::getTinyMceLanguage();
 
             $wizard .= $objTemplate->parse();
+        }
+
+        // subpalette handling
+        // Internet Explorer does not support onchange for checkboxes and radio buttons
+        if ($arrData['eval']['submitOnChange']) {
+            if ('checkbox' == $arrData['inputType'] || 'checkboxWizard' == $arrData['inputType'] || 'radio' == $arrData['inputType'] || 'radioTable' == $arrData['inputType']) {
+                $objWidget->addAttribute('data-mce-click', $this->getActionUrl(static::ACTION_UPDATE_ROWS));
+                $objWidget->onclick = null;
+            } else {
+                $objWidget->addAttribute('data-mce-change', $this->getActionUrl(static::ACTION_UPDATE_ROWS));
+                $objWidget->onchange = null;
+            }
         }
 
         $strHelp = (!$objWidget->hasErrors() ? static::help($arrData) : '');
@@ -570,48 +554,56 @@ class MultiColumnEditor extends Widget
      */
     protected function validator($varInput)
     {
-        // validate every field
-        $varInput = [];
-        $intRowCount = System::getContainer()->get('huh.request')->getPost($this->strName.'_'.'rowCount');
         $blnHasErrors = false;
 
-        for ($i = 1; $i <= $intRowCount; ++$i) {
-            foreach ($this->arrDca['fields'] as $strField => $arrData) {
-                if (null === ($objWidget = System::getContainer()->get('huh.utils.form')->getWidgetFromAttributes($this->strName.'_'.$strField.'_'.$i, $arrData, null, $strField, $this->strTable, $this->objDca))) {
+        foreach ($varInput as $i => $row) {
+            foreach ($row as $field => $value) {
+                $config = $this->arrDca['fields'][$field];
+
+                if (!isset($this->arrDca['fields'][$field]) || !\is_array($this->arrDca['fields'][$field])) {
+                    continue;
+                }
+
+                $id = $this->strName.'_'.$i.'_'.$field;
+                $name = $this->strName.'['.$i.']['.$field.']';
+
+                /** @var Widget $objWidget */
+                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name, $config, null, $name, $this->strTable, $this->dataContainer))) {
                     continue;
                 }
 
                 $objWidget->validate();
-                $varValue = $objWidget->value;
+                $objWidget->value = $value;
 
-                // Convert date formats into timestamps (check the eval setting first -> #3063)
-                $rgxp = $arrData['eval']['rgxp'];
-
-                if (('date' === $rgxp || 'time' === $rgxp || 'datim' === $rgxp) && '' !== $varValue) {
-                    $objDate = new \Date($varValue, $GLOBALS['TL_CONFIG'][$rgxp.'Format']);
-                    $varValue = $objDate->tstamp;
+                // Convert date formats into timestamps
+                if ('' !== $value && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'])) {
+                    $objDate = new Date($value, Date::getFormatFromRgxp($config['eval']['rgxp']));
+                    $value = $objDate->tstamp;
                 }
 
-                // Save callback
-                if (\is_array($arrData['save_callback'])) {
-                    foreach ($arrData['save_callback'] as $callback) {
-                        $this->import($callback[0]);
+                // Convert arrays
+                if ($config['eval']['multiple'] && isset($config['eval']['csv'])) {
+                    $value = implode($config['eval']['csv'], StringUtil::deserialize($value, true));
+                }
 
-                        try {
-                            $varValue = $this->{$callback[0]}->{$callback[1]}($varValue, $this->objDca);
-                        } catch (\Exception $e) {
-                            $objWidget->class = 'error';
-                            $objWidget->addError($e->getMessage());
+                // Trigger the save_callback
+                if (\is_array($config['save_callback'])) {
+                    foreach ($config['save_callback'] as $callback) {
+                        if (\is_array($callback)) {
+                            $this->import($callback[0]);
+                            $value = $this->{$callback[0]}->{$callback[1]}($value, $this);
+                        } elseif (\is_callable($callback)) {
+                            $value = $callback($value, $this);
                         }
                     }
                 }
 
-                $varInput[$i - 1][$strField] = $varValue;
+                $varInput[$i][$field] = $value;
 
                 // Do not submit if there are errors
                 if ($objWidget->hasErrors()) {
                     // store the errors
-                    $this->arrWidgetErrors[$this->strName.'_'.$strField.'_'.$i] = $objWidget->getErrors();
+                    $this->arrWidgetErrors[$id] = $objWidget->getErrors();
                     $blnHasErrors = true;
                 }
             }
@@ -622,60 +614,36 @@ class MultiColumnEditor extends Widget
             $this->blnSubmitInput = false;
         }
 
-        return parent::validator(serialize($varInput));
+        return $varInput;
     }
 
     /**
-     * @param array  $arrValues
-     * @param string $strFieldName
+     * Get current row count.
      *
-     * @return array
+     * @return int
      */
-    protected function prefixValuesWithFieldName(array $arrValues, string $strFieldName): array
+    protected function getCurrentRowCount(): int
     {
-        $arrResult = [];
-
-        foreach ($arrValues as $arrValue) {
-            $arrRow = [];
-
-            if (!\is_array($arrValue)) {
-                continue;
-            }
-
-            foreach ($arrValue as $strKey => $varValue) {
-                $arrRow[$strFieldName.'_'.$strKey] = $varValue;
-            }
-
-            $arrResult[] = $arrRow;
-        }
-
-        return $arrResult;
+        return \count(\is_array($this->varValue) ? $this->varValue : StringUtil::deserialize($this->varValue, true));
     }
 
     /**
-     * @param array  $arrPost
-     * @param string $strFieldName
-     * @param array  $arrDca
+     * Get maximum row count (0 = unlimited).
      *
-     * @return array
+     * @return int
      */
-    protected function restoreValueFromPost(array $arrPost, string $strFieldName, array $arrDca): array
+    protected function getMaxRowCount(): int
     {
-        $arrResult = [];
-        $intRowCount = System::getContainer()->get('huh.request')->getPost($strFieldName.'_rowCount');
+        return $this->arrDca['maxRowCount'] ?? 0;
+    }
 
-        for ($i = 0; $i < $intRowCount; ++$i) {
-            $arrRow = [];
-
-            foreach ($arrDca['fields'] as $strField => $arrFieldData) {
-                $arrRow[$strField] = $arrPost[$strFieldName.'_'.$strField.'_'.($i + 1)];
-            }
-
-            if (!empty($arrRow)) {
-                $arrResult[] = $arrRow;
-            }
-        }
-
-        return $arrResult;
+    /**
+     * Get minimum row count (default 1).
+     *
+     * @return int
+     */
+    protected function getMinRowCount(): int
+    {
+        return $this->arrDca['minRowCount'] ?? 1;
     }
 }

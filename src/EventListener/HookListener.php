@@ -9,57 +9,73 @@
 namespace HeimrichHannot\MultiColumnEditorBundle\EventListener;
 
 use Contao\Config;
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Exception\ResponseException;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\DataContainer;
 use Contao\System;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
+use Psr\Log\LogLevel;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class HookListener
 {
     /**
-     * @var ContaoFrameworkInterface
+     * @var ContainerInterface
      */
-    private $framework;
+    private $container;
 
     /**
      * Constructor.
      *
-     * @param ContaoFrameworkInterface $framework
+     * @param ContainerInterface $container
      */
-    public function __construct(ContaoFrameworkInterface $framework)
+    public function __construct(ContainerInterface $container)
     {
-        $this->framework = $framework;
+        $this->container = $container;
     }
 
     /**
-     * Add custom logic via  the post actions hook.
+     * Add custom logic via the post actions hook.
      *
-     * @param $strAction
-     * @param \DataContainer $objDc
+     * @param string        $action
+     * @param DataContainer $dc
      */
-    public function executePostActionsHook($strAction, \DataContainer $objDc)
+    public function executePostActionsHook(string $action, DataContainer $dc)
     {
-        $request = System::getContainer()->get('huh.request');
-        $modelUtil = System::getContainer()->get('huh.utils.model');
+        switch ($action) {
+            case MultiColumnEditor::ACTION_ADD_ROW:
+                $widget = $this->prepareWidgetForExecutePostActions($dc);
+                $widget->addRow($this->container->get('huh.request')->getPost('row'));
 
-        if (MultiColumnEditor::ACTION_ADD_ROW === $strAction || MultiColumnEditor::ACTION_DELETE_ROW === $strAction ||
-            MultiColumnEditor::ACTION_SORT_ROWS === $strAction
-        ) {
-            $objDc->field = $request->getPost('field');
-            $objDc->table = $request->getPost('table');
+                throw new ResponseException(new Response($widget->generate()));
 
-            if (!$objDc->field || !$objDc->table) {
-                header('HTTP/1.1 400 Bad Request');
+                break;
 
-                die('Bad Request');
-            }
+            case MultiColumnEditor::ACTION_DELETE_ROW:
+                $widget = $this->prepareWidgetForExecutePostActions($dc);
+                $widget->deleteRow($this->container->get('huh.request')->getPost('row'));
 
-            $objDc->activeRecord = 'tl_settings' === $objDc->table ? Config::getInstance() : $modelUtil->findModelInstanceByPk($objDc->table, $objDc->id);
+                throw new ResponseException(new Response($widget->generate()));
 
-            $editor = new MultiColumnEditor(['strField' => $objDc->field, 'varValue' => $objDc->value, 'strTable' => $objDc->table, 'dataContainer' => $objDc]);
+                break;
 
-            ob_end_clean(); // clear output buffer
+            case MultiColumnEditor::ACTION_SORT_ROWS:
+                $widget = $this->prepareWidgetForExecutePostActions($dc);
+                $widget->sortRows();
 
-            die($editor->generate());
+                throw new ResponseException(new Response($widget->generate()));
+
+                break;
+
+            case MultiColumnEditor::ACTION_UPDATE_ROWS:
+                $widget = $this->prepareWidgetForExecutePostActions($dc);
+                $widget->updateRows();
+
+                throw new ResponseException(new Response($widget->generate()));
+
+                break;
         }
     }
 
@@ -94,6 +110,74 @@ class HookListener
         if ($this->isMceField($name, $dca)) {
             $dca['fields'][$name] = [];
         }
+    }
+
+    /**
+     * @param DataContainer $dc
+     *
+     * @return MultiColumnEditor
+     */
+    protected function prepareWidgetForExecutePostActions(DataContainer $dc): MultiColumnEditor
+    {
+        $id = $this->container->get('huh.request')->getGet('id');
+        $field = $dc->inputName = $this->container->get('huh.request')->getPost('field');
+
+        // Handle the keys in "edit multiple" mode
+        if ('editAll' == $this->container->get('huh.request')->getGet('act')) {
+            $id = preg_replace('/.*_([0-9a-zA-Z]+)$/', '$1', $field);
+            $field = preg_replace('/(.*)_[0-9a-zA-Z]+$/', '$1', $field);
+        }
+
+        $dc->field = $field;
+
+        // The field does not exist
+        if (!isset($GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field])) {
+            $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Field "'.$field.'" does not exist in DCA "'.$dc->table.'"', ['contao' => new ContaoContext(__METHOD__, LogLevel::ERROR)]);
+
+            throw new BadRequestHttpException('Bad request');
+        }
+
+        $arrData = $GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field];
+
+        $value = null;
+
+        // Load the value
+        if ('overrideAll' != $this->container->get('huh.request')->getGet('act')) {
+            if ('File' == $GLOBALS['TL_DCA'][$dc->table]['config']['dataContainer']) {
+                $value = Config::get($field);
+            } elseif ($id > 0) {
+                // The record does not exist
+                if (null === ($model = $this->container->get('huh.utils.model')->findModelInstanceByPk($dc->table, $id))) {
+                    $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'A record with the ID "'.$id.'" does not exist in table "'.$dc->table.'"', ['contao' => new ContaoContext(__METHOD__, LogLevel::ERROR)]);
+
+                    throw new BadRequestHttpException('Bad request');
+                }
+
+                $value = $model->$field;
+                $dc->activeRecord = $model;
+            }
+        }
+
+        // Call the load_callback
+        if (\is_array($arrData['load_callback'])) {
+            foreach ($arrData['load_callback'] as $callback) {
+                if (\is_array($callback)) {
+                    System::importStatic($callback[0]);
+                    $value = $this->{$callback[0]}->{$callback[1]}($value, $dc);
+                } elseif (\is_callable($callback)) {
+                    $value = $callback($value, $dc);
+                }
+            }
+        }
+
+        // Set the new value
+        $value = $this->container->get('huh.request')->getPost($dc->inputName, true);
+
+        /** @var MultiColumnEditor $strClass */
+        $strClass = $GLOBALS['BE_FFL']['multiColumnEditor'];
+
+        /* @var MultiColumnEditor $objWidget */
+        return new $strClass($strClass::getAttributesFromDca($arrData, $dc->inputName, $value, $dc->field, $dc->table, $dc));
     }
 
     protected function isMceField($name, $dca)

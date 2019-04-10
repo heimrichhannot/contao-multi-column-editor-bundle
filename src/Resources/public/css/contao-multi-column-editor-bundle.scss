@@ -4,25 +4,46 @@
 
 .multi-column-editor-wrapper {
   .multi-column-editor {
-    .add {
-      margin: 10px 0;
-    }
+    border: 1px solid #d0d0d2;
 
     .mce-row {
-      clear: left;
+      display: flex;
+      padding: .5rem .5rem 0;
+      background: #f3f3f5;
 
-      &.row_1 {
-        .tl_checkbox_single_container {
-          margin-top: 39px !important;
-        }
+      .fields {
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        clear: left;
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #fff;
+      }
+
+      &:nth-child(even) {
+        background: #f9f9f9;
+      }
+
+      &:hover,
+      &:focus {
+        background-color: #fffbd1;
       }
 
       .form-group {
-        display: inline-block;
         margin-right: 10px;
         position: relative;
-        margin-bottom: 10px;
+        margin-bottom: .5rem;
         vertical-align: top;
+
+        fieldset {
+          &.tl_checkbox_container,
+          &.tl_radio_container {
+            margin-top: 0;
+            margin-bottom: 0;
+          }
+        }
 
         input[type="text"], input[type="password"] {
           width: 100% !important;
@@ -34,20 +55,8 @@
           }
         }
 
-        .tl_checkbox_single_container {
-          margin-top: 6px;
-        }
-
         > h3 {
           padding-top: 0;
-        }
-      }
-
-      &:not(:first-child){
-        .form-group {
-          > h3{
-            display: none;
-          }
         }
       }
 
@@ -57,17 +66,12 @@
             padding-top: 14px;
           }
         }
-
-        .actions {
-          margin-top: 39px;
-          margin-left: 0;
-        }
       }
 
       .actions {
         display: inline-block;
-        margin-top: 8px;
-        margin-left: 0;
+        margin-left: auto;
+        align-self: center;
 
         .drag-handle {
           background: none;

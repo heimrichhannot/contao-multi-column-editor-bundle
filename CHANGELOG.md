@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2019-04-10
+
+### Changed
+- complete refactoring, fields now use the array form field syntax (e.g `field[0][subField]`)
+- better ux in backend mode, added row styles (including even/odd stripes), make usage of flexbox and added hover effect to have better feedback, what item you are currently on
+- removed redundant attributes from template, please adjust your custom templates if you get unknown variable errors from twig
+
+### Added
+- subpalette support with field selector and field_value selector (see README.md for more information) 
+
+### Fixed
+- `editAll` support in backend now works properly
+
 ## [2.0.4] - 2019-03-21
 
 ### Fixed

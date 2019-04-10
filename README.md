@@ -31,13 +31,32 @@ Use the inputType "multiColumnEditor" for your field.
             // defaults to false
             'skipCopyValuesOnAdd' => false,
             'editorTemplate' => 'multi_column_editor_backend_default',
+            // add palette and subpalette if you need supalettes support
+            'palettes'    => [
+                '__selector__' => ['field1'],
+                'default'      => 'field1',
+            ],
+            'subpalettes' => [
+                'field1'  => 'field2', // key selector
+                'field1_10' => 'field3' // key_value selector
+            ],
             'fields' => array(
                 // place your fields here as you would normally in your DCA
                 // (sql is not required)
                 'field1' => [
                 	'label' => 'field 1',
                 	'inputType' => 'text',
-                	'eval' => ['groupStyle' => 'width:150px']
+                	'eval' => ['groupStyle' => 'width:150px', 'submitOnChange' => true]
+                ],
+                'field2' => [
+                    'label' => 'field 2',
+                    'inputType' => 'text',
+                    'eval' => ['groupStyle' => 'width:150px']
+                ]
+                'field3' => [
+                    'label' => 'field 3',
+                    'inputType' => 'text',
+                    'eval' => ['groupStyle' => 'width:150px']
                 ]
             )
         )
