@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2019-04-10
+
+### Fixed
+- non-palette multi-column-editor fields had no values
+
 ## [2.1.0] - 2019-04-10
 
 ### Changed

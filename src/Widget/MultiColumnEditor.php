@@ -299,7 +299,7 @@ class MultiColumnEditor extends Widget
     protected function getRow(array $row, $palette = 'default')
     {
         if (!isset($this->arrDca['palettes']) || !\is_array($this->arrDca['palettes']) || !isset($this->arrDca['palettes'][$palette])) {
-            return array_keys($this->arrDca['fields']);
+            return $row;
         }
 
         $boxes = \StringUtil::trimsplit(';', $this->arrDca['palettes'][$palette]);
