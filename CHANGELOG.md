@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.3] - 2019-04-11
+
+### Fixed
+- deleteRow deleted the wrong row
+- updated documentation
+
 ## [2.1.2] - 2019-04-11
 
 ### Fixed

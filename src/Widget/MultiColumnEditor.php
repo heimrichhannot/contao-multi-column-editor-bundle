@@ -175,11 +175,11 @@ class MultiColumnEditor extends Widget
      */
     public function deleteRow(int $offset = 0)
     {
-        if (!\is_array($this->varValue) || empty($this->varValue)) {
+        if (!\is_array($this->varValue) || empty($this->varValue) || !isset($this->varValue[$offset])) {
             return;
         }
 
-        array_splice($this->varValue, $offset, 1);
+        unset($this->varValue[$offset]);
     }
 
     /**
