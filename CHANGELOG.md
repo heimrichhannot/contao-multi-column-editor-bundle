@@ -1,9 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.1.1] - 2019-04-10
+## [2.1.2] - 2019-04-11
 
 ### Fixed
+- js error on accessing non existing variable that prevent vendor js like datepicker to work properly on async response 
+- small backend style adjustments 
+
+## [2.1.1] - 2019-04-10
+ 
+ ### Fixed
 - non-palette multi-column-editor fields had no values
 
 ## [2.1.0] - 2019-04-10

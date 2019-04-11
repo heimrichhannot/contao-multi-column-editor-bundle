@@ -4,7 +4,10 @@
 
 .multi-column-editor-wrapper {
   .multi-column-editor {
-    border: 1px solid #d0d0d2;
+
+    .rows {
+      border: 1px solid #d0d0d2;
+    }
 
     .mce-row {
       display: flex;
@@ -13,7 +16,7 @@
 
       .fields {
         display: flex;
-        align-items: flex-start;
+        align-items: baseline;
         flex-wrap: wrap;
         clear: left;
       }
@@ -60,18 +63,13 @@
         }
       }
 
-      &:first-child {
-        .form-group {
-          > h3 {
-            padding-top: 14px;
-          }
-        }
-      }
-
       .actions {
         display: inline-block;
         margin-left: auto;
-        align-self: center;
+        align-self: baseline;
+        min-width: 60px;
+        text-align: right;
+        margin-top: .75rem;
 
         .drag-handle {
           background: none;
