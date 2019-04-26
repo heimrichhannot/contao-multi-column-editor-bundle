@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.4] - 2019-04-26
+
+### Fixed
+- warning when multicolumn widget value is empty on save
+
 ## [2.1.3] - 2019-04-11
 
 ### Fixed

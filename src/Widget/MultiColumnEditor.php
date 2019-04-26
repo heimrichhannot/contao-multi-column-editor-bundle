@@ -556,6 +556,22 @@ class MultiColumnEditor extends Widget
     {
         $blnHasErrors = false;
 
+        if (empty($varInput)) {
+            if (!$this->mandatory) {
+                return $varInput;
+            }
+            else {
+                if ($this->strLabel == '')
+                {
+                    $this->addError($GLOBALS['TL_LANG']['ERR']['mdtryNoLabel']);
+                }
+                else
+                {
+                    $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory'], $this->strLabel));
+                }
+            }
+        }
+
         foreach ($varInput as $i => $row) {
             foreach ($row as $field => $value) {
                 $config = $this->arrDca['fields'][$field];
