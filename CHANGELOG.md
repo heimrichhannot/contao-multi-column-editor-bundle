@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.5] - 2019-04-26
+
+### Fixed
+- `MultiColumnEditor::validator()` now properly works with inputs having eval `decodeEntities` set to `true`
+
 ## [2.1.4] - 2019-04-26
 
 ### Fixed

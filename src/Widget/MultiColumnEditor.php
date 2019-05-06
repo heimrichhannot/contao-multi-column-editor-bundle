@@ -560,15 +560,11 @@ class MultiColumnEditor extends Widget
             if (!$this->mandatory) {
                 return $varInput;
             }
-            else {
-                if ($this->strLabel == '')
-                {
-                    $this->addError($GLOBALS['TL_LANG']['ERR']['mdtryNoLabel']);
-                }
-                else
-                {
-                    $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory'], $this->strLabel));
-                }
+
+            if ('' == $this->strLabel) {
+                $this->addError($GLOBALS['TL_LANG']['ERR']['mdtryNoLabel']);
+            } else {
+                $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory'], $this->strLabel));
             }
         }
 
@@ -589,7 +585,7 @@ class MultiColumnEditor extends Widget
                 }
 
                 $objWidget->validate();
-                $objWidget->value = $value;
+                $value = $objWidget->value;
 
                 // Convert date formats into timestamps
                 if ('' !== $value && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'])) {
