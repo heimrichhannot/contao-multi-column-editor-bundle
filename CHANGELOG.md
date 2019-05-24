@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.7] - 2019-05-24
+
+### Fixed
+- comment
+
 ## [2.1.6] - 2019-05-24
 
 ### Fixed

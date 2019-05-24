@@ -183,7 +183,7 @@ class HookListener
     protected function isMceField($name, $dca)
     {
         $isMce = false;
-        // <mceField>_<digit>_<row field>, e.g. hotels_0_image
+        // <mceField>[<digit>][<row field>], e.g. hotels[0][image]
         $cleanedName = preg_replace('/[^\[]+\[\d+\]\[([^\[\]]+)\]/i', '$1', $name);
         $mceFieldArrays = [];
 
