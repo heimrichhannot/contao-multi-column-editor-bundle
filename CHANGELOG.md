@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.6] - 2019-05-24
+
+### Fixed
+- fileTree ajax issues
+
 ## [2.1.5] - 2019-04-26
 
 ### Fixed

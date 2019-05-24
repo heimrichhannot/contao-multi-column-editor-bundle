@@ -390,7 +390,7 @@ class MultiColumnEditor extends Widget
         $config = $this->arrDca['fields'][$field];
 
         // Use array_key_exists here (see #5252)
-        if (\array_key_exists('default', $config)) {
+        if (array_key_exists('default', $config)) {
             $value = $config['default'];
 
             // Encrypt the default value (see #3740)

@@ -102,7 +102,7 @@ class HookListener
 
         $action = System::getContainer()->get('huh.request')->getPost('action');
 
-        // support for jumpTo fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
+        // support for fileTree fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
         if (('reloadPagetree' !== $action && 'reloadFiletree' !== $action) || 'fieldpalette' === $strTable) {
             return;
         }
@@ -183,7 +183,8 @@ class HookListener
     protected function isMceField($name, $dca)
     {
         $isMce = false;
-        $cleanedName = preg_replace('/_\d+$/i', '', $name);
+        // <mceField>_<digit>_<row field>, e.g. hotels_0_image
+        $cleanedName = preg_replace('/[^\[]+\[\d+\]\[([^\[\]]+)\]/i', '$1', $name);
         $mceFieldArrays = [];
 
         foreach ($dca['fields'] as $field => $data) {
