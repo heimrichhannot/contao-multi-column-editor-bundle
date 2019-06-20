@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2019-06-20
+
+### Changed
+- repository for js now within this bundle (`src/Resources/npm-package`)
+- fixed an error with reordering elements (#5)
+
 ## [2.1.7] - 2019-05-24
 
 ### Fixed
