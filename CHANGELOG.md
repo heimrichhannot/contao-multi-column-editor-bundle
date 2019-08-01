@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2019-08-01
+
+### Changed
+- removed old contao autoload.ini and autoload.php
+
 ## [2.2.0] - 2019-06-20
 
 ### Changed
