@@ -3,57 +3,41 @@ git:
   depth: 1
 cache:
   directories:
-  - "$HOME/.composer/cache"
+    - "$HOME/.composer/cache"
 sudo: false
 env:
   global:
-  - COMPOSER_ALLOW_XDEBUG=0
+    - COMPOSER_ALLOW_XDEBUG=0
 matrix:
   include:
-  - php: 7.1
-    env: CONTAO_VERSION='4.4.*'
-  - php: 7.3
-    env: CONTAO_VERSION='4.4.*'
-  - php: 7.1
-    env: CONTAO_VERSION='4.7.*'
-  - php: 7.3
-    env: CONTAO_VERSION='4.7.*'
-  - php: 7.3
-    env: COVERAGE=1 CONTAO_VERSION='4.4.*'
+    - php: 7.1
+      env: CONTAO_VERSION='4.4.*'
+    - php: 7.3
+      env: CONTAO_VERSION='4.4.*'
+    - php: 7.1
+      env: CONTAO_VERSION='4.7.*'
+    - php: 7.3
+      env: CONTAO_VERSION='4.7.*'
+    - php: 7.3
+      env: COVERAGE=1 CONTAO_VERSION='4.5.*'
   allow_failures:
-  - env: COVERAGE=1 UPDATEDOC=1 DEFAULT=0
+    - env: COVERAGE=1 DEFAULT=0
   fast_finish: true
 before_install:
-- if [[ "$COVERAGE" != "1" ]]; then phpenv config-rm xdebug.ini || true; fi
+  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - if [[ "$COVERAGE" != "1" ]]; then phpenv config-rm xdebug.ini || true; fi
 install:
-- composer require contao/core-bundle:${CONTAO_VERSION}
-- if [[ "$UPDATEDOC" = "1" ]]; then wget -O sami.phar http://get.sensiolabs.org/sami.phar;
-  fi
+  - composer require contao/core-bundle:${CONTAO_VERSION} --no-update
 notifications:
   email:
     recipients:
-    - digitales@heimrich-hannot.de
+      - digitales@heimrich-hannot.de
     on_success: never
     on_failure: always
-  hipchat:
-    rooms:
-      secure: m+WKkcDn7kB9e0f4IxTL8Eceb3OmU+o4hM940wpMzRZqF2zEx3DFQJDeNi9GuC7aGvgBXmel7jWQ+CWoMGgrcEdp87HJBQqsYjzbWZEXEa+1ETPc4BvNVdVqNsADrvqLPDlUguf8ArbJ6VBZv6NmeTKDpgYuzqywzotbqOTmrKcyI9zfYnKX+vWI0bYU4Qh4gStMrtl1pnfSkNRi+VTfRJzb660vJuUrZIarkTujzyzW5jI3G15lw+Cp6lR+Qnc/4e2acxA/dRx+M/w0JLtYq07BPGmhFrY46OW3r1oWo36arvQlwejgqrC4Wb7WSSqo3can8m5tE+t6tPfVRxKrMjFon8F171uF4LsQ7/So6123FcvPMD9a1jmPO50jiZ0rff7Oyl8OnNfpR8Z20rIOxaFov/UZxOZKGlOwwrlfo2tUAfPNGcr1IDsw9xn7BpX3rAU5Uj0Hp3vtHmv7Ys5ZC8fKRR71wAXFEN8mx5xaAHHDcu6W64GGYkWSAkyiGa/rmF6DsawHRQOU7TTOJpJyyLwCAI1g6HRenoYmlucryD4xkR5miSyzClKG5ne9p+uKYj5TJok2jPcVbd5Gvh1eTTVmGSSefyR+hT5PPDB6zCQW8OXQjn5+JOENJx65711Dz0Ify6SnVftFy+rOvG8WxGGTt6ZV3mb1njCAVlSqdUQ=
 before_script:
-- travis_wait composer install --no-interaction
+  - travis_wait composer install --no-interaction
 script:
-- if [[ "$COVERAGE" = "1" ]]; then travis_retry mkdir -p build/logs; fi
-- if [[ "$COVERAGE" = "1" ]]; then travis_retry php vendor/bin/phpunit --coverage-clover
-  build/logs/clover.xml || true; fi
-- if [[ "$UPDATEDOC" = "1" ]]; then travis_retry php sami.phar update ./docs/config/SamiDocConfig.php
-  || true; fi
+  - if [[ "$COVERAGE" = "1" ]]; then travis_retry mkdir -p build/logs; fi
+  - if [[ "$COVERAGE" = "1" ]]; then travis_retry php vendor/bin/phpunit --coverage-clover build/logs/clover.xml || true; fi
 after_script:
-- if [[ "$COVERAGE" = "1" ]]; then travis_retry php vendor/bin/php-coveralls -v; fi
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: "$GITHUB_TOKEN"
-  keep-history: true
-  local-dir: docs/build
-  on:
-    branch: master
-    condition: "$UPDATEDOC == '1'"
+  - if [[ "$COVERAGE" = "1" ]]; then travis_retry php vendor/bin/php-coveralls -v; fi
