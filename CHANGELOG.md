@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.2] - 2019-08-27
+
+### Fixed
+- fixed load_callback
+
 ## [2.2.1] - 2019-08-01
 
 ### Changed

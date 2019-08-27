@@ -162,8 +162,8 @@ class HookListener
         if (\is_array($arrData['load_callback'])) {
             foreach ($arrData['load_callback'] as $callback) {
                 if (\is_array($callback)) {
-                    System::importStatic($callback[0]);
-                    $value = $this->{$callback[0]}->{$callback[1]}($value, $dc);
+                    $callbackObj = System::importStatic($callback[0]);
+                    $value = $callbackObj->{$callback[1]}($value, $dc);
                 } elseif (\is_callable($callback)) {
                     $value = $callback($value, $dc);
                 }
