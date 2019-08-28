@@ -11,6 +11,7 @@ namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 use Contao\BackendTemplate;
 use Contao\Controller;
 use Contao\Date;
+use Contao\Environment;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
@@ -486,6 +487,29 @@ class MultiColumnEditor extends Widget
       });
     });
   </script>';
+        }
+
+        // dca picker
+        if ($arrData['eval']['dcaPicker']) {
+            $ppId = 'pp_'. $objWidget->strId;
+            $ctrl = 'ctrl_' . $objWidget->strId;
+            $url = System::getContainer()->get('huh.utils.url')->getCurrentUrl(['skipParams' => true]);
+
+            $link = sprintf('<a href="%s/picker?context=link&amp;value=" title="" id="%s"><img src="system/themes/flexible/icons/pickpage.svg" width="16" height="16" alt="Seiten auswählen"></a>', $url, $ppId);
+            $script = sprintf('<script>$("%s").addEvent("click", function(e) {
+                  e.preventDefault();
+                  Backend.openModalSelector({
+                    "id": "tl_listing",
+                    "title": "Link-Adresse",
+                    "url": this.href + "&value=" + document.getElementById("%s").value,
+                    "callback": function(picker, value) {
+                      $("%s").value = value.join(",");
+                    }.bind(this)
+                  });
+                });
+              </script>', $ppId, $ctrl, $ctrl);
+
+            $wizard .= $link . $script;
         }
 
         // rte

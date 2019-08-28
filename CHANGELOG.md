@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2019-08-28
+### Added
+- dcaPicker support for input fields
+
+### Fixed
+- fixed load_callback
+
 ## [2.2.2] - 2019-08-27
 
 ### Fixed
