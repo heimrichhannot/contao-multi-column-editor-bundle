@@ -17,6 +17,11 @@ $GLOBALS['TL_HOOKS']['executePostActions']['multiColumnEditor'] = ['huh.multicol
 $GLOBALS['TL_HOOKS']['loadDataContainer']['multiColumnEditor']  = ['huh.multicolumneditor.listener.hooks', 'loadDataContainerHook'];
 
 /**
+ * RSCE
+ */
+$GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'] = [];
+
+/**
  * Assets
  */
 if (\Contao\System::getContainer()->get('huh.utils.container')->isBackend()) {

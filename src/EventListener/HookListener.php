@@ -103,11 +103,11 @@ class HookListener
         $action = System::getContainer()->get('huh.request')->getPost('action');
 
         // support for fileTree fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
-        if (('reloadPagetree' !== $action && 'reloadFiletree' !== $action) || 'fieldpalette' === $strTable) {
+        if (('reloadPagetree' !== $action && 'reloadFiletree' !== $action) || 'fieldpalette' === $strTable || isset($dca['fields'][$name])) {
             return;
         }
 
-        if ($this->isMceField($name, $dca)) {
+        if ($this->isMceField($name, $dca, $strTable)) {
             $dca['fields'][$name] = [];
         }
     }
@@ -180,12 +180,16 @@ class HookListener
         return new $strClass($strClass::getAttributesFromDca($arrData, $dc->inputName, $value, $dc->field, $dc->table, $dc));
     }
 
-    protected function isMceField($name, $dca)
+    protected function isMceField($name, $dca, $table)
     {
         $isMce = false;
         // <mceField>[<digit>][<row field>], e.g. hotels[0][image]
         $cleanedName = preg_replace('/[^\[]+\[\d+\]\[([^\[\]]+)\]/i', '$1', $name);
         $mceFieldArrays = [];
+
+        if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \in_array($cleanedName, $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table])) {
+            return true;
+        }
 
         foreach ($dca['fields'] as $field => $data) {
             if ('multiColumnEditor' !== $data['inputType'] || !isset($data['eval']['multiColumnEditor']['fields'])) {

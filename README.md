@@ -65,6 +65,39 @@ Use the inputType "multiColumnEditor" for your field.
 ),
 ```
 
+### Add support for special fields (like fileTrees) in Rocksolid Custom Content Elements (RSCE)
+
+Simply add the following to your project's `config.php`:
+
+```
+$GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'] = array_merge(
+    is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields']) ? $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'] : [], [
+        'tl_content' => ['linkImage']
+    ]
+);
+```
+
+where this would be your RSCE config:
+
+```
+$element = [
+     // ...
+    'fields'          => [
+        'links'              => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_content']['links'],
+            'inputType' => 'multiColumnEditor',
+            'eval'      => [
+                'tl_class'          => 'long clr',
+                'multiColumnEditor' => [
+                    'minRowCount' => 0,
+                    'fields'      => [
+                        'linkImage'     => [
+                            // ...
+                            'inputType'               => 'fileTree',
+                        ],
+    // ...
+```
+
 ## Developers
 
 ### Assets

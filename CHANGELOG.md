@@ -1,7 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2019-09-06
+
+### Added
+- support for special fields in multi column editors in rocksolid custom content elements (rsce)
+
 ## [2.3.0] - 2019-08-28
+
 ### Added
 - dcaPicker support for input fields
 

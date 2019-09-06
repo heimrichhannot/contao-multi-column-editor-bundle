@@ -11,7 +11,6 @@ namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 use Contao\BackendTemplate;
 use Contao\Controller;
 use Contao\Date;
-use Contao\Environment;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
@@ -491,8 +490,8 @@ class MultiColumnEditor extends Widget
 
         // dca picker
         if ($arrData['eval']['dcaPicker']) {
-            $ppId = 'pp_'. $objWidget->strId;
-            $ctrl = 'ctrl_' . $objWidget->strId;
+            $ppId = 'pp_'.$objWidget->strId;
+            $ctrl = 'ctrl_'.$objWidget->strId;
             $url = System::getContainer()->get('huh.utils.url')->getCurrentUrl(['skipParams' => true]);
 
             $link = sprintf('<a href="%s/picker?context=link&amp;value=" title="" id="%s"><img src="system/themes/flexible/icons/pickpage.svg" width="16" height="16" alt="Seiten auswählen"></a>', $url, $ppId);
@@ -509,7 +508,7 @@ class MultiColumnEditor extends Widget
                 });
               </script>', $ppId, $ctrl, $ctrl);
 
-            $wizard .= $link . $script;
+            $wizard .= $link.$script;
         }
 
         // rte
@@ -610,6 +609,10 @@ class MultiColumnEditor extends Widget
 
                 $objWidget->validate();
                 $value = $objWidget->value;
+
+                if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable]) && \in_array($field, $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable])) {
+                    $value = StringUtil::binToUuid($value);
+                }
 
                 // Convert date formats into timestamps
                 if ('' !== $value && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'])) {
