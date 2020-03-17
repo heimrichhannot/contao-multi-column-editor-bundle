@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.1] - 2020-03-17
+
+### Added
+- english translations
+
 ## [2.4.0] - 2019-09-06
 
 ### Added

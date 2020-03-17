@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -28,8 +28,6 @@ class HookListener
 
     /**
      * Constructor.
-     *
-     * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
@@ -38,9 +36,6 @@ class HookListener
 
     /**
      * Add custom logic via the post actions hook.
-     *
-     * @param string        $action
-     * @param DataContainer $dc
      */
     public function executePostActionsHook(string $action, DataContainer $dc)
     {
@@ -112,11 +107,6 @@ class HookListener
         }
     }
 
-    /**
-     * @param DataContainer $dc
-     *
-     * @return MultiColumnEditor
-     */
     protected function prepareWidgetForExecutePostActions(DataContainer $dc): MultiColumnEditor
     {
         $id = $this->container->get('huh.request')->getGet('id');

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -33,9 +33,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
     /**
      * Allows a plugin to override extension configuration.
      *
-     * @param string           $extensionName
-     * @param array            $extensionConfigs
-     * @param ContainerBuilder $container
+     * @param string $extensionName
      *
      * @return
      */

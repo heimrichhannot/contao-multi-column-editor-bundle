@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -77,8 +77,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Generate the widget and return it as string.
-     *
-     * @return string
      */
     public function generate(): string
     {
@@ -91,8 +89,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Generate the editor form.
-     *
-     * @return string
      */
     public function generateEditorForm(): string
     {
@@ -124,10 +120,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Get the action url.
-     *
-     * @param string $action
-     *
-     * @return string
      */
     public function getActionUrl(string $action): string
     {
@@ -140,8 +132,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Add row after given position.
-     *
-     * @param int $offset
      */
     public function addRow(int $offset = 0)
     {
@@ -170,8 +160,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Delete Row at given position.
-     *
-     * @param int $offset
      */
     public function deleteRow(int $offset = 0)
     {
@@ -200,8 +188,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Generate rows based on current values.
-     *
-     * @return array
      */
     public function generateRows(): array
     {
@@ -268,17 +254,12 @@ class MultiColumnEditor extends Widget
         return $rows;
     }
 
-    /**
-     * @return string
-     */
     public function getEditorTemplate(): string
     {
         return $this->editorTemplate;
     }
 
     /**
-     * @param string $editorTemplate
-     *
      * @return MultiColumnEditor
      */
     public function setEditorTemplate(string $editorTemplate): self
@@ -291,7 +272,6 @@ class MultiColumnEditor extends Widget
     /**
      * Get row fields based on current palette.
      *
-     * @param array  $row
      * @param string $palette
      *
      * @return array
@@ -390,7 +370,7 @@ class MultiColumnEditor extends Widget
         $config = $this->arrDca['fields'][$field];
 
         // Use array_key_exists here (see #5252)
-        if (array_key_exists('default', $config)) {
+        if (\array_key_exists('default', $config)) {
             $value = $config['default'];
 
             // Encrypt the default value (see #3740)
@@ -402,12 +382,6 @@ class MultiColumnEditor extends Widget
         return $value;
     }
 
-    /**
-     * @param Widget $objWidget
-     * @param array  $arrData
-     * @param string $strField
-     * @param string $strTable
-     */
     protected function handleSpecialFields(Widget $objWidget, array $arrData, string $strField, string $strTable): void
     {
         $wizard = '';
@@ -553,12 +527,6 @@ class MultiColumnEditor extends Widget
         $objWidget->wizard = $strHelp ? $wizard.$strHelp : $wizard;
     }
 
-    /**
-     * @param array  $arrData
-     * @param string $strClass
-     *
-     * @return string
-     */
     protected function help(array $arrData, string $strClass = ''): string
     {
         $return = $arrData['label'][1];
@@ -658,8 +626,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Get current row count.
-     *
-     * @return int
      */
     protected function getCurrentRowCount(): int
     {
@@ -668,8 +634,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Get maximum row count (0 = unlimited).
-     *
-     * @return int
      */
     protected function getMaxRowCount(): int
     {
@@ -678,8 +642,6 @@ class MultiColumnEditor extends Widget
 
     /**
      * Get minimum row count (default 1).
-     *
-     * @return int
      */
     protected function getMinRowCount(): int
     {
