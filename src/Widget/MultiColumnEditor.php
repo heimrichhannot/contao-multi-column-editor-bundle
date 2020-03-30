@@ -68,10 +68,14 @@ class MultiColumnEditor extends Widget
         $this->container = System::getContainer();
 
         if ($this->container->get('huh.utils.container')->isFrontend()) {
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this, $this->container));
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this, $this->container));
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this, $this->container));
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_UPDATE_ROWS, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW,
+                new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW,
+                new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS,
+                new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_UPDATE_ROWS,
+                new AjaxController($this, $this->container));
         }
     }
 
@@ -112,10 +116,37 @@ class MultiColumnEditor extends Widget
         $data['editorFormAction'] = $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
         $data['rows'] = $this->generateRows();
 
+        $data['disableAdd'] = $this->getDisableAdd($data);
+        $data['disableRemove'] = $this->getDisableRemove($data);
+
         return $this->container->get('twig')->render(
             $this->container->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
             $data
         );
+    }
+
+    public function getDisableAdd(array $data): bool
+    {
+        $disable = false;
+        $count = \count($data['rows']);
+
+        if ($data['maxRowCount'] && $data['maxRowCount'] <= ($count)) {
+            $disable = true;
+        }
+
+        return $disable;
+    }
+
+    public function getDisableRemove(array $data): bool
+    {
+        $disable = false;
+        $count = \count($data['rows']);
+
+        if ($data['minRowCount'] && $data['minRowCount'] >= ($count)) {
+            $disable = true;
+        }
+
+        return $disable;
     }
 
     /**
@@ -216,7 +247,8 @@ class MultiColumnEditor extends Widget
                 $name = $this->strName.'['.$i.']['.$field.']';
 
                 /** @var Widget $objWidget */
-                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name, $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
+                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
+                        $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
                     continue;
                 }
 
@@ -315,7 +347,8 @@ class MultiColumnEditor extends Widget
         foreach ($fields as $name) {
             $existing[$name] = $row[$name] ?? $this->getDefaultValue($name);
 
-            if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($name, $this->arrDca['palettes']['__selector__'])) {
+            if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($name,
+                    $this->arrDca['palettes']['__selector__'])) {
                 $subPalette = null;
 
                 if ('checkbox' == $this->arrDca['fields'][$name]['inputType'] && !$this->arrDca['fields'][$name]['eval']['multiple']) {
@@ -468,7 +501,8 @@ class MultiColumnEditor extends Widget
             $ctrl = 'ctrl_'.$objWidget->strId;
             $url = System::getContainer()->get('huh.utils.url')->getCurrentUrl(['skipParams' => true]);
 
-            $link = sprintf('<a href="%s/picker?context=link&amp;value=" title="" id="%s"><img src="system/themes/flexible/icons/pickpage.svg" width="16" height="16" alt="Seiten auswählen"></a>', $url, $ppId);
+            $link = sprintf('<a href="%s/picker?context=link&amp;value=" title="" id="%s"><img src="system/themes/flexible/icons/pickpage.svg" width="16" height="16" alt="Seiten auswählen"></a>',
+                $url, $ppId);
             $script = sprintf('<script>$("%s").addEvent("click", function(e) {
                   e.preventDefault();
                   Backend.openModalSelector({
@@ -571,14 +605,16 @@ class MultiColumnEditor extends Widget
                 $name = $this->strName.'['.$i.']['.$field.']';
 
                 /** @var Widget $objWidget */
-                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name, $config, null, $name, $this->strTable, $this->dataContainer))) {
+                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
+                        $config, null, $name, $this->strTable, $this->dataContainer))) {
                     continue;
                 }
 
                 $objWidget->validate();
                 $value = $objWidget->value;
 
-                if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable]) && \in_array($field, $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable])) {
+                if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable]) && \in_array($field,
+                        $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$this->strTable])) {
                     $value = StringUtil::binToUuid($value);
                 }
 

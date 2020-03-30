@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.2] - 2020-03-30
+
+### Added
+- enable/disable add or remove rows depending on configuration in dca
+
 ## [2.4.1] - 2020-03-17
 
 ### Added

@@ -122,7 +122,9 @@ class HookListener
 
         // The field does not exist
         if (!isset($GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field])) {
-            $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Field "'.$field.'" does not exist in DCA "'.$dc->table.'"', ['contao' => new ContaoContext(__METHOD__, LogLevel::ERROR)]);
+            $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR,
+                'Field "'.$field.'" does not exist in DCA "'.$dc->table.'"',
+                ['contao' => new ContaoContext(__METHOD__, LogLevel::ERROR)]);
 
             throw new BadRequestHttpException('Bad request');
         }
@@ -137,8 +139,11 @@ class HookListener
                 $value = Config::get($field);
             } elseif ($id > 0) {
                 // The record does not exist
-                if (null === ($model = $this->container->get('huh.utils.model')->findModelInstanceByPk($dc->table, $id))) {
-                    $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'A record with the ID "'.$id.'" does not exist in table "'.$dc->table.'"', ['contao' => new ContaoContext(__METHOD__, LogLevel::ERROR)]);
+                if (null === ($model = $this->container->get('huh.utils.model')->findModelInstanceByPk($dc->table,
+                        $id))) {
+                    $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR,
+                        'A record with the ID "'.$id.'" does not exist in table "'.$dc->table.'"',
+                        ['contao' => new ContaoContext(__METHOD__, LogLevel::ERROR)]);
 
                     throw new BadRequestHttpException('Bad request');
                 }
@@ -167,7 +172,8 @@ class HookListener
         $strClass = $GLOBALS['BE_FFL']['multiColumnEditor'];
 
         /* @var MultiColumnEditor $objWidget */
-        return new $strClass($strClass::getAttributesFromDca($arrData, $dc->inputName, $value, $dc->field, $dc->table, $dc));
+        return new $strClass($strClass::getAttributesFromDca($arrData, $dc->inputName, $value, $dc->field, $dc->table,
+            $dc));
     }
 
     protected function isMceField($name, $dca, $table)
@@ -177,7 +183,8 @@ class HookListener
         $cleanedName = preg_replace('/[^\[]+\[\d+\]\[([^\[\]]+)\]/i', '$1', $name);
         $mceFieldArrays = [];
 
-        if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \in_array($cleanedName, $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table])) {
+        if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \in_array($cleanedName,
+                $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table])) {
             return true;
         }
 
@@ -194,7 +201,8 @@ class HookListener
         }
 
         foreach ($mceFieldArrays as $field => $mceData) {
-            if (\in_array(preg_replace('/^'.$field.'_/', '', $cleanedName), array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
+            if (\in_array(preg_replace('/^'.$field.'_/', '', $cleanedName),
+                array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
                 $isMce = true;
             }
         }
