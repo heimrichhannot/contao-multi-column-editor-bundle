@@ -25,14 +25,14 @@ $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'] = [];
  * Assets
  */
 if (\Contao\System::getContainer()->get('huh.utils.container')->isBackend()) {
-    $GLOBALS['TL_CSS']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/css/contao-multi-column-editor-bundle.min.css|static';
+    $GLOBALS['TL_CSS']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.css|static';
 }
 else
 {
     $GLOBALS['TL_JAVASCRIPT']['sortablejs'] = 'assets/sortablejs/sortablejs/Sortable.min.js|static';
 }
 
-$GLOBALS['TL_JAVASCRIPT']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/js/contao-multi-column-editor-bundle.js|static';
+$GLOBALS['TL_JAVASCRIPT']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle.js|static';
 
 /**
  * Ajax

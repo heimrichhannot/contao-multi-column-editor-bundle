@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.0] - 2020-04-03
+
+- added css class "long" to twig template
+- added webpack workflow for css generation as well
+- updated to encore 0.28+
+
 ## [2.4.2] - 2020-03-30
 
 ### Added

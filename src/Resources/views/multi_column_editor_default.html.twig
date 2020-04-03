@@ -7,7 +7,7 @@
         <div class="{{ 'rows ' ~ (sortable|default() ? 'sortable' : '') | trim }}">
             {% for iterator, row in rows %}
                 <div class="{{ 'mce-row row_' ~ iterator | trim }}" data-index="{{ iterator }}">
-                    <div class="fields">
+                    <div class="fields long">
                         {% for field, widget in row %}
                             {% if widget.type == "hidden" %}
                                 {{ widget.parse()|raw }}

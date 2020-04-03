@@ -1,0 +1,1 @@
+import '../scss/contao-multi-column-editor-bundle.scss';

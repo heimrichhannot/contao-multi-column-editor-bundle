@@ -1,0 +1,17 @@
+{
+  "entrypoints": {
+    "contao-multi-column-editor-bundle": {
+      "js": [
+        "/bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle.js"
+      ]
+    },
+    "contao-multi-column-editor-bundle-be": {
+      "css": [
+        "/bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.css"
+      ],
+      "js": [
+        "/bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.js"
+      ]
+    }
+  }
+}
