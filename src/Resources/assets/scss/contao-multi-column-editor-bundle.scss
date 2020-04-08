@@ -54,7 +54,8 @@
 
         &.wizard {
           input[type="text"], input[type="password"] {
-            width: 83% !important;
+            margin-right: -26px;
+            padding-right: 26px;
           }
         }
 

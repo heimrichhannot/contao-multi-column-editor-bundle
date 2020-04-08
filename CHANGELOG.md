@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.1] - 2020-04-08
+
+- fixed wizard fields
+- fixed package.json
+
 ## [2.5.0] - 2020-04-03
 
 - added css class "long" to twig template
