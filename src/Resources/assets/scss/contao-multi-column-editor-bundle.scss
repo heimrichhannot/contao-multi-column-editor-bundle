@@ -16,7 +16,7 @@
 
       .fields {
         display: flex;
-        align-items: baseline;
+        align-items: end;
         flex-wrap: wrap;
         clear: left;
       }
@@ -67,7 +67,7 @@
       .actions {
         display: inline-block;
         margin-left: auto;
-        align-self: baseline;
+        align-self: end;
         min-width: 60px;
         text-align: right;
         margin-top: .75rem;

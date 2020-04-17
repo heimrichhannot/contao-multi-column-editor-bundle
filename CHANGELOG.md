@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.2] - 2020-04-17
+
+- fixed flexbox style
+
 ## [2.5.1] - 2020-04-08
 
 - fixed wizard fields
