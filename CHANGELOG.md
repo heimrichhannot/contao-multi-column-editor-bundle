@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.3] - 2020-06-24
+
+- added array check in `HookListener` (see https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/7, thanks to zonky2!)
+
 ## [2.5.2] - 2020-04-17
 
 - fixed flexbox style

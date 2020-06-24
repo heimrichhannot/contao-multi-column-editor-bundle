@@ -91,10 +91,10 @@ class HookListener
             return;
         }
 
-        if (is_array($name)) {
+        if (\is_array($name)) {
             return;
         }
-        
+
         if (isset($dca['fields'][$name])) {
             return;
         }
