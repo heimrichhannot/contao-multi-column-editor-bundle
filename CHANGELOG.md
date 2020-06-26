@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.4] - 2020-06-26
+
+- added curly braces to inline call (php 7)
+
 ## [2.5.3] - 2020-06-24
 
 - added array check in `HookListener` (see https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/7, thanks to zonky2!)

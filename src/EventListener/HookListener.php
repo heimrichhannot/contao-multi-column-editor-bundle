@@ -152,7 +152,7 @@ class HookListener
                     throw new BadRequestHttpException('Bad request');
                 }
 
-                $value = $model->$field;
+                $value = $model->{$field};
                 $dc->activeRecord = $model;
             }
         }
