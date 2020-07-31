@@ -14,6 +14,7 @@ use Contao\Date;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
+use HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -84,6 +85,7 @@ class MultiColumnEditor extends Widget
      */
     public function generate(): string
     {
+        $this->container->get(MceAssets::class)->addAssets();
         if ($this->container->get('huh.utils.container')->isBackend()) {
             return '<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$this->generateEditorForm().$this->getErrorAsHTML().'</div>';
         }
@@ -521,7 +523,7 @@ class MultiColumnEditor extends Widget
 
         // rte
         if (!empty($arrData['eval']['rte'])) {
-            list($file, $type) = explode('|', $arrData['eval']['rte'], 2);
+            [$file, $type] = explode('|', $arrData['eval']['rte'], 2);
 
             $fileBrowserTypes = [];
             $pickerBuilder = $this->container->get('contao.picker.builder');

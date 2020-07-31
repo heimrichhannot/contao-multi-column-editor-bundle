@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.0] - 2020-07-31
+- assets now only added where widget is included
+- updated encore bundle config
+- minimum supported encore bundle version is now 1.5
+- some refactoring
+
 ## [2.5.4] - 2020-06-26
 
 - added curly braces to inline call (php 7)

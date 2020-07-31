@@ -12,13 +12,12 @@ use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Contao\ManagerPlugin\Config\ContainerBuilder;
-use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
+use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use HeimrichHannot\MultiColumnEditorBundle\HeimrichHannotContaoMultiColumnEditorBundle;
-use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 use HeimrichHannot\UtilsBundle\HeimrichHannotContaoUtilsBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
-class Plugin implements BundlePluginInterface, ExtensionPluginInterface
+class Plugin implements BundlePluginInterface, ConfigPluginInterface
 {
     /**
      * {@inheritdoc}
@@ -30,20 +29,12 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
         ];
     }
 
-    /**
-     * Allows a plugin to override extension configuration.
-     *
-     * @param string $extensionName
-     *
-     * @return
-     */
-    public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
     {
-        return ContainerUtil::mergeConfigFile(
-            'huh_encore',
-            $extensionName,
-            $extensionConfigs,
-            __DIR__.'/../Resources/config/config_encore.yml'
-        );
+        $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/services.yml');
+        $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/listener.yml');
+        if (class_exists('HeimrichHannot\EncoreBundle\HeimrichHannotContaoEncoreBundle')) {
+            $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/config_encore.yml');
+        }
     }
 }

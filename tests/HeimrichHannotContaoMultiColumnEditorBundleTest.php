@@ -22,17 +22,4 @@ class HeimrichHannotContaoMultiColumnEditorBundleTest extends TestCase
 
         $this->assertInstanceOf('HeimrichHannot\MultiColumnEditorBundle\HeimrichHannotContaoMultiColumnEditorBundle', $bundle);
     }
-
-    /**
-     * Tests the getContainerExtension() method.
-     */
-    public function testReturnsTheContainerExtension()
-    {
-        $bundle = new HeimrichHannotContaoMultiColumnEditorBundle();
-
-        $this->assertInstanceOf(
-            'HeimrichHannot\MultiColumnEditorBundle\DependencyInjection\HeimrichHannotContaoMultiColumnEditorExtension',
-            $bundle->getContainerExtension()
-        );
-    }
 }

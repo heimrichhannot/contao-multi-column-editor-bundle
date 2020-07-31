@@ -75,6 +75,7 @@ class AjaxController
 
     public function prepareWidget()
     {
+        $dc = $this->editor->dataContainer;
         $field = $this->editor->dataContainer->inputName = $this->container->get('huh.request')->getPost('field');
         $this->editor->dataContainer->field = $field;
 
@@ -90,7 +91,7 @@ class AjaxController
         $value = $this->editor->dataContainer->activeRecord->{$field};
 
         // Call the load_callback
-        if (\is_array($arrData['load_callback'])) {
+        if (isset($arrData['load_callback']) && \is_array($arrData['load_callback'])) {
             foreach ($arrData['load_callback'] as $callback) {
                 if (\is_array($callback)) {
                     System::importStatic($callback[0]);
