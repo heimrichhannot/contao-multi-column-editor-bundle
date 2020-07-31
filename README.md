@@ -52,7 +52,7 @@ Use the inputType "multiColumnEditor" for your field.
                     'label' => 'field 2',
                     'inputType' => 'text',
                     'eval' => ['groupStyle' => 'width:150px']
-                ]
+                ],
                 'field3' => [
                     'label' => 'field 3',
                     'inputType' => 'text',
