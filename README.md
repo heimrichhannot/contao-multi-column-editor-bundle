@@ -1,7 +1,7 @@
 # Multi Column Editor bundle
 
-![](https://img.shields.io/packagist/v/heimrichhannot/contao-multi-column-editor-bundle.svg)
-![](https://img.shields.io/packagist/dt/heimrichhannot/contao-multi-column-editor-bundle.svg)
+[![](https://img.shields.io/packagist/v/heimrichhannot/contao-multi-column-editor-bundle.svg)](https://packagist.org/packages/heimrichhannot/contao-multi-column-editor-bundle)
+[![](https://img.shields.io/packagist/dt/heimrichhannot/contao-multi-column-editor-bundle.svg)](https://packagist.org/packages/heimrichhannot/contao-multi-column-editor-bundle)
 [![](https://img.shields.io/travis/heimrichhannot/contao-multi-column-editor-bundle/master.svg)](https://travis-ci.org/heimrichhannot/contao-multi-column-editor-bundle/)
 [![](https://img.shields.io/coveralls/heimrichhannot/contao-multi-column-editor-bundle/master.svg)](https://coveralls.io/github/heimrichhannot/contao-multi-column-editor-bundle)
 
@@ -10,6 +10,17 @@ This module offers an input type for editing one or more records in backend and 
 ![alt text](doc/presentation.gif "Demo in the backend")
 
 ## Features
+* input type to edit one or multiple records
+* support for backend and frontend
+* [Encore bundle](https://github.com/heimrichhannot/contao-encore-bundle) support
+
+## Setup
+
+### Install 
+
+Install with composer: 
+
+    composer require heimrichhannot/contao-multi-column-editor-bundle
 
 ### Technical instructions
 
