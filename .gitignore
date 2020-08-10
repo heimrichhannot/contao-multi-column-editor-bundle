@@ -3,8 +3,8 @@ Thumbs.db
 .DS_Store
 .sass-cache
 /vendor
+/component
 composer.lock
 composer.json~
-composer.phar
 yarn.lock
-yarn-error.log
+/node_modules
