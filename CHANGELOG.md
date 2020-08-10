@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.2] - 2020-08-10
+- js error in backend after sub palette opening
+
 ## [2.6.1] - 2020-08-10
 - css and js error in backend after sub palette opening
 - removed CHANGELOG from separate npm-package folder -> js changes are also included in the bundle changelog
