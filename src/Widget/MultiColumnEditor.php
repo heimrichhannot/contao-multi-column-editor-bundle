@@ -11,6 +11,7 @@ namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 use Contao\BackendTemplate;
 use Contao\Controller;
 use Contao\Date;
+use Contao\Environment;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
@@ -86,8 +87,18 @@ class MultiColumnEditor extends Widget
     public function generate(): string
     {
         $this->container->get(MceAssets::class)->addAssets();
+
         if ($this->container->get('huh.utils.container')->isBackend()) {
-            return '<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$this->generateEditorForm().$this->getErrorAsHTML().'</div>';
+            // add the css inline on ajax call
+            if (Environment::get('isAjaxRequest')) {
+                $inlineStyle = '<style>'.file_get_contents(
+                        TL_ROOT.'/web/bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.css'
+                    ).'</style>';
+            } else {
+                $inlineStyle = '';
+            }
+
+            return $inlineStyle.'<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$this->generateEditorForm().$this->getErrorAsHTML().'</div>';
         }
 
         return '<div class="multi-column-editor-wrapper">'.$this->generateEditorForm().'</div>';

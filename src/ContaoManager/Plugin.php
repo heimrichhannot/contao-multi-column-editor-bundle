@@ -33,6 +33,7 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
     {
         $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/services.yml');
         $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/listener.yml');
+
         if (class_exists('HeimrichHannot\EncoreBundle\HeimrichHannotContaoEncoreBundle')) {
             $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/config_encore.yml');
         }

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.1] - 2020-08-10
+- css and js error in backend after sub palette opening
+- removed CHANGELOG from separate npm-package folder -> js changes are also included in the bundle changelog
+
 ## [2.6.0] - 2020-07-31
 - assets now only added where widget is included
 - updated encore bundle config

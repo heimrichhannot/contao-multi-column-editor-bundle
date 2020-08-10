@@ -14,6 +14,7 @@ use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\DataContainer;
 use Contao\System;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
+use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,6 +88,12 @@ class HookListener
 
         $dca = &$GLOBALS['TL_DCA'][$strTable];
 
+        // Assets
+        if ($this->container->get(ContainerUtil::class)->isBackend()) {
+            $GLOBALS['TL_JAVASCRIPT']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle.js|static';
+        }
+
+        // ajax
         if (!($name = System::getContainer()->get('huh.request')->getPost('name'))) {
             return;
         }

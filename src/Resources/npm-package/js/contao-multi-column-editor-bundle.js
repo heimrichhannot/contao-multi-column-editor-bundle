@@ -167,9 +167,9 @@ class MultiColumnEditorBundle {
                         var response = document.createElement('div');
                         response.innerHTML = xhr.responseText;
 
-                        var scriptElements = response.childNodes[0].getElementsByTagName('script');
+                        var scriptElements = response.getElementsByTagName('script');
 
-                        link.closest('.multi-column-editor-wrapper').replaceWith(response.childNodes[0]);
+                        link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
                         MultiColumnEditorBundle.initChosen();
                         MultiColumnEditorBundle.initSortable(isBackend);
 
@@ -190,7 +190,7 @@ class MultiColumnEditorBundle {
                         let response = document.createElement('div');
                         response.innerHTML = data.result.html;
 
-                        link.closest('.multi-column-editor-wrapper').replaceWith(response.childNodes[0]);
+                        link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
 
                         MultiColumnEditorBundle.initSortable(isBackend);
 
@@ -225,6 +225,10 @@ document.addEventListener('DOMContentLoaded', MultiColumnEditorBundle.init);
                     }
                 });
             };
+        });
+
+        window.addEvent('ajax_change', function() {
+            MultiColumnEditorBundle.init();
         });
     }
 })();

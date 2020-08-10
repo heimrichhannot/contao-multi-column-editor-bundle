@@ -1,1 +1,1 @@
-import '@hundh/contao-multi-column-editor-bundle';
+import '../../npm-package/js/contao-multi-column-editor-bundle';

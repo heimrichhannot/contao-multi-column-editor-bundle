@@ -170,16 +170,18 @@ class AjaxControllerTest extends ContaoTestCase
     public function createTestInstance(array $parameter = [])
     {
         if (!isset($parameter['editor'])) {
-            /** @var MultiColumnEditor|MockObject */
+            /* @var MultiColumnEditor|MockObject */
             $parameter['editor'] = $this->createMock(MultiColumnEditor::class);
         }
         $container = $this->mockContainer();
-        if (isset($parameter['services']) && is_array($parameter['services'])) {
+
+        if (isset($parameter['services']) && \is_array($parameter['services'])) {
             foreach ($parameter['services'] as $name => $service) {
                 $container->set($name, $service);
             }
         }
         $instance = new AjaxController($parameter['editor'], $container);
+
         return $instance;
     }
 
@@ -188,7 +190,6 @@ class AjaxControllerTest extends ContaoTestCase
      */
     public function testCanBeInstantiated()
     {
-
         $instance = $this->createTestInstance();
         $this->assertInstanceOf(AjaxController::class, $instance);
     }
@@ -198,29 +199,29 @@ class AjaxControllerTest extends ContaoTestCase
      */
     public function testAddRowWithoutFields()
     {
-        $session  = new Session(new MockArraySessionStorage());
+        $session = new Session(new MockArraySessionStorage());
         $request = $this->createMock(Request::class);
         $request->method('getPost')->willReturnCallback(function ($key) {
-           switch ($key) {
+            switch ($key) {
                case 'field':
                    return 'test';
+
                case 'row':
                    return 1;
            }
-           return null;
+
+            return null;
         });
         $request->method('getSession')->willReturn($session);
         $request->method('hasSession')->willReturn(true);
-
 
         $dataContainer = new \stdClass();
         $dataContainer->table = 'tl_test';
         $dataContainer->activeRecord = $this->mockClassWithProperties(Model::class, ['test' => 1]);
         /** @var MultiColumnEditor|MockObject */
-        $editor          = $this->mockClassWithProperties(MultiColumnEditor::class, [
+        $editor = $this->mockClassWithProperties(MultiColumnEditor::class, [
             'dataContainer' => $dataContainer,
         ]);
-
 
         $instance = $this->createTestInstance([
             'services' => [
