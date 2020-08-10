@@ -1,6 +1,6 @@
 {
   "name": "@hundh/contao-multi-column-editor-bundle",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "This package contains the frontend assets of the composer bundle heimrichhannot/contao-multi-column-editor-bundle.",
   "main": "js/contao-multi-column-editor-bundle.js",
   "repository": {
