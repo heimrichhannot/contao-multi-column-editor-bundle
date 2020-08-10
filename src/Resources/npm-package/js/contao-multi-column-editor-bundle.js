@@ -167,14 +167,20 @@ class MultiColumnEditorBundle {
                         var response = document.createElement('div');
                         response.innerHTML = xhr.responseText;
 
-                        var scriptElements = response.getElementsByTagName('script');
+                        var scriptElements = response.getElementsByTagName('script'),
+                            scriptHtml = [];
+
+                        // store the texts because after replacing the dom elements are gone
+                        for (var m = 0; m < scriptElements.length; m++) {
+                            scriptHtml.push(scriptElements[m].innerHTML);
+                        }
 
                         link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
                         MultiColumnEditorBundle.initChosen();
                         MultiColumnEditorBundle.initSortable(isBackend);
 
-                        for (var n = 0; n < scriptElements.length; n++) {
-                            eval(scriptElements[n].innerHTML);
+                        for (var n = 0; n < scriptHtml.length; n++) {
+                            eval(scriptHtml[n]);
                         }
 
                         if (typeof callback === 'function') {

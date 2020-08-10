@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.3] - 2020-08-10
+- js script evaluation error
+
 ## [2.6.2] - 2020-08-10
 - js error in backend after sub palette opening
 
