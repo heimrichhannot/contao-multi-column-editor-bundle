@@ -132,6 +132,8 @@ class MultiColumnEditor extends Widget
         $data['disableAdd'] = $this->getDisableAdd($data);
         $data['disableRemove'] = $this->getDisableRemove($data);
 
+        $data['mceErrors'] = $this->arrErrors;
+
         return $this->container->get('twig')->render(
             $this->container->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
             $data
@@ -592,7 +594,7 @@ class MultiColumnEditor extends Widget
      */
     protected function validator($varInput)
     {
-        $blnHasErrors = false;
+        $blnHasWidgetErrors = false;
 
         if (empty($varInput)) {
             if (!$this->mandatory) {
@@ -660,13 +662,29 @@ class MultiColumnEditor extends Widget
                 if ($objWidget->hasErrors()) {
                     // store the errors
                     $this->arrWidgetErrors[$id] = $objWidget->getErrors();
-                    $blnHasErrors = true;
+                    $blnHasWidgetErrors = true;
                 }
             }
         }
 
-        if ($blnHasErrors) {
+        if ($this->rgxp && isset($GLOBALS['TL_HOOKS']['addCustomRegexp']) && \is_array($GLOBALS['TL_HOOKS']['addCustomRegexp'])) {
+            foreach ($GLOBALS['TL_HOOKS']['addCustomRegexp'] as $callback) {
+                $callbackObj = System::importStatic($callback[0]);
+                $break = $callbackObj->{$callback[1]}($this->rgxp, $varInput, $this);
+
+                // Stop the loop if a callback returned true
+                if (true === $break) {
+                    break;
+                }
+            }
+        }
+
+        // Do not submit if there are errors
+        if ($blnHasWidgetErrors) {
             $this->addError($GLOBALS['TL_LANG']['MSC']['multiColumnEditor']['error']);
+        }
+
+        if ($this->hasErrors() || $blnHasWidgetErrors) {
             $this->blnSubmitInput = false;
         }
 

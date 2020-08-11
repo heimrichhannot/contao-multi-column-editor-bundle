@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.7.0] - 2020-08-11
+- added support for rgxp for the whole multiColumnEditor (not the separate fields)
+- errors of the validation of the whole multiColumnEditor (not the separate fields) are printed out in the template
+
 ## [2.6.3] - 2020-08-10
 - js script evaluation error
 

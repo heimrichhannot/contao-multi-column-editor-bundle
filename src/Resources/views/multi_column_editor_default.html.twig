@@ -1,4 +1,13 @@
 <div class="{{ ('multi-column-editor ' ~ cssClass)| trim }}" data-env="{{ isBackend ? 'backend' : 'frontend' }}" data-field="{{ fieldName }}" data-table="{{ table }}" data-min-row-count="{{ minRowCount }}" data-max-row-count="{{ maxRowCount }}">
+    {% if mceErrors|default and mceErrors is not empty %}
+        <div class="form-feedback invalid-feedback" style="display: block;">
+            {% for errorMsg in mceErrors %}
+                <div class="feedback-message">{{ errorMsg }}</div>
+            {% endfor %}
+            <br>
+        </div>
+    {% endif %}
+
     {% if(rows|length < 1 ) %}
         <a href="{{ ajaxAddUrl }}" class="add first{% if isBackend %} tl_submit{% endif %}" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
             <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
