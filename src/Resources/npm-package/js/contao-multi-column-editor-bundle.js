@@ -158,7 +158,9 @@ class MultiColumnEditorBundle {
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 // dispatch custom event
-                let customEvent = document.createEvent('CustomEvent');
+                let customEvent = document.createEvent('CustomEvent'),
+                    widget;
+
                 customEvent.initEvent('ajaxSuccess', true, true);
                 document.dispatchEvent(customEvent);
 
@@ -170,13 +172,15 @@ class MultiColumnEditorBundle {
                         var scriptElements = response.getElementsByTagName('script'),
                             scriptHtml = [];
 
+                        widget = link.closest('.widget');
+
                         // store the texts because after replacing the dom elements are gone
                         for (var m = 0; m < scriptElements.length; m++) {
                             scriptHtml.push(scriptElements[m].innerHTML);
                         }
 
                         link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
-                        MultiColumnEditorBundle.initChosen();
+                        MultiColumnEditorBundle.initChosen(widget);
                         MultiColumnEditorBundle.initSortable(isBackend);
 
                         for (var n = 0; n < scriptHtml.length; n++) {
@@ -224,12 +228,10 @@ document.addEventListener('DOMContentLoaded', MultiColumnEditorBundle.init);
 (function() {
     if (typeof window.addEvent === 'function') {
         window.addEvent('domready', function() {
-            MultiColumnEditorBundle.initChosen = function() {
-                $$('.multi-column-editor select.tl_chosen').each(function(el) {
-                    if (typeof el.initialized === 'undefined') {
-                        el.initialized = $$('#' + el.getAttribute('id')).chosen();
-                    }
-                });
+            MultiColumnEditorBundle.initChosen = function(widget) {
+                widget.querySelectorAll('select.tl_chosen').forEach((el) => {
+                    $$('#' + el.getAttribute('id')).chosen();
+                })
             };
         });
 

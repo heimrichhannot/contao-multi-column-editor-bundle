@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.7.1] - 2020-08-17
+- fixed chosen being run multiple times if multiple fields of type multiColumnEditor are in place
+
 ## [2.7.0] - 2020-08-11
 - added support for rgxp for the whole multiColumnEditor (not the separate fields)
 - errors of the validation of the whole multiColumnEditor (not the separate fields) are printed out in the template
