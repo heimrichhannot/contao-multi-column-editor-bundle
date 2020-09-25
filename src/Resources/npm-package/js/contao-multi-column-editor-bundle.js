@@ -114,6 +114,13 @@ class MultiColumnEditorBundle {
             url = form.action;
         }
 
+        // set the tinymces' values because later on they get resetted
+        editor.querySelectorAll('.mce-tinymce + textarea').forEach((element) => {
+            if (typeof window.tinymce !== 'undefined') {
+                element.value = tinymce.get(element.getAttribute('id')).getContent();
+            }
+        });
+
         form.querySelectorAll(
             'input[name]:not([disabled]), textarea[name]:not([disabled]), select[name]:not([disabled]), button[name]:not([disabled])',
         ).forEach(function(input) {
@@ -165,6 +172,14 @@ class MultiColumnEditorBundle {
                 document.dispatchEvent(customEvent);
 
                 if (xhr.status === 200) {
+                    // unload the tinymce's -> else the ones added via ajax wouldn't be initiated because tinymce thinks they
+                    // are already (ID seems to be stored!)
+                    editor.querySelectorAll('.mce-tinymce + textarea').forEach((element) => {
+                        if (typeof window.tinymce !== 'undefined') {
+                            tinymce.get(element.getAttribute('id')).remove();
+                        }
+                    });
+
                     if (isBackend) {
                         var response = document.createElement('div');
                         response.innerHTML = xhr.responseText;

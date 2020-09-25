@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.7.3] - 2020-09-25
+- fixed tinymce bugs
+
+## [2.7.2] - 2020-08-28
+- added translations
+
 ## [2.7.1] - 2020-08-17
 - fixed chosen being run multiple times if multiple fields of type multiColumnEditor are in place
 
