@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.7.4] - 2020-09-30
+- fixed readme
+
 ## [2.7.3] - 2020-09-25
 - fixed tinymce bugs
 

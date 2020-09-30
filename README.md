@@ -30,6 +30,7 @@ Use the inputType "multiColumnEditor" for your field.
 'someField' => array(
     'label'     => &$GLOBALS['TL_LANG']['tl_my_table']['someField'],
     'inputType' => 'multiColumnEditor',
+    'exclude'   => true,
     'eval'      => array(
         'multiColumnEditor' => array(
             // set to true if the rows should be sortable (backend only atm)
@@ -55,9 +56,9 @@ Use the inputType "multiColumnEditor" for your field.
                 // place your fields here as you would normally in your DCA
                 // (sql is not required)
                 'field1' => [
-                	'label' => 'field 1',
-                	'inputType' => 'text',
-                	'eval' => ['groupStyle' => 'width:150px', 'submitOnChange' => true]
+                    'label' => 'field 1',
+                    'inputType' => 'text',
+                    'eval' => ['groupStyle' => 'width:150px', 'submitOnChange' => true]
                 ],
                 'field2' => [
                     'label' => 'field 2',
