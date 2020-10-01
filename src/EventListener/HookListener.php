@@ -43,7 +43,7 @@ class HookListener
         switch ($action) {
             case MultiColumnEditor::ACTION_ADD_ROW:
                 $widget = $this->prepareWidgetForExecutePostActions($dc);
-                $widget->addRow($this->container->get('huh.request')->getPost('row'));
+                $widget->addRow((int) $this->container->get('huh.request')->getPost('row'));
 
                 throw new ResponseException(new Response($widget->generate()));
 

@@ -36,7 +36,7 @@ class AjaxController
     public function addRow()
     {
         $this->prepareWidget();
-        $this->editor->addRow($this->container->get('huh.request')->getPost('row'));
+        $this->editor->addRow((int) $this->container->get('huh.request')->getPost('row'));
         $objResponse = new ResponseSuccess();
         $objResponse->setResult(new ResponseData(($this->editor->generate())));
 
