@@ -26,13 +26,13 @@ Install with composer:
 
 Use the inputType "multiColumnEditor" for your field.
 
-```
-'someField' => array(
+```php
+'someField' => [
     'label'     => &$GLOBALS['TL_LANG']['tl_my_table']['someField'],
     'inputType' => 'multiColumnEditor',
     'exclude'   => true,
-    'eval'      => array(
-        'multiColumnEditor' => array(
+    'eval'      => [
+        'multiColumnEditor' => [
             // set to true if the rows should be sortable (backend only atm)
             'sortable' => true,
             'class' => 'some-class',
@@ -43,7 +43,8 @@ Use the inputType "multiColumnEditor" for your field.
             // defaults to false
             'skipCopyValuesOnAdd' => false,
             'editorTemplate' => 'multi_column_editor_backend_default',
-            // add palette and subpalette if you need supalettes support
+            // Optional: add palette and subpalette if you need supalettes support (otherwise all fields will be shows)
+            // Legends are supported since verison 2.8
             'palettes'    => [
                 '__selector__' => ['field1'],
                 'default'      => 'field1',
@@ -52,9 +53,10 @@ Use the inputType "multiColumnEditor" for your field.
                 'field1'  => 'field2', // key selector
                 'field1_10' => 'field3' // key_value selector
             ],
-            'fields' => array(
-                // place your fields here as you would normally in your DCA
-                // (sql is not required)
+            // place your fields here as you would normally in your DCA
+            // (sql is not required)
+            'fields' => [
+                
                 'field1' => [
                     'label' => 'field 1',
                     'inputType' => 'text',
@@ -70,11 +72,11 @@ Use the inputType "multiColumnEditor" for your field.
                     'inputType' => 'text',
                     'eval' => ['groupStyle' => 'width:150px']
                 ]
-            )
-        )
-    ),
+            ]
+        ]
+    ],
     'sql'       => "blob NULL"
-),
+],
 ```
 
 ### Add support for special fields (like fileTrees) in Rocksolid Custom Content Elements (RSCE)

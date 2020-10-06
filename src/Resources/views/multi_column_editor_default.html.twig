@@ -13,23 +13,33 @@
             <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
         </a>
     {% else %}
-        <div class="{{ 'rows ' ~ (sortable|default() ? 'sortable' : '') | trim }}">
-            {% for iterator, row in rows %}
+        <div class="rows{{ legend|default() ? ' grouped'}}{{ sortable|default() ? ' sortable' }}">
+            {% for iterator, row in groupRows %}
                 <div class="{{ 'mce-row row_' ~ iterator | trim }}" data-index="{{ iterator }}">
-                    <div class="fields long">
-                        {% for field, widget in row %}
-                            {% if widget.type == "hidden" %}
-                                {{ widget.parse()|raw }}
-                            {% else %}
-                                {% if widget.datepicker|default or widget.dcaPicker|default %}
-                                    {% set wizard = ' wizard' %}
-                                {% endif %}
-                                <div class="{{ ('form-group ' ~ field  ~ wizard|default ~ (isBackend ? ' col' : '')) | trim }}" data-name="{{ widget.noIndex }}"{% if widget.groupStyle|default() %} style="{{ widget.groupStyle }}"{% endif %}>
+                    {% for group in row %}
+                        {% if legend and group.legend is defined %}
+                            <fieldset id="pal_{{ group.legend.key }}_{{ iterator }}" class="tl_tbox {{ class|default }}{{ group.legend ? '' : ' nolegend' }}">
+                                <legend onclick="AjaxRequest.toggleFieldset(this, '{{ group.legend.key }}_{{ iterator }}', '{{ table }}')">{{ group.legend.lang }}</legend>
+                        {% endif %}
+
+                        <div class="fields long">
+                            {% for field, widget in group.fields %}
+                                {% if widget.type == "hidden" %}
                                     {{ widget.parse()|raw }}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                                {% else %}
+                                    {% if widget.datepicker|default or widget.dcaPicker|default %}
+                                        {% set wizard = ' wizard' %}
+                                    {% endif %}
+                                    <div class="{{ ('form-group ' ~ field  ~ wizard|default ~ (isBackend ? ' col' : '')) | trim }}" data-name="{{ widget.noIndex }}"{% if widget.groupStyle|default() %} style="{{ widget.groupStyle }}"{% endif %}>
+                                        {{ widget.parse()|raw }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% if legend and  group.legend is defined %}
+                            </fieldset>
+                        {% endif %}
+                    {% endfor %}
                     <div class="actions">
                         {% if not disableAdd|default %}
                             <a href="{{ ajaxAddUrl }}" class="add" title="{{ 'huh.multicolumneditor.add.default'|trans }}">

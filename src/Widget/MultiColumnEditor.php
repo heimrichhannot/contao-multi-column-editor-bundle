@@ -127,7 +127,10 @@ class MultiColumnEditor extends Widget
 
         // add rows
         $data['editorFormAction'] = $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
-        $data['rows'] = $this->generateRows();
+        list($rows, $groupRows, $useLegends) = $this->generateRows();
+        $data['rows'] = $rows;
+        $data['groupRows'] = $groupRows;
+        $data['legend'] = $useLegends;
 
         $data['disableAdd'] = $this->getDisableAdd($data);
         $data['disableRemove'] = $this->getDisableRemove($data);
@@ -238,6 +241,8 @@ class MultiColumnEditor extends Widget
     public function generateRows(): array
     {
         $rows = [];
+        $groupRows = [];
+        $useLegends = false;
 
         if (empty($this->varValue)) {
             if ($this->getMinRowCount() > 0) {
@@ -251,54 +256,71 @@ class MultiColumnEditor extends Widget
 
         foreach ($this->varValue as $i => $row) {
             $fields = [];
+            $groups = [];
 
-            foreach ($this->getRow($row) as $field => $value) {
-                if (!isset($this->arrDca['fields'][$field]) || !\is_array($this->arrDca['fields'][$field])) {
-                    continue;
+            list('existing' => $existing, 'boxes' => $boxes, 'legends' => $legends) = $this->getRow($row);
+
+            foreach ($boxes as $boxIndex => $box) {
+                $group = [];
+
+                if (isset($legends[$boxIndex])) {
+                    $useLegends = true;
+                    list($key, $cls) = explode(':', $legends[$boxIndex]);
+                    $group['legend'] = ['key' => $key, 'closed' => $cls];
+                    $group['legend']['lang'] = $GLOBALS['TL_LANG'][$this->strTable][$key] ?: $key;
                 }
 
-                $config = $this->arrDca['fields'][$field];
-                $id = $this->strName.'_'.$i.'_'.$field;
-                $name = $this->strName.'['.$i.']['.$field.']';
-
-                /** @var Widget $objWidget */
-                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
-                        $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
-                    continue;
-                }
-
-                // contao does not convert array field names to css id compatible selectors
-                $objWidget->strId = $id;
-
-                // add correct dca for bootstrapper since by normal behavior retrieval of the dca is impossible
-                $objWidget->arrDca = $config;
-
-                $objWidget->noIndex = $field;
-
-                if (is_numeric($objWidget->value)) {
-                    // date/time fields
-                    if ('date' === $config['eval']['rgxp']) {
-                        $objWidget->value = Date::parse(\Config::get('dateFormat'), $objWidget->value);
-                    } elseif ('time' === $config['eval']['rgxp']) {
-                        $objWidget->value = Date::parse(\Config::get('timeFormat'), $objWidget->value);
-                    } elseif ('datim' === $config['eval']['rgxp']) {
-                        $objWidget->value = Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                foreach ($box as $field) {
+                    if (!isset($this->arrDca['fields'][$field]) || !\is_array($this->arrDca['fields'][$field])) {
+                        continue;
                     }
+
+                    $config = $this->arrDca['fields'][$field];
+                    $id = $this->strName.'_'.$i.'_'.$field;
+                    $name = $this->strName.'['.$i.']['.$field.']';
+                    $value = $existing[$field];
+                    /** @var Widget $objWidget */
+                    if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
+                            $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
+                        continue;
+                    }
+
+                    // contao does not convert array field names to css id compatible selectors
+                    $objWidget->strId = $id;
+
+                    // add correct dca for bootstrapper since by normal behavior retrieval of the dca is impossible
+                    $objWidget->arrDca = $config;
+
+                    $objWidget->noIndex = $field;
+
+                    if (is_numeric($objWidget->value)) {
+                        // date/time fields
+                        if ('date' === $config['eval']['rgxp']) {
+                            $objWidget->value = Date::parse(\Config::get('dateFormat'), $objWidget->value);
+                        } elseif ('time' === $config['eval']['rgxp']) {
+                            $objWidget->value = Date::parse(\Config::get('timeFormat'), $objWidget->value);
+                        } elseif ('datim' === $config['eval']['rgxp']) {
+                            $objWidget->value = Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                        }
+                    }
+
+                    if (isset($this->arrWidgetErrors[$id])) {
+                        $objWidget->addError(implode('', $this->arrWidgetErrors[$id]));
+                    }
+
+                    $this->handleSpecialFields($objWidget, $config, $field, $this->strTable);
+
+                    $fields[$id] = $group['fields'][$id] = $objWidget;
                 }
 
-                if (isset($this->arrWidgetErrors[$id])) {
-                    $objWidget->addError(implode('', $this->arrWidgetErrors[$id]));
-                }
-
-                $this->handleSpecialFields($objWidget, $config, $field, $this->strTable);
-
-                $fields[$id] = $objWidget;
+                $groups[] = $group;
             }
 
             $rows[$i] = $fields;
+            $rowGroups[$i] = $groups;
         }
 
-        return $rows;
+        return [$rows, $rowGroups, $useLegends];
     }
 
     public function getEditorTemplate(): string
@@ -326,7 +348,7 @@ class MultiColumnEditor extends Widget
     protected function getRow(array $row, $palette = 'default')
     {
         if (!isset($this->arrDca['palettes']) || !\is_array($this->arrDca['palettes']) || !isset($this->arrDca['palettes'][$palette])) {
-            return $row;
+            return ['existing' => $row, 'boxes' => [array_keys($row)], 'legends' => []];
         }
 
         $boxes = \StringUtil::trimsplit(';', $this->arrDca['palettes'][$palette]);
@@ -397,7 +419,7 @@ class MultiColumnEditor extends Widget
             }
         }
 
-        return $existing;
+        return ['existing' => $existing, 'boxes' => $boxes, 'legends' => $legends];
     }
 
     /**

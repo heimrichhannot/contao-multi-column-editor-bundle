@@ -78,6 +78,41 @@
         }
       }
     }
+
+    .rows.grouped {
+      border: none;
+
+      > .mce-row {
+        border: 1px solid #d0d0d2;
+        display: block;
+        padding: 0;
+        margin-bottom: 2px;
+        position: relative;
+
+        & > fieldset {
+          display: flex;
+          flex-direction: column;
+          margin: 0;
+          padding: 0;
+
+          & > legend {
+            padding: 9px 0 9px 28px;
+            background-position-y: 11px;
+          }
+
+          & > .fields {
+            padding: .5rem 15px 0;
+          }
+        }
+
+        .actions {
+          position: absolute;
+          top: 9px;
+          right: 9px;
+          margin: 0;
+        }
+      }
+    }
   }
 
   & + .tl_tip {
