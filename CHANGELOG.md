@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.8.1] - 2020-10-06
+- fixed subpalettes
+
 ## [2.8.0] - 2020-10-06
 - added legend support to palettes
 

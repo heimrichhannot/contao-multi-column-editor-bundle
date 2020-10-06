@@ -351,71 +351,67 @@ class MultiColumnEditor extends Widget
             return ['existing' => $row, 'boxes' => [array_keys($row)], 'legends' => []];
         }
 
-        $boxes = \StringUtil::trimsplit(';', $this->arrDca['palettes'][$palette]);
-        $fields = [];
+        $boxes = StringUtil::trimsplit(';', $this->arrDca['palettes'][$palette]);
+        $existing = [];
 
         foreach ($boxes as $k => $v) {
             $eCount = 1;
-            $boxes[$k] = \StringUtil::trimsplit(',', $v);
+            $boxes[$k] = StringUtil::trimsplit(',', $v);
+            $fields = [];
 
-            foreach ($boxes[$k] as $kk => $vv) {
-                if (preg_match('/^\[.*\]$/', $vv)) {
+            foreach ($boxes[$k] as $kk => $fieldName) {
+                if (preg_match('/^\[.*\]$/', $fieldName)) {
                     ++$eCount;
 
                     continue;
                 }
 
-                if (preg_match('/^\{.*\}$/', $vv)) {
-                    $legends[$k] = substr($vv, 1, -1);
+                if (preg_match('/^\{.*\}$/', $fieldName)) {
+                    $legends[$k] = substr($fieldName, 1, -1);
                     unset($boxes[$k][$kk]);
                 }
 
-                $fields[] = $vv;
+                $existing[$fieldName] = $row[$fieldName] ?? $this->getDefaultValue($fieldName);
+
+                if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($fieldName,
+                        $this->arrDca['palettes']['__selector__'])) {
+                    $subPalette = null;
+
+                    if ('checkbox' == $this->arrDca['fields'][$fieldName]['inputType'] && !$this->arrDca['fields'][$fieldName]['eval']['multiple']) {
+                        // Look for a subpalette
+                        if ($row[$fieldName] && \strlen($this->arrDca['subpalettes'][$fieldName])) {
+                            $subPalette = $this->arrDca['subpalettes'][$fieldName];
+                        }
+                    } else {
+                        $key = $fieldName.'_'.$row[$fieldName];
+                        // Look for a subpalette
+                        if (\strlen($this->arrDca['subpalettes'][$key])) {
+                            $subPalette = $this->arrDca['subpalettes'][$key];
+                        }
+                    }
+
+                    if (null === $subPalette) {
+                        continue;
+                    }
+
+                    $sFields = StringUtil::trimsplit(',', $subPalette);
+
+                    foreach ($sFields as $sName) {
+                        if (!isset($this->arrDca['fields'][$sName])) {
+                            continue;
+                        }
+
+                        $sValue = null;
+
+                        $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
+                        array_insert($boxes[$k], $kk, $sName);
+                    }
+                }
             }
 
             // Unset a box if it does not contain any fields
             if (\count($boxes[$k]) < $eCount) {
                 unset($boxes[$k]);
-            }
-        }
-
-        $existing = [];
-
-        foreach ($fields as $name) {
-            $existing[$name] = $row[$name] ?? $this->getDefaultValue($name);
-
-            if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($name,
-                    $this->arrDca['palettes']['__selector__'])) {
-                $subPalette = null;
-
-                if ('checkbox' == $this->arrDca['fields'][$name]['inputType'] && !$this->arrDca['fields'][$name]['eval']['multiple']) {
-                    // Look for a subpalette
-                    if ($row[$name] && \strlen($this->arrDca['subpalettes'][$name])) {
-                        $subPalette = $this->arrDca['subpalettes'][$name];
-                    }
-                } else {
-                    $key = $name.'_'.$row[$name];
-                    // Look for a subpalette
-                    if (\strlen($this->arrDca['subpalettes'][$key])) {
-                        $subPalette = $this->arrDca['subpalettes'][$key];
-                    }
-                }
-
-                if (null === $subPalette) {
-                    continue;
-                }
-
-                $sFields = StringUtil::trimsplit(',', $subPalette);
-
-                foreach ($sFields as $sName) {
-                    if (!isset($this->arrDca['fields'][$sName])) {
-                        continue;
-                    }
-
-                    $sValue = null;
-
-                    $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
-                }
             }
         }
 
