@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.7.6] - 2020-10-06
+- fixed subpalettes not working with checkboxes
+
 ## [2.7.5] - 2020-10-01
 - fixed type issue
 

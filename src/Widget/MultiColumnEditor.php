@@ -368,7 +368,7 @@ class MultiColumnEditor extends Widget
 
                 if ('checkbox' == $this->arrDca['fields'][$name]['inputType'] && !$this->arrDca['fields'][$name]['eval']['multiple']) {
                     // Look for a subpalette
-                    if (\strlen($this->arrDca['subpalettes'][$name])) {
+                    if ($row[$name] && \strlen($this->arrDca['subpalettes'][$name])) {
                         $subPalette = $this->arrDca['subpalettes'][$name];
                     }
                 } else {
