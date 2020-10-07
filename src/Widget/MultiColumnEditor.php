@@ -251,7 +251,7 @@ class MultiColumnEditor extends Widget
         }
 
         if (empty($this->varValue)) {
-            return $rows;
+            return [$rows, [], $useLegends];
         }
 
         foreach ($this->varValue as $i => $row) {
