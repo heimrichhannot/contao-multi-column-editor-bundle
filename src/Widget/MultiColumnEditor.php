@@ -9,6 +9,7 @@
 namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 
 use Contao\BackendTemplate;
+use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
 use Contao\Environment;
@@ -127,7 +128,7 @@ class MultiColumnEditor extends Widget
 
         // add rows
         $data['editorFormAction'] = $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
-        list($rows, $groupRows, $useLegends) = $this->generateRows();
+        [$rows, $groupRows, $useLegends] = $this->generateRows();
         $data['rows'] = $rows;
         $data['groupRows'] = $groupRows;
         $data['legend'] = $useLegends;
@@ -243,6 +244,7 @@ class MultiColumnEditor extends Widget
         $rows = [];
         $groupRows = [];
         $useLegends = false;
+        $fieldConfigs = [];
 
         if (empty($this->varValue)) {
             if ($this->getMinRowCount() > 0) {
@@ -258,14 +260,14 @@ class MultiColumnEditor extends Widget
             $fields = [];
             $groups = [];
 
-            list('existing' => $existing, 'boxes' => $boxes, 'legends' => $legends) = $this->getRow($row);
+            ['existing' => $existing, 'boxes' => $boxes, 'legends' => $legends] = $this->getRow($row);
 
             foreach ($boxes as $boxIndex => $box) {
                 $group = [];
 
                 if (isset($legends[$boxIndex])) {
                     $useLegends = true;
-                    list($key, $cls) = explode(':', $legends[$boxIndex]);
+                    [$key, $cls] = explode(':', $legends[$boxIndex]);
                     $group['legend'] = ['key' => $key, 'closed' => $cls];
                     $group['legend']['lang'] = $GLOBALS['TL_LANG'][$this->strTable][$key] ?: $key;
                 }
@@ -296,11 +298,11 @@ class MultiColumnEditor extends Widget
                     if (is_numeric($objWidget->value)) {
                         // date/time fields
                         if ('date' === $config['eval']['rgxp']) {
-                            $objWidget->value = Date::parse(\Config::get('dateFormat'), $objWidget->value);
+                            $objWidget->value = Date::parse(Config::get('dateFormat'), $objWidget->value);
                         } elseif ('time' === $config['eval']['rgxp']) {
-                            $objWidget->value = Date::parse(\Config::get('timeFormat'), $objWidget->value);
+                            $objWidget->value = Date::parse(Config::get('timeFormat'), $objWidget->value);
                         } elseif ('datim' === $config['eval']['rgxp']) {
-                            $objWidget->value = Date::parse(\Config::get('datimFormat'), $objWidget->value);
+                            $objWidget->value = Date::parse(Config::get('datimFormat'), $objWidget->value);
                         }
                     }
 
@@ -310,7 +312,18 @@ class MultiColumnEditor extends Widget
 
                     $this->handleSpecialFields($objWidget, $config, $field, $this->strTable);
 
+                    $group['fieldConfigs'][$id]['class'] = $config['eval']['tl_class'];
+
+                    if ('checkbox' == $config['inputType'] && !$config['eval']['multiple'] && false !== strpos($config['eval']['tl_class'], 'w50')) {
+                        $group['fieldConfigs'][$id]['class'] .= ' cbx';
+                    }
+
+                    if (isset($config['eval']['dcaPicker']) && (\is_array($config['eval']['dcaPicker']) || true === $config['eval']['dcaPicker'])) {
+                        $group['fieldConfigs'][$id]['class'] .= ' dcapicker';
+                    }
+
                     $fields[$id] = $group['fields'][$id] = $objWidget;
+                    $group['fieldConfigs'][$id]['dca'] = $config;
                 }
 
                 $groups[] = $group;

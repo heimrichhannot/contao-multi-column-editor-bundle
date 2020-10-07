@@ -15,62 +15,72 @@
     {% else %}
         <div class="rows{{ legend|default() ? ' grouped'}}{{ sortable|default() ? ' sortable' }}">
             {% for iterator, row in groupRows %}
-                <div class="{{ 'mce-row row_' ~ iterator | trim }}" data-index="{{ iterator }}">
-                    {% for group in row %}
-                        {% if legend and group.legend is defined %}
-                            <fieldset id="pal_{{ group.legend.key }}_{{ iterator }}" class="tl_tbox{{ class|default ? ' ' ~ class }}{{ group.legend ? '' : ' nolegend' }}{{ group.legend.closed|default ? ' collapsed' }}">
-                                <legend onclick="AjaxRequest.toggleFieldset(this, '{{ group.legend.key }}_{{ iterator }}', '{{ table }}')">{{ group.legend.lang }}</legend>
-                        {% endif %}
+                {% block row %}
+                    <div class="{{ 'mce-row row_' ~ iterator | trim }}" data-index="{{ iterator }}">
+                        {% for group in row %}
+                            {% block row_group %}
+                                {% if legend and group.legend is defined %}
+                                    <fieldset id="pal_{{ group.legend.key }}_{{ iterator }}" class="tl_tbox{{ class|default ? ' ' ~ class }}{{ group.legend ? '' : ' nolegend' }}{{ group.legend.closed|default ? ' collapsed' }}">
+                                        <legend onclick="AjaxRequest.toggleFieldset(this, '{{ group.legend.key }}_{{ iterator }}', '{{ table }}')">{{ group.legend.lang }}</legend>
+                                {% endif %}
 
-                        <div class="fields long">
-                            {% for field, widget in group.fields %}
-                                {% if widget.type == "hidden" %}
-                                    {{ widget.parse()|raw }}
-                                {% else %}
-                                    {% if widget.datepicker|default or widget.dcaPicker|default %}
-                                        {% set wizard = ' wizard' %}
-                                    {% endif %}
-                                    <div class="{{ ('form-group ' ~ field  ~ wizard|default ~ (isBackend ? ' col' : '')) | trim }}" data-name="{{ widget.noIndex }}"{% if widget.groupStyle|default() %} style="{{ widget.groupStyle }}"{% endif %}>
-                                        {{ widget.parse()|raw }}
+                                {% block row_group_fields %}
+                                    <div class="fields long">
+                                        {% for field, widget in group.fields %}
+                                            {% block row_group_field %}
+                                                {% if widget.type == "hidden" %}
+                                                    {{ widget.parse()|raw }}
+                                                {% else %}
+                                                    {% if widget.datepicker|default or widget.dcaPicker|default %}
+                                                        {% set wizard = ' wizard' %}
+                                                    {% endif %}
+                                                    {% block row_group_field_default %}
+                                                        <div class="{{ ('form-group ' ~ field  ~ wizard|default ~ (isBackend ? ' col' : '')) | trim }}" data-name="{{ widget.noIndex }}"{% if widget.groupStyle|default() %} style="{{ widget.groupStyle }}"{% endif %}>
+                                                            {{ widget.parse()|raw }}
+                                                        </div>
+                                                    {% endblock %}
+                                                {% endif %}
+                                            {% endblock %}
+                                        {% endfor %}
                                     </div>
+                                {% endblock %}
+                                {% if legend and  group.legend is defined %}
+                                    </fieldset>
                                 {% endif %}
-                            {% endfor %}
-                        </div>
-                        {% if legend and  group.legend is defined %}
-                            </fieldset>
-                        {% endif %}
-                    {% endfor %}
-                    <div class="actions">
-                        {% if not disableAdd|default %}
-                            <a href="{{ ajaxAddUrl }}" class="add" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
-                                {% if isBackend %}
-                                    <img src="system/themes/flexible/icons/copy.svg" width="16" height="16">
-                                {% else %}
-                                    <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
-                                {% endif %}
-                            </a>
-                        {% endif %}
-                        {% if not disableRemove|default %}
-                            <a href="{{ ajaxDeleteUrl }}" class="delete" title="{{ 'huh.multicolumneditor.delete.default'|trans }}">
-                                {% if isBackend %}
-                                    <img src="system/themes/flexible/icons/delete.svg" width="16" height="16">
-                                {% else %}
-                                    <span>{{ 'huh.multicolumneditor.delete.default'|trans }}</span>
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                            {% endblock %}
+                        {% endfor %}
+                        <div class="actions">
+                            {% if not disableAdd|default %}
+                                <a href="{{ ajaxAddUrl }}" class="add" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
+                                    {% if isBackend %}
+                                        <img src="system/themes/flexible/icons/copy.svg" width="16" height="16">
+                                    {% else %}
+                                        <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                            {% if not disableRemove|default %}
+                                <a href="{{ ajaxDeleteUrl }}" class="delete" title="{{ 'huh.multicolumneditor.delete.default'|trans }}">
+                                    {% if isBackend %}
+                                        <img src="system/themes/flexible/icons/delete.svg" width="16" height="16">
+                                    {% else %}
+                                        <span>{{ 'huh.multicolumneditor.delete.default'|trans }}</span>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
 
-                        {% if sortable|default() %}
-                            <a class="drag-handle" href="{{ ajaxSortUrl }}" title="{{ 'huh.multicolumneditor.sort.default'|trans }}">
-                                {% if isBackend %}
-                                    <img src="system/themes/flexible/icons/drag.svg" width="16" height="16" alt="">
-                                {% else %}
-                                    <span>{{ 'huh.multicolumneditor.sort.default'|trans }}</span>
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                            {% if sortable|default() %}
+                                <a class="drag-handle" href="{{ ajaxSortUrl }}" title="{{ 'huh.multicolumneditor.sort.default'|trans }}">
+                                    {% if isBackend %}
+                                        <img src="system/themes/flexible/icons/drag.svg" width="16" height="16" alt="">
+                                    {% else %}
+                                        <span>{{ 'huh.multicolumneditor.sort.default'|trans }}</span>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
+                {% endblock %}
             {% endfor %}
         </div>
     {% endif %}

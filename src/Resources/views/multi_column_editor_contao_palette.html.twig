@@ -1,0 +1,16 @@
+{% extends '@HeimrichHannotContaoMultiColumnEditor/multi_column_editor_default.html.twig' %}
+
+{% block row_group_fields %}
+    <div class="">
+        {% for field, widget in group.fields %}
+            {{ block('row_group_field') }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block row_group_field_default %}
+    {% set fieldConfig = group.fieldConfigs[field].dca %}
+    <div class="widget{{ group.fieldConfigs[field].class ? ' ' ~ group.fieldConfigs[field].class }} {{ (' ' ~ field  ~ wizard|default ~ (isBackend ? ' col' : '')) | trim }}" data-name="{{ widget.noIndex }}"{% if widget.groupStyle|default() %} style="{{ widget.groupStyle }}"{% endif %}>
+        {{ widget.parse()|raw }}
+    </div>
+{% endblock %}
