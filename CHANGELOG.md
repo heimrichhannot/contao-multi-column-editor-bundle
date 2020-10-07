@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.8.2] - 2020-10-06
+## [2.9.0] - 2020-10-07
 - added collapsed support for legends (legend:hide)
 
 ## [2.8.1] - 2020-10-06
