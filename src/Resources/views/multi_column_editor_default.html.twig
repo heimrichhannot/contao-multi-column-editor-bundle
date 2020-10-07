@@ -18,7 +18,7 @@
                 <div class="{{ 'mce-row row_' ~ iterator | trim }}" data-index="{{ iterator }}">
                     {% for group in row %}
                         {% if legend and group.legend is defined %}
-                            <fieldset id="pal_{{ group.legend.key }}_{{ iterator }}" class="tl_tbox {{ class|default }}{{ group.legend ? '' : ' nolegend' }}">
+                            <fieldset id="pal_{{ group.legend.key }}_{{ iterator }}" class="tl_tbox{{ class|default ? ' ' ~ class }}{{ group.legend ? '' : ' nolegend' }}{{ group.legend.closed|default ? ' collapsed' }}">
                                 <legend onclick="AjaxRequest.toggleFieldset(this, '{{ group.legend.key }}_{{ iterator }}', '{{ table }}')">{{ group.legend.lang }}</legend>
                         {% endif %}
 
