@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.10.0-DEV] - 2020-10-07
-
+- added template to support contao dca css classes (`multi_column_editor_contao_palette`)
 
 ## [2.9.1] - 2020-10-07
 - fixed a warning on empty mce widgets
