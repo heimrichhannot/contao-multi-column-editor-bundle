@@ -223,7 +223,7 @@ class MultiColumnEditor extends Widget
             return;
         }
 
-        $this->updateSession($offset, true);
+        $this->updateSession($offset, 'delete');
 
         unset($this->varValue[$offset]);
     }
@@ -234,6 +234,7 @@ class MultiColumnEditor extends Widget
     public function sortRows()
     {
         // update indexes
+        $this->updateSession(0, 'sort', array_keys($this->varValue));
         $this->varValue = array_values($this->varValue);
     }
 
@@ -805,10 +806,13 @@ class MultiColumnEditor extends Widget
     }
 
     /**
-     * @return array
+     * @param string $action 'add', 'delete', 'sort'
      */
-    protected function updateSession(int $offset, bool $delete = false): void
+    protected function updateSession(int $offset, string $action = 'add', array $sort = []): void
     {
+        if ('sort' === $action && empty($sort)) {
+            return;
+        }
         $fs = $this->contaoSessionBackend->get('fieldset_states');
 
         $filtered = array_filter($fs[$this->strTable] ?: [], function ($key, $value) use ($offset) {
@@ -826,27 +830,42 @@ class MultiColumnEditor extends Widget
         }, ARRAY_FILTER_USE_BOTH);
 
         if (!empty($filtered)) {
-            if (!$delete) {
+            if ('add' === $action) {
                 $filtered = array_reverse($filtered);
+            }
+
+            if ('sort' === $action) {
+                $sorting = [];
             }
 
             foreach ($filtered as $key => $value) {
                 $parts = explode('_', $key);
                 $legend = $parts[2].('legend' === $parts[3] ? '_legend' : '');
                 $row = (int) end($parts);
-                $newRow = $delete ? ($row - 1) : ($row + 1);
 
-                $fs[$this->strTable][$this->generateLegendId($legend, $newRow)] = $fs[$this->strTable][$key];
-
-                if ($delete) {
-                    if ($row === \count($this->varValue)) {
-                        unset($fs[$this->strTable][$key]);
+                if ('sort' === $action) {
+                    if (false !== ($index = array_search($row, $sort))) {
+                        $sorting[$this->generateLegendId($legend, $index)] = $fs[$this->strTable][$key];
                     }
+                    unset($fs[$this->strTable][$key]);
                 } else {
-                    if ($row > $offset) {
-                        unset($fs[$this->strTable][$key]);
+                    $newRow = 'delete' === $action ? ($row - 1) : ($row + 1);
+                    $fs[$this->strTable][$this->generateLegendId($legend, $newRow)] = $fs[$this->strTable][$key];
+
+                    if ('delete' === $action) {
+                        if ($row === \count($this->varValue)) {
+                            unset($fs[$this->strTable][$key]);
+                        }
+                    } else {
+                        if ($row > $offset) {
+                            unset($fs[$this->strTable][$key]);
+                        }
                     }
                 }
+            }
+
+            if ('sort' === $action) {
+                $fs[$this->strTable] = array_merge($fs[$this->strTable], $sorting);
             }
             $this->contaoSessionBackend->set('fieldset_states', $fs);
         }
