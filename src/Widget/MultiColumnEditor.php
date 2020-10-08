@@ -19,6 +19,7 @@ use Contao\Widget;
 use HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class MultiColumnEditor extends Widget
 {
@@ -256,6 +257,10 @@ class MultiColumnEditor extends Widget
             return [$rows, [], $useLegends];
         }
 
+        /** @var Session $objSessionBag */
+        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
+        $fs = $objSessionBag->get('fieldset_states');
+
         foreach ($this->varValue as $i => $row) {
             $fields = [];
             $groups = [];
@@ -270,9 +275,22 @@ class MultiColumnEditor extends Widget
                     [$key, $cls] = explode(':', $legends[$boxIndex]);
                     $group['legend'] = ['key' => $key, 'closed' => $cls];
                     $group['legend']['lang'] = $GLOBALS['TL_LANG'][$this->strTable][$key] ?: $key;
+                    $group['legend']['id'] = $key.'_'.$i;
+                    $group['class'] = 'tl_tbox';
+
+                    if (isset($fs[$this->strTable][$group['legend']['id']])) {
+                        $group['class'] .= ($fs[$this->strTable][$group['legend']['id']] ? '' : ' collapsed');
+                    } else {
+                        $group['class'] .= ($cls ? ' '.$cls : '');
+                    }
                 }
 
                 foreach ($box as $field) {
+                    if (\is_array($field)) {
+                        $subpalette = $field['subpalette'];
+                        $field = $field['name'];
+                    }
+
                     if (!isset($this->arrDca['fields'][$field]) || !\is_array($this->arrDca['fields'][$field])) {
                         continue;
                     }
