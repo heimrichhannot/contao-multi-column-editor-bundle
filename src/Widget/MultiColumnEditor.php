@@ -19,7 +19,6 @@ use Contao\Widget;
 use HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class MultiColumnEditor extends Widget
 {
@@ -62,6 +61,8 @@ class MultiColumnEditor extends Widget
     /** @var ContainerInterface */
     protected $container;
 
+    protected $contaoSessionBackend;
+
     public function __construct($arrData)
     {
         parent::__construct($arrData);
@@ -70,6 +71,8 @@ class MultiColumnEditor extends Widget
         $this->arrDca = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiColumnEditor'];
         $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
         $this->container = System::getContainer();
+
+        $this->contaoSessionBackend = System::getContainer()->get('session')->getBag('contao_backend');
 
         if ($this->container->get('huh.utils.container')->isFrontend()) {
             $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW,
@@ -206,6 +209,8 @@ class MultiColumnEditor extends Widget
             }
         }
 
+        $this->updateSession($offset);
+
         array_insert($this->varValue, $offset, [$new]);
     }
 
@@ -217,6 +222,8 @@ class MultiColumnEditor extends Widget
         if (!\is_array($this->varValue) || empty($this->varValue) || !isset($this->varValue[$offset])) {
             return;
         }
+
+        $this->updateSession($offset, true);
 
         unset($this->varValue[$offset]);
     }
@@ -257,9 +264,7 @@ class MultiColumnEditor extends Widget
             return [$rows, [], $useLegends];
         }
 
-        /** @var Session $objSessionBag */
-        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
-        $fs = $objSessionBag->get('fieldset_states');
+        $fs = $this->contaoSessionBackend->get('fieldset_states');
 
         foreach ($this->varValue as $i => $row) {
             $fields = [];
@@ -275,13 +280,13 @@ class MultiColumnEditor extends Widget
                     [$key, $cls] = explode(':', $legends[$boxIndex]);
                     $group['legend'] = ['key' => $key, 'closed' => $cls];
                     $group['legend']['lang'] = $GLOBALS['TL_LANG'][$this->strTable][$key] ?: $key;
-                    $group['legend']['id'] = $key.'_'.$i;
+                    $group['legend']['id'] = $this->generateLegendId($key, $i);
                     $group['class'] = 'tl_tbox';
 
                     if (isset($fs[$this->strTable][$group['legend']['id']])) {
                         $group['class'] .= ($fs[$this->strTable][$group['legend']['id']] ? '' : ' collapsed');
                     } else {
-                        $group['class'] .= ($cls ? ' '.$cls : '');
+                        $group['class'] .= ($cls ? ' collapsed' : '');
                     }
                 }
 
@@ -390,7 +395,13 @@ class MultiColumnEditor extends Widget
             $boxes[$k] = StringUtil::trimsplit(',', $v);
             $fields = [];
 
+            $fieldIndex = 0;
+
             foreach ($boxes[$k] as $kk => $fieldName) {
+                if ($fieldIndex < $kk) {
+                    $fieldIndex = $kk;
+                }
+
                 if (preg_match('/^\[.*\]$/', $fieldName)) {
                     ++$eCount;
 
@@ -404,40 +415,7 @@ class MultiColumnEditor extends Widget
 
                 $existing[$fieldName] = $row[$fieldName] ?? $this->getDefaultValue($fieldName);
 
-                if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($fieldName,
-                        $this->arrDca['palettes']['__selector__'])) {
-                    $subPalette = null;
-
-                    if ('checkbox' == $this->arrDca['fields'][$fieldName]['inputType'] && !$this->arrDca['fields'][$fieldName]['eval']['multiple']) {
-                        // Look for a subpalette
-                        if ($row[$fieldName] && \strlen($this->arrDca['subpalettes'][$fieldName])) {
-                            $subPalette = $this->arrDca['subpalettes'][$fieldName];
-                        }
-                    } else {
-                        $key = $fieldName.'_'.$row[$fieldName];
-                        // Look for a subpalette
-                        if (\strlen($this->arrDca['subpalettes'][$key])) {
-                            $subPalette = $this->arrDca['subpalettes'][$key];
-                        }
-                    }
-
-                    if (null === $subPalette) {
-                        continue;
-                    }
-
-                    $sFields = StringUtil::trimsplit(',', $subPalette);
-
-                    foreach ($sFields as $sName) {
-                        if (!isset($this->arrDca['fields'][$sName])) {
-                            continue;
-                        }
-
-                        $sValue = null;
-
-                        $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
-                        array_insert($boxes[$k], $kk, $sName);
-                    }
-                }
+                $this->generateSubpalette($fieldName, $row, $boxes, $existing, $k, $fieldIndex);
             }
 
             // Unset a box if it does not contain any fields
@@ -447,6 +425,53 @@ class MultiColumnEditor extends Widget
         }
 
         return ['existing' => $existing, 'boxes' => $boxes, 'legends' => $legends];
+    }
+
+    protected function generateSubpalette(string $fieldName, array $row, array &$boxes, array &$existing, int $boxIndex, int &$fieldIndex)
+    {
+        if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($fieldName,
+                $this->arrDca['palettes']['__selector__'])) {
+            $subPalette = null;
+
+            if ('checkbox' == $this->arrDca['fields'][$fieldName]['inputType'] && !$this->arrDca['fields'][$fieldName]['eval']['multiple']) {
+                // Look for a subpalette
+                if ($row[$fieldName] && \strlen($this->arrDca['subpalettes'][$fieldName])) {
+                    $subPalette = $this->arrDca['subpalettes'][$fieldName];
+                }
+            } else {
+                $fieldValue = $row[$fieldName];
+
+                if (is_numeric($fieldValue) && !$this->arrDca['eval']['isAssociative']) {
+                    if (isset($this->arrDca['fields'][$fieldName]['options'][$fieldValue])) {
+                        $fieldValue = $this->arrDca['fields'][$fieldName]['options'][$fieldValue];
+                    }
+                }
+                $key = $fieldName.'_'.$fieldValue;
+                // Look for a subpalette
+                if (\strlen($this->arrDca['subpalettes'][$key])) {
+                    $subPalette = $this->arrDca['subpalettes'][$key];
+                }
+            }
+
+            if (null === $subPalette) {
+                return;
+            }
+
+            $sFields = StringUtil::trimsplit(',', $subPalette);
+
+            foreach ($sFields as $sName) {
+                if (!isset($this->arrDca['fields'][$sName])) {
+                    continue;
+                }
+
+                $sValue = null;
+
+                $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
+                array_insert($boxes[$boxIndex], $fieldIndex, $sName);
+                ++$fieldIndex;
+                $this->generateSubpalette($sName, $row, $boxes, $existing, $boxIndex, $fieldIndex);
+            }
+        }
     }
 
     /**
@@ -762,5 +787,68 @@ class MultiColumnEditor extends Widget
     protected function getMinRowCount(): int
     {
         return $this->arrDca['minRowCount'] ?? 1;
+    }
+
+    protected function generateLegendId(?string $legendName = null, ?int $row = null)
+    {
+        $legendId = 'mce_'.$this->objDca->id.'_';
+
+        if (null !== $legendName) {
+            $legendId .= $legendName.'_';
+        }
+
+        if (null !== $row) {
+            $legendId .= $row;
+        }
+
+        return $legendId;
+    }
+
+    /**
+     * @return array
+     */
+    protected function updateSession(int $offset, bool $delete = false): void
+    {
+        $fs = $this->contaoSessionBackend->get('fieldset_states');
+
+        $filtered = array_filter($fs[$this->strTable] ?: [], function ($key, $value) use ($offset) {
+            if (false === strpos($value, $this->generateLegendId())) {
+                return false;
+            }
+            $parts = explode('_', $value);
+            $row = end($parts);
+
+            if (!is_numeric($row) || (int) $row < $offset) {
+                return false;
+            }
+
+            return true;
+        }, ARRAY_FILTER_USE_BOTH);
+
+        if (!empty($filtered)) {
+            if (!$delete) {
+                $filtered = array_reverse($filtered);
+            }
+
+            foreach ($filtered as $key => $value) {
+                $parts = explode('_', $key);
+                $legend = $parts[2].('legend' === $parts[3] ? '_legend' : '');
+                $row = (int) end($parts);
+                $newRow = $delete ? ($row - 1) : ($row + 1);
+
+                $fs[$this->strTable][$this->generateLegendId($legend, $newRow)] = $fs[$this->strTable][$key];
+
+                if ($delete) {
+                    if ($row === \count($this->varValue)) {
+                        unset($fs[$this->strTable][$key]);
+                    }
+                } else {
+                    if ($row > $offset) {
+                        unset($fs[$this->strTable][$key]);
+                    }
+                }
+            }
+            $this->contaoSessionBackend->set('fieldset_states', $fs);
+        }
     }
 }
