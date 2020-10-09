@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.10.0-DEV] - 2020-10-08
+## [2.10.0] - 2020-10-09
 - added support for nested subpalettes
 - added fieldset state storage
 - added template to support contao dca css classes (`multi_column_editor_contao_palette`)
