@@ -12,6 +12,7 @@ use Contao\Config;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\DataContainer;
+use Contao\Input;
 use Contao\System;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
 use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
@@ -51,7 +52,7 @@ class HookListener
 
             case MultiColumnEditor::ACTION_DELETE_ROW:
                 $widget = $this->prepareWidgetForExecutePostActions($dc);
-                $widget->deleteRow($this->container->get('huh.request')->getPost('row'));
+                $widget->deleteRow(Input::post('row'));
 
                 throw new ResponseException(new Response($widget->generate()));
 

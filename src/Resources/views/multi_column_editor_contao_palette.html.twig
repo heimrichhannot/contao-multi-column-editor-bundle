@@ -1,7 +1,7 @@
 {% extends '@HeimrichHannotContaoMultiColumnEditor/multi_column_editor_default.html.twig' %}
 
 {% block row_group_fields %}
-    <div class="">
+    <div>
         {% for field, widget in group.fields %}
             {{ block('row_group_field') }}
         {% endfor %}

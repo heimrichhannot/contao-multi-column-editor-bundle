@@ -13,6 +13,7 @@ use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
 use Contao\Environment;
+use Contao\FrontendTemplate;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
@@ -93,6 +94,22 @@ class MultiColumnEditor extends Widget
     {
         $this->container->get(MceAssets::class)->addAssets();
 
+        $responseText = $this->generateEditorForm();
+        $hasTinyMce = false;
+
+        foreach ($this->arrDca['fields'] as $field) {
+            if ('textarea' === $field['inputType'] && isset($field['eval']['rte']) && 'tinyMCE' === $field['eval']['rte']) {
+                $hasTinyMce = true;
+
+                break;
+            }
+        }
+
+        if ($hasTinyMce) {
+            $template = new FrontendTemplate();
+            $responseText = '<script src="'.$template->asset('js/tinymce.min.js', 'contao-components/tinymce4').'"></script>'.$responseText;
+        }
+
         if ($this->container->get('huh.utils.container')->isBackend()) {
             // add the css inline on ajax call
             if (Environment::get('isAjaxRequest')) {
@@ -103,10 +120,10 @@ class MultiColumnEditor extends Widget
                 $inlineStyle = '';
             }
 
-            return $inlineStyle.'<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$this->generateEditorForm().$this->getErrorAsHTML().'</div>';
+            return $inlineStyle.'<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$responseText.$this->getErrorAsHTML().'</div>';
         }
 
-        return '<div class="multi-column-editor-wrapper">'.$this->generateEditorForm().'</div>';
+        return '<div class="multi-column-editor-wrapper">'.$responseText.'</div>';
     }
 
     /**

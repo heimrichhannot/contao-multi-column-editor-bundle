@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.10.1] - 2020-10-14
+- fixed issue when first row contains a tinyMce field
+- fixed deleting first element not working
+
 ## [2.10.0] - 2020-10-09
 - added support for nested subpalettes
 - added fieldset state storage
