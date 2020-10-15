@@ -228,7 +228,7 @@ class MultiColumnEditor extends Widget
 
         $this->updateSession($offset);
 
-        array_insert($this->varValue, $offset, [$new]);
+        array_insert($this->varValue, ($offset + 1), [$new]);
     }
 
     /**

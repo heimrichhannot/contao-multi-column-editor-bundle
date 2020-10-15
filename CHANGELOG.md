@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.10.2] - 2020-10-15
+- fixed an isse with new row positions
+
 ## [2.10.1] - 2020-10-14
 - fixed issue when first row contains a tinyMce field
 - fixed deleting first element not working
