@@ -229,6 +229,8 @@ class MultiColumnEditor extends Widget
         $this->updateSession($offset);
 
         array_insert($this->varValue, ($offset + 1), [$new]);
+
+        $this->sortRows();
     }
 
     /**
@@ -243,6 +245,8 @@ class MultiColumnEditor extends Widget
         $this->updateSession($offset, 'delete');
 
         unset($this->varValue[$offset]);
+
+        $this->sortRows();
     }
 
     /**
