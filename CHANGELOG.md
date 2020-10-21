@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.0-DEV] - 2020-10-20
+- added row_inner block to default editor template
+
 ## [2.10.2] - 2020-10-15
 - fixed an isse with new row positions
 
