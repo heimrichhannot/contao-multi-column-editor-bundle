@@ -106,8 +106,14 @@ class MultiColumnEditor extends Widget
         }
 
         if ($hasTinyMce) {
-            $template = new FrontendTemplate();
-            $responseText = '<script src="'.$template->asset('js/tinymce.min.js', 'contao-components/tinymce4').'"></script>'.$responseText;
+            if (version_compare(VERSION, '4.5') >= 0) {
+                $template = new FrontendTemplate();
+                $tinyMcePath = $template->asset('js/tinymce.min.js', 'contao-components/tinymce4');
+            } else {
+                $tinyMcePath = TL_ASSETS_URL.'assets/tinymce4/js/tinymce.min.js';
+            }
+
+            $responseText = '<script src="'.$tinyMcePath.'"></script>'.$responseText;
         }
 
         if ($this->container->get('huh.utils.container')->isBackend()) {

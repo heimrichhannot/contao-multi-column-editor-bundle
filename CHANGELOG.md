@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.1] - 2020-10-22
+- fixed tinyMce path for contao 4.4
+
 ## [2.11.0] - 2020-10-20
 - added row_inner block to default editor template
 - fixes row indices not correctly updated on adding and deleting rows
