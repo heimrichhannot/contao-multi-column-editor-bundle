@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.12.0] - 2020-11-06
+- added support for disabled attribute
+- respect values added or changed in getAttributesFromDca hook
+
 ## [2.11.1] - 2020-10-22
 - fixed tinyMce path for contao 4.4
 

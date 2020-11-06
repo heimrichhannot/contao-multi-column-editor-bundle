@@ -69,7 +69,7 @@ class MultiColumnEditor extends Widget
         parent::__construct($arrData);
 
         Controller::loadDataContainer($this->strTable);
-        $this->arrDca = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiColumnEditor'];
+        $this->arrDca = array_merge($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiColumnEditor'], $arrData['multiColumnEditor']);
         $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
         $this->container = System::getContainer();
 
@@ -165,6 +165,11 @@ class MultiColumnEditor extends Widget
 
         $data['mceErrors'] = $this->arrErrors;
 
+        if ($this->getAttribute('disabled')) {
+            $data['disabled'] = true;
+            $data['sortable'] = false;
+        }
+
         return $this->container->get('twig')->render(
             $this->container->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
             $data
@@ -174,6 +179,11 @@ class MultiColumnEditor extends Widget
     public function getDisableAdd(array $data): bool
     {
         $disable = false;
+
+        if ($this->getAttribute('disabled')) {
+            return true;
+        }
+
         $count = \count($data['rows']);
 
         if ($data['maxRowCount'] && $data['maxRowCount'] <= ($count)) {
@@ -186,6 +196,11 @@ class MultiColumnEditor extends Widget
     public function getDisableRemove(array $data): bool
     {
         $disable = false;
+
+        if ($this->getAttribute('disabled')) {
+            return true;
+        }
+
         $count = \count($data['rows']);
 
         if ($data['minRowCount'] && $data['minRowCount'] >= ($count)) {
@@ -332,6 +347,10 @@ class MultiColumnEditor extends Widget
                     $id = $this->strName.'_'.$i.'_'.$field;
                     $name = $this->strName.'['.$i.']['.$field.']';
                     $value = $existing[$field];
+
+                    if ($this->getAttribute('disabled')) {
+                        $config['eval']['disabled'] = true;
+                    }
                     /** @var Widget $objWidget */
                     if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
                             $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {

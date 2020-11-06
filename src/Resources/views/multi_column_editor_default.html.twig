@@ -8,10 +8,14 @@
         </div>
     {% endif %}
 
-    {% if(rows|length < 1 ) %}
-        <a href="{{ ajaxAddUrl }}" class="add first{% if isBackend %} tl_submit{% endif %}" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
-            <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
-        </a>
+    {% if(rows|length < 1) %}
+        {% if disableAdd|default(false) %}
+            <button class="add first{% if isBackend %} tl_submit{% endif %}" disabled><span>{{ 'huh.multicolumneditor.add.default'|trans }}</span></button>
+        {% else %}
+            <a href="{{ ajaxAddUrl }}" class="add first{% if isBackend %} tl_submit{% endif %}" title="{{ 'huh.multicolumneditor.add.default'|trans }}">
+                <span>{{ 'huh.multicolumneditor.add.default'|trans }}</span>
+            </a>
+        {% endif%}
     {% else %}
         <div class="rows{{ legend|default() ? ' grouped'}}{{ sortable|default() ? ' sortable' }}">
             {% for iterator, row in groupRows %}
