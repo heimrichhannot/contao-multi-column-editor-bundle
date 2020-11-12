@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.12.2-DEV] - 2020-11-12
+## [2.12.2] - 2020-11-12
 - fixed onload callback when used in frontend
 - fixed issue when deleting row with index 0 due issue in Contao StringUtil (see https://github.com/contao/contao/issues/2468)
 
