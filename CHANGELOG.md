@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.12.1] - 2020-11-11
+- fixed tinymce issue if an ordinary tinymce-based textarea is in place next to one in a multi column editor
+
 ## [2.12.0] - 2020-11-06
 - added support for disabled attribute
 - respect values added or changed in getAttributesFromDca hook

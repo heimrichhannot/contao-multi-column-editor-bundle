@@ -113,7 +113,7 @@ class MultiColumnEditor extends Widget
                 $tinyMcePath = TL_ASSETS_URL.'assets/tinymce4/js/tinymce.min.js';
             }
 
-            $responseText = '<script src="'.$tinyMcePath.'"></script>'.$responseText;
+            $responseText = '<script>window.tinymce || document.write(\'<script src="'.$tinyMcePath.'">\x3C/script>\')</script>'.$responseText;
         }
 
         if ($this->container->get('huh.utils.container')->isBackend()) {
