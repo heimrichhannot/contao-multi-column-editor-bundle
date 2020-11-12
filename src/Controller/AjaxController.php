@@ -94,8 +94,7 @@ class AjaxController
         if (isset($arrData['load_callback']) && \is_array($arrData['load_callback'])) {
             foreach ($arrData['load_callback'] as $callback) {
                 if (\is_array($callback)) {
-                    System::importStatic($callback[0]);
-                    $value = $this->{$callback[0]}->{$callback[1]}($value, $this->editor->dataContainer);
+                    $value = System::importStatic($callback[0])->{$callback[1]}($value, $this->editor->dataContainer);
                 } elseif (\is_callable($callback)) {
                     $value = $callback($value, $this->editor->dataContainer);
                 }
