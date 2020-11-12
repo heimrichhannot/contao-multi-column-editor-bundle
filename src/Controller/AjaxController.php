@@ -9,6 +9,7 @@
 namespace HeimrichHannot\MultiColumnEditorBundle\Controller;
 
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\Input;
 use Contao\System;
 use HeimrichHannot\AjaxBundle\Response\ResponseData;
 use HeimrichHannot\AjaxBundle\Response\ResponseSuccess;
@@ -46,7 +47,9 @@ class AjaxController
     public function deleteRow()
     {
         $this->prepareWidget();
-        $this->editor->deleteRow($this->container->get('huh.request')->getPost('row'));
+        // Fix an issue in contao StringUtil (see https://github.com/contao/contao/issues/2468, can be reverted when issue is fixed by contao)
+        $row = $this->container->get('huh.request')->getPost('row') ?: ('0' === Input::post('row') ? Input::post('row') : null);
+        $this->editor->deleteRow($row);
         $objResponse = new ResponseSuccess();
         $objResponse->setResult(new ResponseData(($this->editor->generate())));
 

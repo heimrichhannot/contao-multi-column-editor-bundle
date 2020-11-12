@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.12.2-DEV] - 2020-11-12
+- fixed onload callback when used in frontend
+- fixed issue when deleting row with index 0 due issue in Contao StringUtil (see https://github.com/contao/contao/issues/2468)
+
 ## [2.12.1] - 2020-11-11
 - fixed tinymce issue if an ordinary tinymce-based textarea is in place next to one in a multi column editor
 
