@@ -59,7 +59,6 @@
 .multi-column-editor-wrapper .multi-column-editor .mce-row .actions {
   display: inline-block;
   margin-left: auto;
-  align-self: end;
   min-width: 60px;
   text-align: right;
   margin-top: .75rem;
