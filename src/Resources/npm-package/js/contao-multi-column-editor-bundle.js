@@ -197,6 +197,9 @@ class MultiColumnEditorBundle {
                         link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
                         MultiColumnEditorBundle.initChosen(widget);
                         MultiColumnEditorBundle.initSortable(isBackend);
+                        MultiColumnEditorBundle.initTooltip(widget);
+
+                        // TODO hide Contao.tips of current link
 
                         for (var n = 0; n < scriptHtml.length; n++) {
                             eval(scriptHtml[n]);
@@ -247,6 +250,15 @@ document.addEventListener('DOMContentLoaded', MultiColumnEditorBundle.init);
                 widget.querySelectorAll('select.tl_chosen').forEach((el) => {
                     $$('#' + el.getAttribute('id')).chosen();
                 })
+            };
+            MultiColumnEditorBundle.initTooltip = function (widget) {
+                widget.querySelectorAll('a[title]').forEach(function (el) {
+                    new Tips.Contao($$(el).filter(function(i) {
+                        return i.title != ''
+                    }), {
+                        offset: {x:0, y:30}
+                    });
+                });
             };
         });
 
