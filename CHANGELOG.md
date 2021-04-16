@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.12.3] - 2021-04-16
+- Fix tooltip initiation + hide ([#15], [@rabauss])
+- updated local asset build script
+
 ## [2.12.2] - 2020-11-12
 - fixed onload callback when used in frontend
 - fixed issue when deleting row with index 0 due issue in Contao StringUtil (see https://github.com/contao/contao/issues/2468)
@@ -88,7 +92,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.5.3] - 2020-06-24
 
-- added array check in `HookListener` (see https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/7, thanks to zonky2!)
+- added array check in `HookListener` (see [#7], thanks to zonky2!)
 
 ## [2.5.2] - 2020-04-17
 
@@ -258,13 +262,13 @@ All notable changes to this project will be documented in this file.
 ## [1.0.12] - 2018-09-18
 
 ### Fixed
-- type issue in loadDataContainer hook (see https://github.com/heimrichhannot/contao-multi_column_editor/issues/3)
+- type issue in loadDataContainer hook ([#3])
 - code style
 
 ## [1.0.11] - 2018-09-17
 
 ### Fixed
-- issue in loadDataContainer hook (see https://github.com/heimrichhannot/contao-multi_column_editor/issues/3)
+- issue in loadDataContainer hook ([#3])
 
 ## [1.0.10] - 2018-09-11
 
@@ -315,3 +319,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - removed tl_member dca file, test data
+
+[@rabauss]: https://github.com/rabauss
+[#15]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/15
+[#7]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/7
+[#3]: https://github.com/heimrichhannot/contao-multi_column_editor/issues/3
