@@ -198,6 +198,10 @@ class MultiColumnEditorBundle {
                         MultiColumnEditorBundle.initChosen(widget);
                         MultiColumnEditorBundle.initSortable(isBackend);
 
+                        MultiColumnEditorBundle.hideTooltip();
+                        setTimeout(function () {MultiColumnEditorBundle.hideTooltip();}, 1000); // hide delayed tooltips
+                        MultiColumnEditorBundle.initTooltip(widget);
+
                         for (var n = 0; n < scriptHtml.length; n++) {
                             eval(scriptHtml[n]);
                         }
@@ -247,6 +251,20 @@ document.addEventListener('DOMContentLoaded', MultiColumnEditorBundle.init);
                 widget.querySelectorAll('select.tl_chosen').forEach((el) => {
                     $$('#' + el.getAttribute('id')).chosen();
                 })
+            };
+            MultiColumnEditorBundle.hideTooltip = function () {
+                document.querySelectorAll('.tip-wrap').forEach(function (tip) {
+                    tip.setStyle('display', 'none');
+                });
+            };
+            MultiColumnEditorBundle.initTooltip = function (widget) {
+                widget.querySelectorAll('a[title]').forEach(function (el) {
+                    new Tips.Contao($$(el).filter(function(i) {
+                        return i.title != ''
+                    }), {
+                        offset: {x:0, y:30}
+                    });
+                });
             };
         });
 
