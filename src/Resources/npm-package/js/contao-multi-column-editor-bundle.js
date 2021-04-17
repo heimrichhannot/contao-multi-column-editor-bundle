@@ -198,8 +198,7 @@ class MultiColumnEditorBundle {
                         MultiColumnEditorBundle.initChosen(widget);
                         MultiColumnEditorBundle.initSortable(isBackend);
 
-                        MultiColumnEditorBundle.hideTooltip();
-                        setTimeout(function () {MultiColumnEditorBundle.hideTooltip();}, 1000); // hide delayed tooltips
+                        MultiColumnEditorBundle.hideInteractiveHelp();
                         Backend.addInteractiveHelp();
 
                         for (var n = 0; n < scriptHtml.length; n++) {
@@ -252,10 +251,15 @@ document.addEventListener('DOMContentLoaded', MultiColumnEditorBundle.init);
                     $$('#' + el.getAttribute('id')).chosen();
                 })
             };
-            MultiColumnEditorBundle.hideTooltip = function () {
-                document.querySelectorAll('.tip-wrap').forEach(function (tip) {
-                    tip.setStyle('display', 'none');
-                });
+            MultiColumnEditorBundle.hideInteractiveHelp = function () {
+                var hideTips = function () {
+                    document.querySelectorAll('.tip-wrap').forEach(function (tip) {
+                        tip.setStyle('display', 'none');
+                    });
+                };
+                hideTips();
+                // hide delayed tips - timeout: Tips.Contao.options.showDelay
+                setTimeout(hideTips, 1000);
             };
         });
 
