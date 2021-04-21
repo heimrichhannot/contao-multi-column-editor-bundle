@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.12.4-DEV] - 2021-04-21
+- fixed picker support
+
 ## [2.12.3] - 2021-04-16
 - Fix tooltip initiation + hide ([#15], [@rabauss])
 - updated local asset build script

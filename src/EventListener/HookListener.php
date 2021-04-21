@@ -109,13 +109,25 @@ class HookListener
 
         $action = System::getContainer()->get('huh.request')->getPost('action');
 
-        // support for fileTree fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
-        if (('reloadPagetree' !== $action && 'reloadFiletree' !== $action) || 'fieldpalette' === $strTable || isset($dca['fields'][$name])) {
+        // support for picker fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
+        $pickerActions = ['reloadPicker', 'reloadPagetree', 'reloadFiletree'];
+        if (!in_array($action, $pickerActions) || 'fieldpalette' === $strTable || isset($dca['fields'][$name])) {
             return;
         }
 
-        if ($this->isMceField($name, $dca, $strTable)) {
+        if ($names = $this->isMceField($name, $dca, $strTable)) {
+           $mceField = &$dca['fields'][$names['dcaFieldName']]['eval']['multiColumnEditor']['fields'][$names['mceFieldName']];
+
             $dca['fields'][$name] = [];
+            if (isset($mceField['eval'])) {
+                $dca['fields'][$name]['eval'] = $mceField['eval'];
+            }
+            if (isset($mceField['foreignKey'])) {
+                $dca['fields'][$name]['foreignKey'] = $mceField['foreignKey'];
+            }
+            if (isset($mceField['relation'])) {
+                $dca['fields'][$name]['relation'] = $mceField['relation'];
+            }
         }
     }
 
@@ -188,16 +200,23 @@ class HookListener
             $dc));
     }
 
-    protected function isMceField($name, $dca, $table)
+    protected function isMceField($name, $dca, $table): ?array
     {
         $isMce = false;
+
         // <mceField>[<digit>][<row field>], e.g. hotels[0][image]
-        $cleanedName = preg_replace('/[^\[]+\[\d+\]\[([^\[\]]+)\]/i', '$1', $name);
+        if (1 !== preg_match('/^([^\[]+)\[\d+\]\[([^\[\]]+)\]$/i', $name, $matches)) {
+            return null;
+        }
+
+        $cleanedName = $matches[2];
+        $dcaFieldName = $matches[1];
+
         $mceFieldArrays = [];
 
         if (isset($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \is_array($GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table]) && \in_array($cleanedName,
                 $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'][$table])) {
-            return true;
+            return ['mceFieldName' => $cleanedName, 'dcaFieldName' => $dcaFieldName];
         }
 
         foreach ($dca['fields'] as $field => $data) {
@@ -209,16 +228,17 @@ class HookListener
         }
 
         if (empty($mceFieldArrays)) {
-            return false;
+            return null;
         }
 
         foreach ($mceFieldArrays as $field => $mceData) {
+
             if (\in_array(preg_replace('/^'.$field.'_/', '', $cleanedName),
                 array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
-                $isMce = true;
+                return ['mceFieldName' => $cleanedName, 'dcaFieldName' => $dcaFieldName];
             }
         }
 
-        return $isMce;
+        return null;
     }
 }

@@ -14,6 +14,7 @@ use Contao\Controller;
 use Contao\Date;
 use Contao\Environment;
 use Contao\FrontendTemplate;
+use Contao\Image;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
@@ -557,7 +558,7 @@ class MultiColumnEditor extends Widget
 
         if ($arrData['eval']['datepicker']) {
             $rgxp = $arrData['eval']['rgxp'];
-            $format = \Date::formatToJs(\Config::get($rgxp.'Format'));
+            $format = Date::formatToJs(Config::get($rgxp.'Format'));
 
             switch ($rgxp) {
                 case 'datim':
@@ -583,10 +584,10 @@ class MultiColumnEditor extends Widget
                 $strOnSelect = ",\n        onSelect: function() { Backend.autoSubmit(\"".$strTable.'"); }';
             }
 
-            $wizard .= ' '.\Image::getHtml(
+            $wizard .= ' '.Image::getHtml(
                     'assets/datepicker/images/icon.svg',
                     '',
-                    'title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']).'" id="toggle_'.$objWidget->id
+                    'title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['datepicker']).'" id="toggle_'.$objWidget->id
                     .'" style="cursor:pointer"'
                 ).'
   <script>
