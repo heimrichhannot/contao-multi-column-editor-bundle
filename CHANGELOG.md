@@ -1,8 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.12.4-DEV] - 2021-04-21
+## [2.12.4] - 2021-04-21
 - fixed picker support
+- Optimize tooltip ([#17], [@rabauss])
 
 ## [2.12.3] - 2021-04-16
 - Fix tooltip initiation + hide ([#15], [@rabauss])
@@ -10,7 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.12.2] - 2020-11-12
 - fixed onload callback when used in frontend
-- fixed issue when deleting row with index 0 due issue in Contao StringUtil (see https://github.com/contao/contao/issues/2468)
+- fixed issue when deleting row with index 0 due issue in Contao StringUtil (see [contao/contao#2468](https://github.com/contao/contao/issues/2468))
 
 ## [2.12.1] - 2020-11-11
 - fixed tinymce issue if an ordinary tinymce-based textarea is in place next to one in a multi column editor
@@ -230,100 +231,13 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - multiple listener issue
 
-## [1.2.3] - 2019-02-12
+## [1.x]
 
-### Fixed
-- clear output buffer
+You'll find the changelog for 1.x releases in older versions of this bundle (before 2.12.4)
 
-## [1.2.2] - 2019-02-08
-
-### Fixed
-- backend javascript issues in sub palettes
-
-## [1.2.1] - 2019-01-10
-
-### Fixed
-- load Sortable js library locally, not from CDN (privacy related)
-
-## [1.2.0] - 2019-01-10
-
-### Changed
-- now replaces multi column editor bundle
-- reverted change from 1.0.13
-- removed symfony 3 dependency
-
-## [1.1.0] - 2018-12-11
-
-### Removed
-- font awesome classes from frontend template
-
-## [1.0.13] - 2018-11-12
-
-### Fixed
-- Replace contao inserttags after render `editorTemplate`
-
-## [1.0.12] - 2018-09-18
-
-### Fixed
-- type issue in loadDataContainer hook ([#3])
-- code style
-
-## [1.0.11] - 2018-09-17
-
-### Fixed
-- issue in loadDataContainer hook ([#3])
-
-## [1.0.10] - 2018-09-11
-
-### Fixed
-- invalid yml
-
-## [1.0.9] - 2018-09-11
-
-### Fixed
-- contao 4.6 support for `huh.multicolumneditor.listener.hooks` service (added `public: true`)
-
-## [1.0.8] - 2018-09-06
-
-### Fixed
-- class issue in be template
-
-## [1.0.7] - 2018-08-06
-
-### Fixed
-- script execution after adding rows
-
-## [1.0.6] - 2018-07-02
-
-### Fixed
-- replaced missing `Containter` class from `heimrichhannot/contao-haste` with `heimrichhannot/contao-utils-bundle`
-
-## [1.0.5] - 2018-06-22
-
-### Fixed
-- issue when using in tl_settings
-
-## [1.0.4] - 2018-06-18
-
-### Fixed
-- javascript issue with checkboxes and adding rows
-
-## [1.0.3] - 2018-06-01
-
-### Fixed
-- activeRecord issue with ajax calls
-
-## [1.0.2] - 2018-05-25
-
-### Fixed
-- js issues
-
-## [1.0.1] - 2018-05-09
-
-### Fixed
-- removed tl_member dca file, test data
 
 [@rabauss]: https://github.com/rabauss
+[#17]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/17
 [#15]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/15
 [#7]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/7
 [#3]: https://github.com/heimrichhannot/contao-multi_column_editor/issues/3
