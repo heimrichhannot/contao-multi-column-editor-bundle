@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2020 Heimrich & Hannot GmbH
+ * Copyright (c) 2021 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -15,6 +15,7 @@ use Contao\Date;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\Image;
+use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Widget;
@@ -76,15 +77,11 @@ class MultiColumnEditor extends Widget
 
         $this->contaoSessionBackend = System::getContainer()->get('session')->getBag('contao_backend');
 
-        if ($this->container->get('huh.utils.container')->isFrontend()) {
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW,
-                new AjaxController($this, $this->container));
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW,
-                new AjaxController($this, $this->container));
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS,
-                new AjaxController($this, $this->container));
-            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_UPDATE_ROWS,
-                new AjaxController($this, $this->container));
+        if ($this->container->get('huh.utils.container')->isFrontend() && $arrData['name'] === Input::post('field')) {
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this, $this->container));
+            $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_UPDATE_ROWS, new AjaxController($this, $this->container));
         }
     }
 

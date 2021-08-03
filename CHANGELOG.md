@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.12.5] - 2021-08-03
+- fixed error on adding wrong fields to wrong mce if multiple are added to a frontend form
+- refactored AjaxController::prepareWidget()
+
 ## [2.12.4] - 2021-04-21
 - fixed picker support
 - Optimize tooltip ([#17], [@rabauss])

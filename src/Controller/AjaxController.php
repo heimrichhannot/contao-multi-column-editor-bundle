@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2020 Heimrich & Hannot GmbH
+ * Copyright (c) 2021 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -78,8 +78,8 @@ class AjaxController
 
     public function prepareWidget()
     {
-        $dc = $this->editor->dataContainer;
-        $field = $this->editor->dataContainer->inputName = $this->container->get('huh.request')->getPost('field');
+        $field = $this->container->get('huh.request')->getPost('field');
+        $this->editor->dataContainer->inputName = $field;
         $this->editor->dataContainer->field = $field;
 
         // The field does not exist
