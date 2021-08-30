@@ -24,7 +24,7 @@
     "issues": "https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues"
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.1|^8.0",
     "contao/core-bundle": "^4.4",
     "heimrichhannot-contao-components/sortablejs": "^1.8",
     "heimrichhannot/contao-utils-bundle": "^2.67",

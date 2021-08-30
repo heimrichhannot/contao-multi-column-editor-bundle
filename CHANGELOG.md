@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.0] - 2021-08-30
+
+- Added: php8 support
+
 ## [2.12.5] - 2021-08-03
 - fixed error on adding wrong fields to wrong mce if multiple are added to a frontend form
 - refactored AjaxController::prepareWidget()
