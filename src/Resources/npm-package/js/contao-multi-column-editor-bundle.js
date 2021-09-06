@@ -12,6 +12,7 @@ class MultiColumnEditorBundle {
 
         utilsBundle.event.addDynamicEventListener('click', '.multi-column-editor .add', function(item, event) {
             event.preventDefault();
+
             MultiColumnEditorBundle.triggerAction(isBackend, item, 'addRow', item.href);
         });
 
@@ -194,7 +195,8 @@ class MultiColumnEditorBundle {
                             scriptHtml.push(scriptElements[m].innerHTML);
                         }
 
-                        link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
+                        link.closest('.multi-column-editor-wrapper').innerHTML = response.querySelector('.multi-column-editor-wrapper').innerHTML;
+
                         MultiColumnEditorBundle.initChosen(widget);
                         MultiColumnEditorBundle.initSortable(isBackend);
 
@@ -218,7 +220,7 @@ class MultiColumnEditorBundle {
                         let response = document.createElement('div');
                         response.innerHTML = data.result.html;
 
-                        link.closest('.multi-column-editor-wrapper').replaceWith(response.querySelector('.multi-column-editor-wrapper'));
+                        link.closest('.multi-column-editor-wrapper').innerHTML = response.querySelector('.multi-column-editor-wrapper').innerHTML;
 
                         MultiColumnEditorBundle.initSortable(isBackend);
 

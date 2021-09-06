@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.1] - 2021-09-06
+
+- Removed: jQuery calls from js
+
 ## [2.13.0] - 2021-08-30
 
 - Added: php8 support
