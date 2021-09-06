@@ -96,7 +96,7 @@ class MultiColumnEditor extends Widget
         $hasTinyMce = false;
 
         foreach ($this->arrDca['fields'] as $field) {
-            if ('textarea' === $field['inputType'] && isset($field['eval']['rte']) && 'tinyMCE' === $field['eval']['rte']) {
+            if ('textarea' === $field['inputType'] && isset($field['eval']['rte']) && false !== strpos($field['eval']['rte'], 'tinyMCE')) {
                 $hasTinyMce = true;
 
                 break;

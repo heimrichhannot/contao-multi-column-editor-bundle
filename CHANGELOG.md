@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.2] - 2021-09-06
+
+- Fixed: missing tinyMce support if there's a custom tinyMCE config in the dca
+
 ## [2.13.1] - 2021-09-06
 
 - Removed: jQuery calls from js
