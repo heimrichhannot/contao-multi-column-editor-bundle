@@ -297,7 +297,9 @@ class MultiColumnEditor extends Widget
 
         if (empty($this->varValue)) {
             if ($this->getMinRowCount() > 0) {
-                $this->addRow(0);
+                for ($i = $this->getMinRowCount(); $i > 0; --$i) {
+                    $this->addRow(0);
+                }
             }
         }
 
@@ -871,7 +873,7 @@ class MultiColumnEditor extends Widget
             }
 
             return true;
-        }, ARRAY_FILTER_USE_BOTH);
+        }, \ARRAY_FILTER_USE_BOTH);
 
         if (!empty($filtered)) {
             if ('add' === $action) {

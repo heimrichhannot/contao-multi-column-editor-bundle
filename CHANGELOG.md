@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.3] - 2021-09-23
+
+- Fixed: minRowCount to add as many fields on initial load as configurated in dca
+
 ## [2.13.2] - 2021-09-06
 
 - Fixed: missing tinyMce support if there's a custom tinyMCE config in the dca
