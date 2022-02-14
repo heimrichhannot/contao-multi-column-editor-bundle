@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2020 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -111,20 +111,24 @@ class HookListener
 
         // support for picker fields -> bypass check in \Contao\Ajax -> comment "The field does not exist" line 282
         $pickerActions = ['reloadPicker', 'reloadPagetree', 'reloadFiletree'];
-        if (!in_array($action, $pickerActions) || 'fieldpalette' === $strTable || isset($dca['fields'][$name])) {
+
+        if (!\in_array($action, $pickerActions) || 'fieldpalette' === $strTable || isset($dca['fields'][$name])) {
             return;
         }
 
         if ($names = $this->isMceField($name, $dca, $strTable)) {
-           $mceField = &$dca['fields'][$names['dcaFieldName']]['eval']['multiColumnEditor']['fields'][$names['mceFieldName']];
+            $mceField = &$dca['fields'][$names['dcaFieldName']]['eval']['multiColumnEditor']['fields'][$names['mceFieldName']];
 
             $dca['fields'][$name] = [];
+
             if (isset($mceField['eval'])) {
                 $dca['fields'][$name]['eval'] = $mceField['eval'];
             }
+
             if (isset($mceField['foreignKey'])) {
                 $dca['fields'][$name]['foreignKey'] = $mceField['foreignKey'];
             }
+
             if (isset($mceField['relation'])) {
                 $dca['fields'][$name]['relation'] = $mceField['relation'];
             }
@@ -178,7 +182,7 @@ class HookListener
         }
 
         // Call the load_callback
-        if (\is_array($arrData['load_callback'])) {
+        if (isset($arrData['load_callback']) && \is_array($arrData['load_callback'])) {
             foreach ($arrData['load_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $callbackObj = System::importStatic($callback[0]);
@@ -232,7 +236,6 @@ class HookListener
         }
 
         foreach ($mceFieldArrays as $field => $mceData) {
-
             if (\in_array(preg_replace('/^'.$field.'_/', '', $cleanedName),
                 array_keys($mceData['eval']['multiColumnEditor']['fields']), true)) {
                 return ['mceFieldName' => $cleanedName, 'dcaFieldName' => $dcaFieldName];

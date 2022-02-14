@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -138,8 +138,8 @@ class MultiColumnEditor extends Widget
         $data = [];
         $data['fieldName'] = $this->strName;
         $data['table'] = $this->strTable;
-        $data['cssClass'] = $this->arrDca['class'];
-        $data['sortable'] = $this->arrDca['sortable'];
+        $data['cssClass'] = $this->arrDca['class'] ?? null;
+        $data['sortable'] = $this->arrDca['sortable'] ?? null;
         $data['minRowCount'] = $this->getMinRowCount();
         $data['maxRowCount'] = $this->getMaxRowCount();
 
@@ -382,7 +382,7 @@ class MultiColumnEditor extends Widget
 
                     $this->handleSpecialFields($objWidget, $config, $field, $this->strTable);
 
-                    $group['fieldConfigs'][$id]['class'] = $config['eval']['tl_class'];
+                    $group['fieldConfigs'][$id]['class'] = $config['eval']['tl_class'] ?? null;
 
                     if ('checkbox' == $config['inputType'] && !$config['eval']['multiple'] && false !== strpos($config['eval']['tl_class'], 'w50')) {
                         $group['fieldConfigs'][$id]['class'] .= ' cbx';
@@ -434,6 +434,7 @@ class MultiColumnEditor extends Widget
             return ['existing' => $row, 'boxes' => [array_keys($row)], 'legends' => []];
         }
 
+        $legends = [];
         $boxes = StringUtil::trimsplit(';', $this->arrDca['palettes'][$palette]);
         $existing = [];
 
@@ -495,7 +496,7 @@ class MultiColumnEditor extends Widget
                 }
                 $key = $fieldName.'_'.$fieldValue;
                 // Look for a subpalette
-                if (\strlen($this->arrDca['subpalettes'][$key])) {
+                if (isset($this->arrDca['subpalettes'][$key]) && \strlen($this->arrDca['subpalettes'][$key])) {
                     $subPalette = $this->arrDca['subpalettes'][$key];
                 }
             }
@@ -555,7 +556,7 @@ class MultiColumnEditor extends Widget
     {
         $wizard = '';
 
-        if ($arrData['eval']['datepicker']) {
+        if ($arrData['eval']['datepicker'] ?? false) {
             $rgxp = $arrData['eval']['rgxp'];
             $format = Date::formatToJs(Config::get($rgxp.'Format'));
 
@@ -606,7 +607,7 @@ class MultiColumnEditor extends Widget
         }
 
         // Color picker
-        if ($arrData['eval']['colorpicker']) {
+        if ($arrData['eval']['colorpicker'] ?? false) {
             // Support single fields as well (see #5240)
             $strKey = $arrData['eval']['multiple'] ? $strField.'_0' : $strField;
 
@@ -632,7 +633,7 @@ class MultiColumnEditor extends Widget
         }
 
         // dca picker
-        if ($arrData['eval']['dcaPicker']) {
+        if ($arrData['eval']['dcaPicker'] ?? false) {
             $ppId = 'pp_'.$objWidget->strId;
             $ctrl = 'ctrl_'.$objWidget->strId;
             $url = System::getContainer()->get('huh.utils.url')->getCurrentUrl(['skipParams' => true]);
@@ -656,7 +657,7 @@ class MultiColumnEditor extends Widget
         }
 
         // rte
-        if (!empty($arrData['eval']['rte'])) {
+        if (isset($arrData['eval']['rte']) && !empty($arrData['eval']['rte'])) {
             [$file, $type] = explode('|', $arrData['eval']['rte'], 2);
 
             $fileBrowserTypes = [];
@@ -682,7 +683,7 @@ class MultiColumnEditor extends Widget
 
         // subpalette handling
         // Internet Explorer does not support onchange for checkboxes and radio buttons
-        if ($arrData['eval']['submitOnChange']) {
+        if ($arrData['eval']['submitOnChange'] ?? false) {
             if ('checkbox' == $arrData['inputType'] || 'checkboxWizard' == $arrData['inputType'] || 'radio' == $arrData['inputType'] || 'radioTable' == $arrData['inputType']) {
                 $objWidget->addAttribute('data-mce-click', $this->getActionUrl(static::ACTION_UPDATE_ROWS));
                 $objWidget->onclick = null;
@@ -755,18 +756,18 @@ class MultiColumnEditor extends Widget
                 }
 
                 // Convert date formats into timestamps
-                if ('' !== $value && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'])) {
+                if ('' !== $value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'])) {
                     $objDate = new Date($value, Date::getFormatFromRgxp($config['eval']['rgxp']));
                     $value = $objDate->tstamp;
                 }
 
                 // Convert arrays
-                if ($config['eval']['multiple'] && isset($config['eval']['csv'])) {
+                if (($config['eval']['multiple'] ?? false) && isset($config['eval']['csv'])) {
                     $value = implode($config['eval']['csv'], StringUtil::deserialize($value, true));
                 }
 
                 // Trigger the save_callback
-                if (\is_array($config['save_callback'])) {
+                if (isset($config['save_callback']) && \is_array($config['save_callback'])) {
                     foreach ($config['save_callback'] as $callback) {
                         if (\is_array($callback)) {
                             $this->import($callback[0]);
@@ -861,7 +862,7 @@ class MultiColumnEditor extends Widget
         }
         $fs = $this->contaoSessionBackend->get('fieldset_states');
 
-        $filtered = array_filter($fs[$this->strTable] ?: [], function ($key, $value) use ($offset) {
+        $filtered = array_filter($fs[$this->strTable] ?? [], function ($key, $value) use ($offset) {
             if (false === strpos($value, $this->generateLegendId())) {
                 return false;
             }
