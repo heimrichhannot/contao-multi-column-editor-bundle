@@ -347,6 +347,9 @@ class MultiColumnEditor extends Widget
                     $id = $this->strName.'_'.$i.'_'.$field;
                     $name = $this->strName.'['.$i.']['.$field.']';
                     $value = $existing[$field];
+                    $inputType = $config['inputType'] ?? null;
+                    $multiple = $config['eval']['multiple'] ?? null;
+                    $rgxp = $config['eval']['rgxp'] ?? null;
 
                     if ($this->getAttribute('disabled')) {
                         $config['eval']['disabled'] = true;
@@ -367,11 +370,11 @@ class MultiColumnEditor extends Widget
 
                     if (is_numeric($objWidget->value)) {
                         // date/time fields
-                        if ('date' === $config['eval']['rgxp']) {
+                        if ('date' === $rgxp) {
                             $objWidget->value = Date::parse(Config::get('dateFormat'), $objWidget->value);
-                        } elseif ('time' === $config['eval']['rgxp']) {
+                        } elseif ('time' === $rgxp) {
                             $objWidget->value = Date::parse(Config::get('timeFormat'), $objWidget->value);
-                        } elseif ('datim' === $config['eval']['rgxp']) {
+                        } elseif ('datim' === $rgxp) {
                             $objWidget->value = Date::parse(Config::get('datimFormat'), $objWidget->value);
                         }
                     }
@@ -384,7 +387,7 @@ class MultiColumnEditor extends Widget
 
                     $group['fieldConfigs'][$id]['class'] = $config['eval']['tl_class'] ?? null;
 
-                    if ('checkbox' == $config['inputType'] && !$config['eval']['multiple'] && false !== strpos($config['eval']['tl_class'], 'w50')) {
+                    if ('checkbox' == $inputType && !$multiple && false !== strpos($config['eval']['tl_class'] ?? '', 'w50')) {
                         $group['fieldConfigs'][$id]['class'] .= ' cbx';
                     }
 

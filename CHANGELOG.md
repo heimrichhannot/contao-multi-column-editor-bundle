@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.5] - 2022-02-14
+
+- Fixed: array index issues in php 8+
+
 ## [2.13.4] - 2022-02-14
 
 - Fixed: array index issues in php 8+
