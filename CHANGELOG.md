@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.6] - 2022-02-24
+
+- Fixed: public dir for contao 4.13+
+
 ## [2.13.5] - 2022-02-14
 
 - Fixed: array index issues in php 8+
@@ -209,11 +213,11 @@ All notable changes to this project will be documented in this file.
 ## [2.1.2] - 2019-04-11
 
 ### Fixed
-- js error on accessing non existing variable that prevent vendor js like datepicker to work properly on async response 
-- small backend style adjustments 
+- js error on accessing non existing variable that prevent vendor js like datepicker to work properly on async response
+- small backend style adjustments
 
 ## [2.1.1] - 2019-04-10
- 
+
  ### Fixed
 - non-palette multi-column-editor fields had no values
 
@@ -225,7 +229,7 @@ All notable changes to this project will be documented in this file.
 - removed redundant attributes from template, please adjust your custom templates if you get unknown variable errors from twig
 
 ### Added
-- subpalette support with field selector and field_value selector (see README.md for more information) 
+- subpalette support with field selector and field_value selector (see README.md for more information)
 
 ### Fixed
 - `editAll` support in backend now works properly

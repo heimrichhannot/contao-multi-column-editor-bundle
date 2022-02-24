@@ -118,7 +118,7 @@ class MultiColumnEditor extends Widget
             // add the css inline on ajax call
             if (Environment::get('isAjaxRequest')) {
                 $inlineStyle = '<style>'.file_get_contents(
-                        TL_ROOT.'/web/bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.css'
+                        System::getContainer()->getParameter('contao.web_dir').'/bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.css'
                     ).'</style>';
             } else {
                 $inlineStyle = '';
