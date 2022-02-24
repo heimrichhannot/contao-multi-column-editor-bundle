@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.8] - 2022-02-24
+
+- Fixed: public dir for contao 4.13+
+
 ## [2.13.7] - 2022-02-24
 
 - Fixed: public dir for contao 4.13+
