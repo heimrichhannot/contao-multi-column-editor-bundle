@@ -703,9 +703,9 @@ class MultiColumnEditor extends Widget
 
     protected function help(array $arrData, string $strClass = ''): string
     {
-        $return = $arrData['label'][1];
+        $return = $arrData['label'][1] ?? '';
 
-        if (!\Config::get('showHelp') || 'password' === $arrData['inputType'] || '' === $return) {
+        if (!Config::get('showHelp') || 'password' === $arrData['inputType'] || '' === $return) {
             return '';
         }
 

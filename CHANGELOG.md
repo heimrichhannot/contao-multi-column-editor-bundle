@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.13.9] - 2022-05-31
+- Fixed: warning in php 8
+
 ## [2.13.8] - 2022-02-24
 
 - Fixed: public dir for contao 4.13+
