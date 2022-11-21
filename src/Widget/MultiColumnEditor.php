@@ -480,11 +480,11 @@ class MultiColumnEditor extends Widget
 
     protected function generateSubpalette(string $fieldName, array $row, array &$boxes, array &$existing, int $boxIndex, int &$fieldIndex)
     {
-        if (\is_array($this->arrDca['palettes']['__selector__']) && \in_array($fieldName,
+        if (\is_array($this->arrDca['palettes']['__selector__'] ?? null) && \in_array($fieldName,
                 $this->arrDca['palettes']['__selector__'])) {
             $subPalette = null;
 
-            if ('checkbox' == $this->arrDca['fields'][$fieldName]['inputType'] && !$this->arrDca['fields'][$fieldName]['eval']['multiple']) {
+            if ('checkbox' == $this->arrDca['fields'][$fieldName]['inputType'] && !($this->arrDca['fields'][$fieldName]['eval']['multiple'] ?? false)) {
                 // Look for a subpalette
                 if ($row[$fieldName] && \strlen($this->arrDca['subpalettes'][$fieldName])) {
                     $subPalette = $this->arrDca['subpalettes'][$fieldName];
