@@ -1,51 +1,40 @@
 <?php
 
 /*
- * Copyright (c) 2020 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\MultiColumnEditorBundle\Asset;
 
-use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
+use HeimrichHannot\EncoreContracts\PageAssetsTrait;
+use HeimrichHannot\UtilsBundle\Util\Utils;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
-class MceAssets
+class MceAssets implements ServiceSubscriberInterface
 {
-    /**
-     * @var ContainerUtil
-     */
-    protected $containerUtil;
-    /**
-     * @var \HeimrichHannot\EncoreBundle\Asset\FrontendAsset
-     */
-    protected $encoreFrontendAsset;
+    use PageAssetsTrait;
 
-    /**
-     * MceAssets constructor.
-     */
-    public function __construct(ContainerUtil $containerUtil)
-    {
-        $this->containerUtil = $containerUtil;
-    }
+    private Utils $utils;
 
-    public function setEncoreFrontendAsset(\HeimrichHannot\EncoreBundle\Asset\FrontendAsset $encoreFrontendAsset): void
+    public function __construct(Utils $utils)
     {
-        $this->encoreFrontendAsset = $encoreFrontendAsset;
+        $this->utils = $utils;
     }
 
     public function addAssets()
     {
-        if ($this->containerUtil->isBackend()) {
+        $GLOBALS['TL_JAVASCRIPT']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle.js|static';
+
+        if ($this->utils->container()->isBackend()) {
             $GLOBALS['TL_CSS']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle-be.css|static';
         } else {
-            $GLOBALS['TL_JAVASCRIPT']['sortablejs'] = 'assets/sortablejs/sortablejs/Sortable.min.js|static';
-
-            if ($this->encoreFrontendAsset) {
-                $this->encoreFrontendAsset->addActiveEntrypoint('contao-multi-column-editor-bundle');
-            }
+            $this->addPageEntrypoint('contao-multi-column-editor-bundle', [
+                'TL_JAVASCRIPT' => [
+                    'sortablejs' => 'assets/sortablejs/sortablejs/Sortable.min.js|static',
+                ],
+            ]);
         }
-
-        $GLOBALS['TL_JAVASCRIPT']['contao-multi-column-editor-bundle'] = 'bundles/heimrichhannotcontaomulticolumneditor/contao-multi-column-editor-bundle.js|static';
     }
 }

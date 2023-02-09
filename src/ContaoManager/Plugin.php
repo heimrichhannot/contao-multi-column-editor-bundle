@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2020 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,7 +25,12 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(HeimrichHannotContaoMultiColumnEditorBundle::class)->setLoadAfter([ContaoCoreBundle::class, 'multi_column_editor', HeimrichHannotContaoUtilsBundle::class]),
+            BundleConfig::create(HeimrichHannotContaoMultiColumnEditorBundle::class)
+                ->setLoadAfter([
+                    ContaoCoreBundle::class,
+                    'multi_column_editor',
+                    HeimrichHannotContaoUtilsBundle::class,
+                ]),
         ];
     }
 
@@ -33,9 +38,5 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
     {
         $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/services.yml');
         $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/listener.yml');
-
-        if (class_exists('HeimrichHannot\EncoreBundle\HeimrichHannotContaoEncoreBundle')) {
-            $loader->load('@HeimrichHannotContaoMultiColumnEditorBundle/Resources/config/config_encore.yml');
-        }
     }
 }
