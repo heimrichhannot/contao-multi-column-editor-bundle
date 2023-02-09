@@ -1,8 +1,0 @@
-huh_encore:
-  js_entries:
-    - name: contao-multi-column-editor-bundle
-      file: 'vendor/heimrichhannot/contao-multi-column-editor-bundle/src/Resources/assets/js/contao-multi-column-editor-bundle.js'
-  unset_global_keys:
-    js:
-      - sortablejs
-      - contao-multi-column-editor-bundle

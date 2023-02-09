@@ -1,8 +1,11 @@
 services:
   _defaults:
     autowire: true
+    autoconfigure: true
+
+
+  HeimrichHannot\MultiColumnEditorBundle\:
+    resource: '../../{Asset}/*'
 
   HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets:
     public: true
-    calls:
-      - [setEncoreFrontendAsset, ['@?HeimrichHannot\EncoreBundle\Asset\FrontendAsset']]
