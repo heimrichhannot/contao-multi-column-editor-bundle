@@ -547,7 +547,7 @@ class MultiColumnEditor extends Widget
             $value = $config['default'];
 
             // Encrypt the default value (see #3740)
-            if ($config['eval']['encrypt']) {
+            if ($config['eval']['encrypt'] ?? false) {
                 $value = $this->container->get('huh.utils.encryption')->encrypt($value);
             }
         }
@@ -583,7 +583,7 @@ class MultiColumnEditor extends Widget
             $strOnSelect = '';
 
             // Trigger the auto-submit function (see #8603)
-            if ($arrData['eval']['submitOnChange']) {
+            if ($arrData['eval']['submitOnChange'] ?? false) {
                 $strOnSelect = ",\n        onSelect: function() { Backend.autoSubmit(\"".$strTable.'"); }';
             }
 
