@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.14.1] - 2023-02-15
+- Fixed: warnings with php 8 ([#22], [@bildschirmartist])
+
 ## [2.14.0] - 2023-02-09
 - Added: encore contracts support ([#21])
 - Changed: require php >= 7.4
@@ -291,6 +294,8 @@ You'll find the changelog for 1.x releases in older versions of this bundle (bef
 
 
 [@rabauss]: https://github.com/rabauss
+[@bildschirmartist]: https://github.com/bildschirmartist
+[#22]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/22
 [#21]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/21
 [#17]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/17
 [#15]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/15
