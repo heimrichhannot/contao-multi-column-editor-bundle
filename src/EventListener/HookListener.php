@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -224,7 +224,7 @@ class HookListener
         }
 
         foreach ($dca['fields'] as $field => $data) {
-            if ('multiColumnEditor' !== $data['inputType'] || !isset($data['eval']['multiColumnEditor']['fields'])) {
+            if ('multiColumnEditor' !== ($data['inputType'] ?? null) || !isset($data['eval']['multiColumnEditor']['fields'])) {
                 continue;
             }
 
