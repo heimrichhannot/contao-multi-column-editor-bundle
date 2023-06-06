@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -490,7 +490,7 @@ class MultiColumnEditor extends Widget
                     $subPalette = $this->arrDca['subpalettes'][$fieldName];
                 }
             } else {
-                $fieldValue = $row[$fieldName];
+                $fieldValue = $row[$fieldName] ?? $this->arrDca['fields'][$fieldName]['default'] ?? null;
 
                 if (is_numeric($fieldValue) && !$this->arrDca['eval']['isAssociative']) {
                     if (isset($this->arrDca['fields'][$fieldName]['options'][$fieldValue])) {

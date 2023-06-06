@@ -1,9 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.14.3] - 2023-06-06
+- Fixed: default value not used if no value is set for subpalette generation
+- Fixed: warning in subpalette generation
+
 ## [2.14.2] - 2023-04-02
 - Fixed: warning
-
 
 ## [2.14.1] - 2023-02-15
 - Fixed: warnings with php 8 ([#22], [@bildschirmartist])
