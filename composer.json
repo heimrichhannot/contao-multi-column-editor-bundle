@@ -30,6 +30,7 @@
     "heimrichhannot/contao-utils-bundle": "^2.225",
     "heimrichhannot/contao-ajax-bundle": "^1.0",
     "heimrichhannot/contao-encore-contracts": "^1.0.2",
+    "heimrichhannot/contao-request-bundle": "^1.3",
     "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
   },
   "require-dev": {

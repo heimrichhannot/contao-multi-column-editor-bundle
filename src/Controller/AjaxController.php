@@ -16,6 +16,7 @@ use HeimrichHannot\AjaxBundle\Response\ResponseSuccess;
 use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
 use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AjaxController
@@ -36,8 +37,9 @@ class AjaxController
 
     public function addRow()
     {
-        $this->prepareWidget();
-        $this->editor->addRow((int) $this->container->get('huh.request')->getPost('row'));
+        $request = System::getContainer()->get('request_stack')->getCurrentRequest();
+        $this->prepareWidget($request);
+        $this->editor->addRow((int) $request->request->get('row'));
         $objResponse = new ResponseSuccess();
         $objResponse->setResult(new ResponseData(($this->editor->generate())));
 
@@ -46,9 +48,10 @@ class AjaxController
 
     public function deleteRow()
     {
+        $request = System::getContainer()->get('request_stack')->getCurrentRequest();
         $this->prepareWidget();
         // Fix an issue in contao StringUtil (see https://github.com/contao/contao/issues/2468, can be reverted when issue is fixed by contao)
-        $row = $this->container->get('huh.request')->getPost('row') ?: ('0' === Input::post('row') ? Input::post('row') : null);
+        $row = $request->request->get('row') ?: ('0' === Input::post('row') ? Input::post('row') : null);
         $this->editor->deleteRow($row);
         $objResponse = new ResponseSuccess();
         $objResponse->setResult(new ResponseData(($this->editor->generate())));
@@ -58,7 +61,8 @@ class AjaxController
 
     public function sortRows()
     {
-        $this->prepareWidget();
+        $request = System::getContainer()->get('request_stack')->getCurrentRequest();
+        $this->prepareWidget($request);
         $this->editor->sortRows();
         $objResponse = new ResponseSuccess();
         $objResponse->setResult(new ResponseData(($this->editor->generate())));
@@ -68,7 +72,8 @@ class AjaxController
 
     public function updateRows()
     {
-        $this->prepareWidget();
+        $request = System::getContainer()->get('request_stack')->getCurrentRequest();
+        $this->prepareWidget($request);
         $this->editor->updateRows();
         $objResponse = new ResponseSuccess();
         $objResponse->setResult(new ResponseData(($this->editor->generate())));
@@ -76,9 +81,9 @@ class AjaxController
         return $objResponse;
     }
 
-    public function prepareWidget()
+    public function prepareWidget(Request $request)
     {
-        $field = $this->container->get('huh.request')->getPost('field');
+        $field = $request->request->get('field');
         $this->editor->dataContainer->inputName = $field;
         $this->editor->dataContainer->field = $field;
 
@@ -105,7 +110,7 @@ class AjaxController
         }
 
         // Set the new value
-        $value = $this->container->get('huh.request')->getPost($this->editor->dataContainer->inputName, true);
+        $value = $request->request->get($this->editor->dataContainer->inputName);
         $this->editor->value = $value;
     }
 }

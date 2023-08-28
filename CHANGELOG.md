@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.15.0] - 2023-08-28
+- Changed: reduced request bundle usage
+- Fixed: missing request bundle dependency
+
 ## [2.14.3] - 2023-06-06
 - Fixed: default value not used if no value is set for subpalette generation
 - Fixed: warning in subpalette generation
