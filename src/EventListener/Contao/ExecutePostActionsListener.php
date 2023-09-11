@@ -92,7 +92,7 @@ class ExecutePostActionsListener
         $value = null;
 
         // Load the value
-        if ('overrideAll' != $this->container->get('huh.request')->getGet('act')) {
+        if ('overrideAll' != $request->query->get('act')) {
             if (in_array(
                 ($GLOBALS['TL_DCA'][$dc->table]['config']['dataContainer'] ?? ''),
                 ['File', DC_File::class]
