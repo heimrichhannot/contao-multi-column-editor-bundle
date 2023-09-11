@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.16.0] - 2023-09-11
+- Changed: remove request bundle dependency ([#23])
+- Changed: removed outdated test setup ([#23])
+
 ## [2.15.0] - 2023-08-28
 - Changed: reduced request bundle usage
 - Fixed: missing request bundle dependency
@@ -306,6 +310,8 @@ You'll find the changelog for 1.x releases in older versions of this bundle (bef
 
 [@rabauss]: https://github.com/rabauss
 [@bildschirmartist]: https://github.com/bildschirmartist
+
+[#23]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/23
 [#22]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/22
 [#21]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/21
 [#17]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/17
