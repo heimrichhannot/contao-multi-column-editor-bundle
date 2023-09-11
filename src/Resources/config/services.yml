@@ -5,7 +5,7 @@ services:
 
 
   HeimrichHannot\MultiColumnEditorBundle\:
-    resource: '../../{Asset}/*'
+    resource: '../../{Asset,EventListener}/*'
 
   HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets:
     public: true

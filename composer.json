@@ -30,36 +30,12 @@
     "heimrichhannot/contao-utils-bundle": "^2.225",
     "heimrichhannot/contao-ajax-bundle": "^1.0",
     "heimrichhannot/contao-encore-contracts": "^1.0.2",
-    "heimrichhannot/contao-request-bundle": "^1.3",
-    "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
-  },
-  "require-dev": {
-    "contao/test-case": "1.1.*",
-    "contao/manager-plugin": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.2",
-    "phpunit/phpunit": "^6.5",
-    "php-http/guzzle6-adapter": "^1.1",
-    "php-http/message-factory": "^1.0.2",
-    "php-coveralls/php-coveralls": "^2.0",
-    "symfony/phpunit-bridge": "^4.2"
+    "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0",
+    "psr/log": "^1.0 || ^2.0 || ^3.0"
   },
   "autoload": {
     "psr-4": {
       "HeimrichHannot\\MultiColumnEditorBundle\\": "src/"
-    },
-    "classmap": [
-      "src/"
-    ],
-    "exclude-from-classmap": [
-      "src/Resources/contao/config/",
-      "src/Resources/contao/dca/",
-      "src/Resources/contao/languages/",
-      "src/Resources/contao/templates/"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "HeimrichHannot\\MultiColumnEditorBundle\\Test\\": "tests/"
     }
   },
   "extra": {

@@ -11,12 +11,6 @@ $GLOBALS['BE_FFL']['multiColumnEditor'] = 'HeimrichHannot\MultiColumnEditorBundl
 $GLOBALS['TL_FFL']['multiColumnEditor'] = 'HeimrichHannot\MultiColumnEditorBundle\Form\FormMultiColumnEditor';
 
 /**
- * Hooks
- */
-$GLOBALS['TL_HOOKS']['executePostActions']['multiColumnEditor'] = ['huh.multicolumneditor.listener.hooks', 'executePostActionsHook'];
-$GLOBALS['TL_HOOKS']['loadDataContainer']['multiColumnEditor']  = ['huh.multicolumneditor.listener.hooks', 'loadDataContainerHook'];
-
-/**
  * RSCE
  */
 $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'] = [];
