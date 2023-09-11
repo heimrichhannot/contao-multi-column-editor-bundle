@@ -1,6 +1,0 @@
-services:
-  _defaults:
-    autowire: true
-  huh.multicolumneditor.listener.hooks:
-    class: HeimrichHannot\MultiColumnEditorBundle\EventListener\HookListener
-    public: true
