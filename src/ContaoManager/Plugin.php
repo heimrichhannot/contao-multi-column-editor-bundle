@@ -14,7 +14,7 @@ use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use HeimrichHannot\MultiColumnEditorBundle\HeimrichHannotContaoMultiColumnEditorBundle;
-use HeimrichHannot\UtilsBundle\HeimrichHannotContaoUtilsBundle;
+use HeimrichHannot\UtilsBundle\HeimrichHannotUtilsBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
 class Plugin implements BundlePluginInterface, ConfigPluginInterface
@@ -29,7 +29,7 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
                     'multi_column_editor',
-                    HeimrichHannotContaoUtilsBundle::class,
+                    HeimrichHannotUtilsBundle::class
                 ]),
         ];
     }

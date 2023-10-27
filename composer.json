@@ -30,6 +30,7 @@
     "heimrichhannot/contao-utils-bundle": "^2.225",
     "heimrichhannot/contao-ajax-bundle": "^1.0",
     "heimrichhannot/contao-encore-contracts": "^1.0.2",
+    "heimrichhannot/contao-twig-support-bundle": "^1.0",
     "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0",
     "psr/log": "^1.0 || ^2.0 || ^3.0"
   },

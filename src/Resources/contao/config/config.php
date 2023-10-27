@@ -3,12 +3,16 @@
 /**
  * Backend form fields
  */
-$GLOBALS['BE_FFL']['multiColumnEditor'] = 'HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor';
+
+use HeimrichHannot\MultiColumnEditorBundle\Form\FormMultiColumnEditor;
+use HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor;
+
+$GLOBALS['BE_FFL']['multiColumnEditor'] = MultiColumnEditor::class;
 
 /**
  * Frontend form fields
  */
-$GLOBALS['TL_FFL']['multiColumnEditor'] = 'HeimrichHannot\MultiColumnEditorBundle\Form\FormMultiColumnEditor';
+$GLOBALS['TL_FFL']['multiColumnEditor'] = FormMultiColumnEditor::class;
 
 /**
  * RSCE
@@ -18,21 +22,21 @@ $GLOBALS['MULTI_COLUMN_EDITOR']['rsce_fields'] = [];
 /**
  * Ajax
  */
-$GLOBALS['AJAX'][\HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::NAME] = [
+$GLOBALS['AJAX'][MultiColumnEditor::NAME] = [
     'actions' => [
-        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_ADD_ROW    => [
+        MultiColumnEditor::ACTION_ADD_ROW    => [
             'arguments' => ['row', 'field', 'table'],
             'optional'  => [],
         ],
-        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_DELETE_ROW => [
+        MultiColumnEditor::ACTION_DELETE_ROW => [
             'arguments' => ['row', 'field', 'table'],
             'optional'  => [],
         ],
-        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_SORT_ROWS => [
+        MultiColumnEditor::ACTION_SORT_ROWS => [
             'arguments' => ['field', 'table'],
             'optional'  => [],
         ],
-        \HeimrichHannot\MultiColumnEditorBundle\Widget\MultiColumnEditor::ACTION_UPDATE_ROWS    => [
+        MultiColumnEditor::ACTION_UPDATE_ROWS    => [
             'arguments' => ['row', 'field', 'table'],
             'optional'  => [],
         ],

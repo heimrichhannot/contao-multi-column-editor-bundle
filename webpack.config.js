@@ -9,8 +9,7 @@ Encore
     .enableSassLoader()
     .disableSingleRuntimeChunk()
     .addExternals({
-        'sortablejs': 'Sortable',
-        '@hundh/contao-utils-bundle': 'utilsBundle'
+        'sortablejs': 'Sortable'
     })
     .enableSourceMaps(!Encore.isProduction())
 ;
