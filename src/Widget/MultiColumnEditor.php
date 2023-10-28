@@ -8,6 +8,7 @@
 
 namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 
+use Contao\Backend;
 use Contao\BackendTemplate;
 use Contao\Config;
 use Contao\Controller;
@@ -23,6 +24,7 @@ use Contao\System;
 use Contao\Widget;
 use HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
+use HeimrichHannot\MultiColumnEditorBundle\Helper\FormHelper;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -179,13 +181,6 @@ class MultiColumnEditor extends Widget
             $data['sortable'] = false;
         }
 
-
-//        System::getContainer()->get('twig')->render()
-
-        /** @var FinderFactory $finder */
-//        $finder = System::getContainer()->get('contao.twig.finder_factory');
-//        $finder->create()->identifier($this->getEditorTemplate())->asTemplateOptions();
-
         $twig = System::getContainer()->get('twig');
         if (System::getContainer()->has('huh.utils.template')) {
             return $twig->render(
@@ -193,7 +188,9 @@ class MultiColumnEditor extends Widget
                 $data
             );
         } elseif ($twig->getLoader()->exists('@Contao/'.$this->getEditorTemplate().'.html.twig')) {
-            return $twig->render('@Contao/'.$this->getEditorTemplate().'.html.twig', $data);
+            return $twig->render('@Contao/' . $this->getEditorTemplate() . '.html.twig', $data);
+        } elseif ($twig->getLoader()->exists('@HeimrichHannotContaoMultiColumnEditor/' . $this->getEditorTemplate() . '.html.twig')) {
+            return $twig->render('@HeimrichHannotContaoMultiColumnEditor/' . $this->getEditorTemplate() . '.html.twig', $data);
         } else {
             return $twig->render('@HeimrichHannotContaoMultiColumnEditor/multi_column_editor_default.html.twig', $data);
         }
@@ -573,7 +570,8 @@ class MultiColumnEditor extends Widget
 
             // Encrypt the default value (see #3740)
             if ($config['eval']['encrypt'] ?? false) {
-                $value = $this->container->get('huh.utils.encryption')->encrypt($value);
+                trigger_deprecation('contao/multi-column-editor-bundle', '2.17.0', 'Using the "encrypt" option in the DCA is deprecated and will no longer be supported in Multi Column Editor Bundle 3.0. Please use another solution for encrypting values.');
+                $value = FormHelper::encrypt($value, System::getContainer()->getParameter('secret'));
             }
         }
 
@@ -662,26 +660,7 @@ class MultiColumnEditor extends Widget
 
         // dca picker
         if ($arrData['eval']['dcaPicker'] ?? false) {
-            $ppId = 'pp_'.$objWidget->strId;
-            $ctrl = 'ctrl_'.$objWidget->strId;
-            $url = System::getContainer()->get('huh.utils.url')->getCurrentUrl(['skipParams' => true]);
-
-            $link = sprintf('<a href="%s/picker?context=link&amp;value=" title="" id="%s"><img src="system/themes/flexible/icons/pickpage.svg" width="16" height="16" alt="Seiten auswählen"></a>',
-                $url, $ppId);
-            $script = sprintf('<script>$("%s").addEvent("click", function(e) {
-                  e.preventDefault();
-                  Backend.openModalSelector({
-                    "id": "tl_listing",
-                    "title": "Link-Adresse",
-                    "url": this.href + "&value=" + document.getElementById("%s").value,
-                    "callback": function(picker, value) {
-                      $("%s").value = value.join(",");
-                    }.bind(this)
-                  });
-                });
-              </script>', $ppId, $ctrl, $ctrl);
-
-            $wizard .= $link.$script;
+            $wizard .= Backend::getDcaPickerWizard($arrData['eval']['dcaPicker'], $strTable, $strField, $objWidget->strId);
         }
 
         // rte
@@ -698,7 +677,7 @@ class MultiColumnEditor extends Widget
             }
 
             /** @var BackendTemplate|object $objTemplate */
-            $objTemplate = new \BackendTemplate('be_'.$file);
+            $objTemplate = new BackendTemplate('be_'.$file);
             $objTemplate->selector = 'ctrl_'.$objWidget->id;
             $objTemplate->type = $type;
             $objTemplate->fileBrowserTypes = $fileBrowserTypes;
@@ -987,7 +966,7 @@ class MultiColumnEditor extends Widget
         $mode = \in_array($mode, ['FE', 'BE']) ? $mode : 'FE';
         $class = 'FE' === $mode ? $GLOBALS['TL_FFL'][$data['inputType']] : $GLOBALS['BE_FFL'][$data['inputType']];
         /** @var $widget Widget */
-        $widget = $this->framework->getAdapter(Widget::class);
+        $widget = System::getContainer()->get('contao.framework')->getAdapter(Widget::class);
 
         if (empty($class) || !class_exists($class)) {
             return null;
