@@ -25,12 +25,11 @@
   },
   "require": {
     "php": "^7.4 || ^8.0",
-    "contao/core-bundle": "^4.9",
+    "contao/core-bundle": "^4.9 || ^5.0",
     "heimrichhannot-contao-components/sortablejs": "^1.8",
-    "heimrichhannot/contao-utils-bundle": "^2.225",
+    "heimrichhannot/contao-utils-bundle": "^2.225 || ^3.0-beta",
     "heimrichhannot/contao-ajax-bundle": "^1.0",
     "heimrichhannot/contao-encore-contracts": "^1.0.2",
-    "heimrichhannot/contao-twig-support-bundle": "^1.0",
     "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0",
     "symfony/deprecation-contracts": "^1.0 || ^2.0 || ^3.0",
     "psr/log": "^1.0 || ^2.0 || ^3.0"
