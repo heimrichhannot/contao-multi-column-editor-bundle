@@ -8,9 +8,13 @@
 
 namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 
+use Contao\ArrayUtil;
+use Contao\Backend;
 use Contao\BackendTemplate;
 use Contao\Config;
 use Contao\Controller;
+use Contao\CoreBundle\Twig\Finder\FinderFactory;
+use Contao\DataContainer;
 use Contao\Date;
 use Contao\Environment;
 use Contao\FrontendTemplate;
@@ -21,15 +25,20 @@ use Contao\System;
 use Contao\Widget;
 use HeimrichHannot\MultiColumnEditorBundle\Asset\MceAssets;
 use HeimrichHannot\MultiColumnEditorBundle\Controller\AjaxController;
+use HeimrichHannot\MultiColumnEditorBundle\Helper\FormHelper;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
+use Twig\Error\LoaderError;
 
 class MultiColumnEditor extends Widget
 {
-    const NAME = '_mce';
-    const ACTION_ADD_ROW = 'addRow';
-    const ACTION_DELETE_ROW = 'deleteRow';
-    const ACTION_SORT_ROWS = 'sortRows';
-    const ACTION_UPDATE_ROWS = 'updateRows';
+    public const NAME = '_mce';
+    public const ACTION_ADD_ROW = 'addRow';
+    public const ACTION_DELETE_ROW = 'deleteRow';
+    public const ACTION_SORT_ROWS = 'sortRows';
+    public const ACTION_UPDATE_ROWS = 'updateRows';
 
     /**
      * @var bool
@@ -56,15 +65,9 @@ class MultiColumnEditor extends Widget
      */
     protected $arrDca;
 
-    /**
-     * @var array
-     */
-    protected $arrWidgetErrors = [];
-
-    /** @var ContainerInterface */
-    protected $container;
-
-    protected $contaoSessionBackend;
+    protected array $arrWidgetErrors = [];
+    protected ContainerInterface $container;
+    protected SessionBagInterface $contaoSessionBackend;
 
     public function __construct($arrData)
     {
@@ -75,9 +78,15 @@ class MultiColumnEditor extends Widget
         $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
         $this->container = System::getContainer();
 
-        $this->contaoSessionBackend = System::getContainer()->get('session')->getBag('contao_backend');
+        if (System::getContainer()->has('session')) {
+            $this->contaoSessionBackend = System::getContainer()->get('session')->getBag('contao_backend');
+        } elseif (System::getContainer()->has('request_stack')) {
+            $this->contaoSessionBackend = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
+        }
 
-        if ($this->container->get('huh.utils.container')->isFrontend() && $arrData['name'] === Input::post('field')) {
+        $utils = System::getContainer()->get(Utils::class);
+
+        if ($utils->container()->isFrontend() && $arrData['name'] === Input::post('field')) {
             $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_ADD_ROW, new AjaxController($this, $this->container));
             $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_DELETE_ROW, new AjaxController($this, $this->container));
             $this->container->get('huh.ajax')->runActiveAction(static::NAME, static::ACTION_SORT_ROWS, new AjaxController($this, $this->container));
@@ -90,6 +99,8 @@ class MultiColumnEditor extends Widget
      */
     public function generate(): string
     {
+        $utils = System::getContainer()->get(Utils::class);
+
         $this->container->get(MceAssets::class)->addAssets();
 
         $responseText = $this->generateEditorForm();
@@ -114,7 +125,7 @@ class MultiColumnEditor extends Widget
             $responseText = '<script>window.tinymce || document.write(\'<script src="'.$tinyMcePath.'">\x3C/script>\')</script>'.$responseText;
         }
 
-        if ($this->container->get('huh.utils.container')->isBackend()) {
+        if ($utils->container()->isBackend()) {
             // add the css inline on ajax call
             if (Environment::get('isAjaxRequest')) {
                 $inlineStyle = '<style>'.file_get_contents(
@@ -135,6 +146,8 @@ class MultiColumnEditor extends Widget
      */
     public function generateEditorForm(): string
     {
+        $utils = System::getContainer()->get(Utils::class);
+
         $data = [];
         $data['fieldName'] = $this->strName;
         $data['table'] = $this->strTable;
@@ -148,11 +161,11 @@ class MultiColumnEditor extends Widget
         $data['ajaxDeleteUrl'] = $this->getActionUrl(static::ACTION_DELETE_ROW);
         $data['ajaxSortUrl'] = $this->getActionUrl(static::ACTION_SORT_ROWS);
 
-        $data['isBackend'] = $this->container->get('huh.utils.container')->isBackend();
-        $data['isFrontend'] = $this->container->get('huh.utils.container')->isFrontend();
+        $data['isBackend'] = $utils->container()->isBackend();
+        $data['isFrontend'] = $utils->container()->isFrontend();
 
         // add rows
-        $data['editorFormAction'] = $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
+        $data['editorFormAction'] = $this->getMainRequest()->getRequestUri();
         [$rows, $groupRows, $useLegends] = $this->generateRows();
         $data['rows'] = $rows;
         $data['groupRows'] = $groupRows;
@@ -168,10 +181,19 @@ class MultiColumnEditor extends Widget
             $data['sortable'] = false;
         }
 
-        return $this->container->get('twig')->render(
-            $this->container->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
-            $data
-        );
+        $twig = System::getContainer()->get('twig');
+        if (System::getContainer()->has('huh.utils.template')) {
+            return $twig->render(
+                System::getContainer()->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
+                $data
+            );
+        } elseif ($twig->getLoader()->exists('@Contao/'.$this->getEditorTemplate().'.html.twig')) {
+            return $twig->render('@Contao/' . $this->getEditorTemplate() . '.html.twig', $data);
+        } elseif ($twig->getLoader()->exists('@HeimrichHannotContaoMultiColumnEditor/' . $this->getEditorTemplate() . '.html.twig')) {
+            return $twig->render('@HeimrichHannotContaoMultiColumnEditor/' . $this->getEditorTemplate() . '.html.twig', $data);
+        } else {
+            return $twig->render('@HeimrichHannotContaoMultiColumnEditor/multi_column_editor_default.html.twig', $data);
+        }
     }
 
     public function getDisableAdd(array $data): bool
@@ -213,8 +235,8 @@ class MultiColumnEditor extends Widget
      */
     public function getActionUrl(string $action): string
     {
-        if ($this->container->get('huh.utils.container')->isBackend()) {
-            return $this->container->get('request_stack')->getMasterRequest()->getRequestUri();
+        if (System::getContainer()->get(Utils::class)->container()->isBackend()) {
+            return $this->getMainRequest()->getRequestUri();
         }
 
         return $this->container->get('huh.ajax.action')->generateUrl(static::NAME, $action);
@@ -247,7 +269,11 @@ class MultiColumnEditor extends Widget
 
         $this->updateSession($offset);
 
-        array_insert($this->varValue, ($offset + 1), [$new]);
+        if (class_exists(ArrayUtil::class) && method_exists(ArrayUtil::class, 'arrayInsert')) {
+            ArrayUtil::arrayInsert($this->varValue, ($offset + 1), [$new]);
+        } else {
+            array_insert($this->varValue, ($offset + 1), [$new]);
+        }
 
         $this->sortRows();
     }
@@ -354,9 +380,12 @@ class MultiColumnEditor extends Widget
                     if ($this->getAttribute('disabled')) {
                         $config['eval']['disabled'] = true;
                     }
+
+                    $mode = System::getContainer()->get(Utils::class)->container()->isBackend() ? 'BE' : 'FE';
+
                     /** @var Widget $objWidget */
-                    if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
-                            $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
+                    if (null === ($objWidget = $this->getWidgetFromAttributes($name,
+                            $config, $value, $name, $this->strTable, $this->dataContainer, $mode))) {
                         continue;
                     }
 
@@ -518,7 +547,13 @@ class MultiColumnEditor extends Widget
                 $sValue = null;
 
                 $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
-                array_insert($boxes[$boxIndex], $fieldIndex, $sName);
+                if (class_exists(ArrayUtil::class) && method_exists(ArrayUtil::class, 'arrayInsert')) {
+                    ArrayUtil::arrayInsert($boxes[$boxIndex], $fieldIndex, $sName);
+                } else {
+                    array_insert($boxes[$boxIndex], $fieldIndex, $sName);
+                }
+
+
                 ++$fieldIndex;
                 $this->generateSubpalette($sName, $row, $boxes, $existing, $boxIndex, $fieldIndex);
             }
@@ -548,7 +583,8 @@ class MultiColumnEditor extends Widget
 
             // Encrypt the default value (see #3740)
             if ($config['eval']['encrypt'] ?? false) {
-                $value = $this->container->get('huh.utils.encryption')->encrypt($value);
+                trigger_deprecation('contao/multi-column-editor-bundle', '2.17.0', 'Using the "encrypt" option in the DCA is deprecated and will no longer be supported in Multi Column Editor Bundle 3.0. Please use another solution for encrypting values.');
+                $value = FormHelper::encrypt($value, System::getContainer()->getParameter('secret'));
             }
         }
 
@@ -637,26 +673,7 @@ class MultiColumnEditor extends Widget
 
         // dca picker
         if ($arrData['eval']['dcaPicker'] ?? false) {
-            $ppId = 'pp_'.$objWidget->strId;
-            $ctrl = 'ctrl_'.$objWidget->strId;
-            $url = System::getContainer()->get('huh.utils.url')->getCurrentUrl(['skipParams' => true]);
-
-            $link = sprintf('<a href="%s/picker?context=link&amp;value=" title="" id="%s"><img src="system/themes/flexible/icons/pickpage.svg" width="16" height="16" alt="Seiten auswählen"></a>',
-                $url, $ppId);
-            $script = sprintf('<script>$("%s").addEvent("click", function(e) {
-                  e.preventDefault();
-                  Backend.openModalSelector({
-                    "id": "tl_listing",
-                    "title": "Link-Adresse",
-                    "url": this.href + "&value=" + document.getElementById("%s").value,
-                    "callback": function(picker, value) {
-                      $("%s").value = value.join(",");
-                    }.bind(this)
-                  });
-                });
-              </script>', $ppId, $ctrl, $ctrl);
-
-            $wizard .= $link.$script;
+            $wizard .= Backend::getDcaPickerWizard($arrData['eval']['dcaPicker'], $strTable, $strField, $objWidget->strId);
         }
 
         // rte
@@ -673,7 +690,7 @@ class MultiColumnEditor extends Widget
             }
 
             /** @var BackendTemplate|object $objTemplate */
-            $objTemplate = new \BackendTemplate('be_'.$file);
+            $objTemplate = new BackendTemplate('be_'.$file);
             $objTemplate->selector = 'ctrl_'.$objWidget->id;
             $objTemplate->type = $type;
             $objTemplate->fileBrowserTypes = $fileBrowserTypes;
@@ -745,7 +762,7 @@ class MultiColumnEditor extends Widget
                 $name = $this->strName.'['.$i.']['.$field.']';
 
                 /** @var Widget $objWidget */
-                if (null === ($objWidget = $this->container->get('huh.utils.form')->getWidgetFromAttributes($name,
+                if (null === ($objWidget = $this->getWidgetFromAttributes($name,
                         $config, null, $name, $this->strTable, $this->dataContainer))) {
                     continue;
                 }
@@ -919,5 +936,55 @@ class MultiColumnEditor extends Widget
             }
             $this->contaoSessionBackend->set('fieldset_states', $fs);
         }
+    }
+
+    private function getMainRequest(): ?Request
+    {
+        $requestStack = System::getContainer()->get('request_stack');
+        if (!$requestStack) {
+            return null;
+        }
+
+        if (method_exists($requestStack, 'getMainRequest')) {
+            return $requestStack->getMainRequest();
+        } else {
+            return $requestStack->getMasterRequest();
+        }
+    }
+
+    /**
+     * Get a new widget instance based on given attributes from a Data Container array.
+     *
+     * @param string             $name   The field name in the form
+     * @param array              $data   The field configuration array
+     * @param mixed              $value  The field value
+     * @param string             $dbName The field name in the database
+     * @param string             $table  The table name in the database
+     * @param DataContainer|null $dc     An optional DataContainer object
+     * @param string             $mode   The contao mode, use FE or BE to get proper widget/form type
+     *
+     * @return Widget|null The new widget based on given attributes
+     */
+    private function getWidgetFromAttributes(string $name, array $data, $value = null, string $dbName = '', string $table = '', DataContainer $dc = null, string $mode = ''): ?Widget
+    {
+        if ('' === $mode) {
+            $mode = System::getContainer()->get(Utils::class)->container()->isFrontend() ? 'FE' : 'BE';
+        }
+
+        if ('hidden' === $data['inputType']) {
+            $mode = 'FE';
+        }
+
+        $mode = strtoupper($mode);
+        $mode = \in_array($mode, ['FE', 'BE']) ? $mode : 'FE';
+        $class = 'FE' === $mode ? $GLOBALS['TL_FFL'][$data['inputType']] : $GLOBALS['BE_FFL'][$data['inputType']];
+        /** @var $widget Widget */
+        $widget = System::getContainer()->get('contao.framework')->getAdapter(Widget::class);
+
+        if (empty($class) || !class_exists($class)) {
+            return null;
+        }
+
+        return new $class($widget->getAttributesFromDca($data, $name, $value, $dbName, $table, $dc));
     }
 }

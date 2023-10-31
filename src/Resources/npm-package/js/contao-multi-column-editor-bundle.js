@@ -1,4 +1,5 @@
 import 'formdata-polyfill'; // ie and edge
+import {EventUtil} from '@hundh/contao-utils-bundle';
 
 class MultiColumnEditorBundle {
     static init() {
@@ -10,27 +11,27 @@ class MultiColumnEditorBundle {
 
         let isBackend = mce[0].dataset.env === 'backend';
 
-        utilsBundle.event.addDynamicEventListener('click', '.multi-column-editor .add', function(item, event) {
+        EventUtil.addDynamicEventListener('click', '.multi-column-editor .add', function(item, event) {
             event.preventDefault();
 
             MultiColumnEditorBundle.triggerAction(isBackend, item, 'addRow', item.href);
         });
 
-        utilsBundle.event.addDynamicEventListener('click', '.multi-column-editor .delete', function(item, event) {
+        EventUtil.addDynamicEventListener('click', '.multi-column-editor .delete', function(item, event) {
             event.preventDefault();
             MultiColumnEditorBundle.triggerAction(isBackend, item, 'deleteRow', item.href);
         });
 
         // fix for firefox and IE
-        utilsBundle.event.addDynamicEventListener('click', '.multi-column-editor .drag-handle', function(item, event) {
+        EventUtil.addDynamicEventListener('click', '.multi-column-editor .drag-handle', function(item, event) {
             event.preventDefault();
         });
 
-        utilsBundle.event.addDynamicEventListener('click', '[data-mce-click]', function(item, event) {
+        EventUtil.addDynamicEventListener('click', '[data-mce-click]', function(item, event) {
             MultiColumnEditorBundle.triggerAction(isBackend, item, 'updateRows', item.getAttribute('data-mce-click'));
         });
 
-        utilsBundle.event.addDynamicEventListener('change', '[data-mce-change]', function(item, event) {
+        EventUtil.addDynamicEventListener('change', '[data-mce-change]', function(item, event) {
             MultiColumnEditorBundle.triggerAction(isBackend, item, 'updateRows', item.getAttribute('data-mce-change'));
         });
 

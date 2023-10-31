@@ -126,7 +126,7 @@ class ExecutePostActionsListener
         }
 
         // Set the new value
-        $value = $request->request->get($dc->inputName);
+        $value = $request->request->all()[$dc->inputName] ?? [];
 
         /** @var MultiColumnEditor $strClass */
         $strClass = $GLOBALS['BE_FFL']['multiColumnEditor'];
