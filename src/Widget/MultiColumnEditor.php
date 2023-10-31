@@ -8,6 +8,7 @@
 
 namespace HeimrichHannot\MultiColumnEditorBundle\Widget;
 
+use Contao\ArrayUtil;
 use Contao\Backend;
 use Contao\BackendTemplate;
 use Contao\Config;
@@ -28,6 +29,7 @@ use HeimrichHannot\MultiColumnEditorBundle\Helper\FormHelper;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Twig\Error\LoaderError;
 
 class MultiColumnEditor extends Widget
@@ -63,15 +65,9 @@ class MultiColumnEditor extends Widget
      */
     protected $arrDca;
 
-    /**
-     * @var array
-     */
-    protected $arrWidgetErrors = [];
-
-    /** @var ContainerInterface */
-    protected $container;
-
-    protected $contaoSessionBackend;
+    protected array $arrWidgetErrors = [];
+    protected ContainerInterface $container;
+    protected SessionBagInterface $contaoSessionBackend;
 
     public function __construct($arrData)
     {
@@ -82,7 +78,11 @@ class MultiColumnEditor extends Widget
         $this->editorTemplate = $this->arrDca['editorTemplate'] ?? $this->editorTemplate;
         $this->container = System::getContainer();
 
-        $this->contaoSessionBackend = System::getContainer()->get('session')->getBag('contao_backend');
+        if (System::getContainer()->has('session')) {
+            $this->contaoSessionBackend = System::getContainer()->get('session')->getBag('contao_backend');
+        } elseif (System::getContainer()->has('request_stack')) {
+            $this->contaoSessionBackend = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
+        }
 
         $utils = System::getContainer()->get(Utils::class);
 
@@ -269,7 +269,11 @@ class MultiColumnEditor extends Widget
 
         $this->updateSession($offset);
 
-        array_insert($this->varValue, ($offset + 1), [$new]);
+        if (class_exists(ArrayUtil::class) && method_exists(ArrayUtil::class, 'arrayInsert')) {
+            ArrayUtil::arrayInsert($this->varValue, ($offset + 1), [$new]);
+        } else {
+            array_insert($this->varValue, ($offset + 1), [$new]);
+        }
 
         $this->sortRows();
     }
@@ -376,9 +380,12 @@ class MultiColumnEditor extends Widget
                     if ($this->getAttribute('disabled')) {
                         $config['eval']['disabled'] = true;
                     }
+
+                    $mode = System::getContainer()->get(Utils::class)->container()->isBackend() ? 'BE' : 'FE';
+
                     /** @var Widget $objWidget */
                     if (null === ($objWidget = $this->getWidgetFromAttributes($name,
-                            $config, $value, $name, $this->strTable, $this->dataContainer, TL_MODE))) {
+                            $config, $value, $name, $this->strTable, $this->dataContainer, $mode))) {
                         continue;
                     }
 
@@ -540,7 +547,13 @@ class MultiColumnEditor extends Widget
                 $sValue = null;
 
                 $existing[$sName] = $row[$sName] ?? $this->getDefaultValue($sName);
-                array_insert($boxes[$boxIndex], $fieldIndex, $sName);
+                if (class_exists(ArrayUtil::class) && method_exists(ArrayUtil::class, 'arrayInsert')) {
+                    ArrayUtil::arrayInsert($boxes[$boxIndex], $fieldIndex, $sName);
+                } else {
+                    array_insert($boxes[$boxIndex], $fieldIndex, $sName);
+                }
+
+
                 ++$fieldIndex;
                 $this->generateSubpalette($sName, $row, $boxes, $existing, $boxIndex, $fieldIndex);
             }
