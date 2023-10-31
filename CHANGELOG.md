@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.17.0] - 2023-10-31
+- Added: support for contao 5
+- Added: support for utils bundle v3
+- Fixed: issues with symfony 6
+- Fixed: multi column wizard selectable in form generator
+- Fixed: styling issues
+- Fixed: missing english translation
+- Fixed: some deprecations
+
 ## [2.16.0] - 2023-09-11
 - Changed: remove request bundle dependency ([#23])
 - Changed: removed outdated test setup ([#23])
