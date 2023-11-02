@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.17.1] - 2023-11-02
+- Fixed: php 7 compatibility
+
 ## [2.17.0] - 2023-10-31
 - Added: support for contao 5
 - Added: support for utils bundle v3

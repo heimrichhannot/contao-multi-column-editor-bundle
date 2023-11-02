@@ -9,11 +9,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[AsHook('initializeSystem')]
 class InitializeSystemListener
 {
+    private RequestStack $requestStack;
+    private ScopeMatcher $scopeMatcher;
+
     public function __construct(
-        private RequestStack $requestStack,
-        private ScopeMatcher $scopeMatcher,
+        RequestStack $requestStack,
+        ScopeMatcher $scopeMatcher
     )
     {
+        $this->requestStack = $requestStack;
+        $this->scopeMatcher = $scopeMatcher;
     }
 
     public function __invoke(): void
