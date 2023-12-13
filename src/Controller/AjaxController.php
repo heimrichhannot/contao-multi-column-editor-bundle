@@ -49,7 +49,7 @@ class AjaxController
     public function deleteRow()
     {
         $request = System::getContainer()->get('request_stack')->getCurrentRequest();
-        $this->prepareWidget();
+        $this->prepareWidget($request);
         // Fix an issue in contao StringUtil (see https://github.com/contao/contao/issues/2468, can be reverted when issue is fixed by contao)
         $row = $request->request->get('row') ?: ('0' === Input::post('row') ? Input::post('row') : null);
         $this->editor->deleteRow($row);

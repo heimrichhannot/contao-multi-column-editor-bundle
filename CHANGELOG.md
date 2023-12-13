@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.17.1] - 2023-12-13
+- Fixed: deleteRow ajax issue
+
 ## [2.17.1] - 2023-11-02
 - Fixed: php 7 compatibility
 

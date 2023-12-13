@@ -965,7 +965,7 @@ class MultiColumnEditor extends Widget
      *
      * @return Widget|null The new widget based on given attributes
      */
-    private function getWidgetFromAttributes(string $name, array $data, $value = null, string $dbName = '', string $table = '', DataContainer $dc = null, string $mode = ''): ?Widget
+    private function getWidgetFromAttributes(string $name, array $data, $value = null, string $dbName = '', string $table = '', $dc = null, string $mode = ''): ?Widget
     {
         if ('' === $mode) {
             $mode = System::getContainer()->get(Utils::class)->container()->isFrontend() ? 'FE' : 'BE';
