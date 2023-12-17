@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.18.0] - 2023-12-17
+- Added: missing label in frontend
+
 ## [2.17.2] - 2023-12-13
 - Fixed: deleteRow ajax issue
 

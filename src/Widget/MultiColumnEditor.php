@@ -138,7 +138,7 @@ class MultiColumnEditor extends Widget
             return $inlineStyle.'<div class="multi-column-editor-wrapper"><h3 class="multi-column-editor-label">'.$this->generateLabel().$this->xlabel.'</h3>'.$responseText.$this->getErrorAsHTML().'</div>';
         }
 
-        return '<div class="multi-column-editor-wrapper">'.$responseText.'</div>';
+        return '<div class="multi-column-editor-wrapper">'.$this->generateLabel().$responseText.'</div>';
     }
 
     /**
@@ -149,6 +149,7 @@ class MultiColumnEditor extends Widget
         $utils = System::getContainer()->get(Utils::class);
 
         $data = [];
+        $data['label'] = $this->generateLabel();
         $data['fieldName'] = $this->strName;
         $data['table'] = $this->strTable;
         $data['cssClass'] = $this->arrDca['class'] ?? null;
