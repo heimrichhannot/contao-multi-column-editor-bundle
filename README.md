@@ -58,17 +58,17 @@ Use the inputType "multiColumnEditor" for your field.
             'fields' => [
                 
                 'field1' => [
-                    'label' => 'field 1',
+                    'label' => ['field 1', 'The description of field 1'],
                     'inputType' => 'text',
                     'eval' => ['groupStyle' => 'width:150px', 'submitOnChange' => true]
                 ],
                 'field2' => [
-                    'label' => 'field 2',
+                    'label' => ['field 2', 'The description of field 2'],
                     'inputType' => 'text',
                     'eval' => ['groupStyle' => 'width:150px']
                 ],
                 'field3' => [
-                    'label' => 'field 3',
+                    'label' => ['field 3', 'The description of field 3'],
                     'inputType' => 'text',
                     'eval' => ['groupStyle' => 'width:150px']
                 ]
