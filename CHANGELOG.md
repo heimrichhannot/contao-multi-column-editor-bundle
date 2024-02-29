@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2024-02-29
+- Added: dark mode support for contao 5.2+ ([#27](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/27), [@ReneLuecking])
 - Fixed: compatibility issue with contao 4.9
 
 ## [2.18.0] - 2023-12-17
@@ -324,13 +325,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - multiple listener issue
 
-## [1.x]
-
-You'll find the changelog for 1.x releases in older versions of this bundle (before 2.12.4)
-
 
 [@rabauss]: https://github.com/rabauss
 [@bildschirmartist]: https://github.com/bildschirmartist
+[@ReneLuecking]: https://github.com/ReneLuecking
 
 [#23]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/23
 [#22]: https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/22
