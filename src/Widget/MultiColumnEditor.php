@@ -115,7 +115,7 @@ class MultiColumnEditor extends Widget
         }
 
         if ($hasTinyMce) {
-            if (version_compare(VERSION, '4.5') >= 0) {
+            if (version_compare((defined('VERSION') ? VERSION : \Contao\CoreBundle\ContaoCoreBundle::getVersion()), '4.5') >= 0) {
                 $template = new FrontendTemplate();
                 $tinyMcePath = $template->asset('js/tinymce.min.js', 'contao-components/tinymce4');
             } else {
@@ -691,7 +691,7 @@ class MultiColumnEditor extends Widget
 
         // rte
         if (isset($arrData['eval']['rte']) && !empty($arrData['eval']['rte'])) {
-            [$file, $type] = explode('|', $arrData['eval']['rte'], 2);
+            [$file, $type] = explode('|', $arrData['eval']['rte'], 2) + array(null, null);
 
             $fileBrowserTypes = [];
             $pickerBuilder = $this->container->get('contao.picker.builder');
@@ -706,10 +706,10 @@ class MultiColumnEditor extends Widget
             $objTemplate = new BackendTemplate('be_'.$file);
             $objTemplate->selector = 'ctrl_'.$objWidget->id;
             $objTemplate->type = $type;
-            $objTemplate->fileBrowserTypes = $fileBrowserTypes;
+            $objTemplate->fileBrowserTypes = implode(' ', $fileBrowserTypes);
 
             // Deprecated since Contao 4.0, to be removed in Contao 5.0
-            $objTemplate->language = \Backend::getTinyMceLanguage();
+            $objTemplate->language = Backend::getTinyMceLanguage();
 
             $wizard .= $objTemplate->parse();
         }
