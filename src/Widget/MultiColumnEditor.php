@@ -115,14 +115,10 @@ class MultiColumnEditor extends Widget
         }
 
         if ($hasTinyMce) {
-            if (version_compare((defined('VERSION') ? VERSION : \Contao\CoreBundle\ContaoCoreBundle::getVersion()), '4.5') >= 0) {
-                $template = new FrontendTemplate();
-                $tinyMcePath = $template->asset('js/tinymce.min.js', 'contao-components/tinymce4');
-            } else {
-                $tinyMcePath = TL_ASSETS_URL.'assets/tinymce4/js/tinymce.min.js';
-            }
+            $template = new FrontendTemplate();
+            $tinyMcePath = $template->asset('js/tinymce.min.js', 'contao-components/tinymce4');
 
-            $responseText = '<script>window.tinymce || document.write(\'<script src="'.$tinyMcePath.'">\x3C/script>\')</script>'.$responseText;
+            $responseText = '<script>window.tinymce || document.write(\'<script src="' . $tinyMcePath . '">\x3C/script>\')</script>' . $responseText;
         }
 
         if ($utils->container()->isBackend()) {
@@ -181,7 +177,7 @@ class MultiColumnEditor extends Widget
             $data['disabled'] = true;
             $data['sortable'] = false;
         }
-        
+
         function legacyLoader(string $template, array $data): ?string {
             if (!System::getContainer()->has('huh.utils.template')) {
                 return null;
@@ -707,6 +703,7 @@ class MultiColumnEditor extends Widget
             $objTemplate->selector = 'ctrl_'.$objWidget->id;
             $objTemplate->type = $type;
             $objTemplate->fileBrowserTypes = implode(' ', $fileBrowserTypes);
+            $objTemplate->readonly = (bool) ($arrData['eval']['readonly'] ?? false);
 
             // Deprecated since Contao 4.0, to be removed in Contao 5.0
             $objTemplate->language = Backend::getTinyMceLanguage();

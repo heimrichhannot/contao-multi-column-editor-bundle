@@ -1,9 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2024-02-29
+## [2.19.0] - 2024-02-29
 - Added: dark mode support for contao 5.2+ ([#27](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/27), [@ReneLuecking])
+- Changed: some small code adjustments
 - Fixed: compatibility issue with contao 4.9
+- Fixed: compatibility issues with contao 5 and tiny mce ([#30](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/30), [@ReneLuecking])
 
 ## [2.18.0] - 2023-12-17
 - Added: missing label in frontend
