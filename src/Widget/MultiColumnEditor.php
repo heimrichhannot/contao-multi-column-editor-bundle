@@ -181,13 +181,25 @@ class MultiColumnEditor extends Widget
             $data['disabled'] = true;
             $data['sortable'] = false;
         }
+        
+        function legacyLoader(string $template, array $data): ?string {
+            if (!System::getContainer()->has('huh.utils.template')) {
+                return null;
+            }
+
+            try {
+                return System::getContainer()->get('twig')->render(
+                    System::getContainer()->get('huh.utils.template')->getTemplate($template),
+                    $data
+                );
+            } catch (LoaderError $e) {
+                return null;
+            }
+        }
 
         $twig = System::getContainer()->get('twig');
-        if (System::getContainer()->has('huh.utils.template')) {
-            return $twig->render(
-                System::getContainer()->get('huh.utils.template')->getTemplate($this->getEditorTemplate()),
-                $data
-            );
+        if ($buffer = legacyLoader($this->getEditorTemplate(), $data)) {
+            return $buffer;
         } elseif ($twig->getLoader()->exists('@Contao/'.$this->getEditorTemplate().'.html.twig')) {
             return $twig->render('@Contao/' . $this->getEditorTemplate() . '.html.twig', $data);
         } elseif ($twig->getLoader()->exists('@HeimrichHannotContaoMultiColumnEditor/' . $this->getEditorTemplate() . '.html.twig')) {

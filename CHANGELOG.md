@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2024-02-29
+- Fixed: compatibility issue with contao 4.9
+
 ## [2.18.0] - 2023-12-17
 - Added: missing label in frontend
 
