@@ -8,13 +8,13 @@
     margin-bottom: 3px;
 
     .rows {
-      border: 1px solid #d0d0d2;
+      border: 1px solid var(--form-border, #aaa);
     }
 
     .mce-row {
       display: flex;
       padding: .5rem .5rem 0;
-      background: #f3f3f5;
+      background: var(--table-odd, #1b1d21);
 
       .fields {
         display: flex;
@@ -24,16 +24,16 @@
       }
 
       &:not(:last-child) {
-        border-bottom: 1px solid #fff;
+        border-bottom: 1px solid var(--content-border, #414448);
       }
 
       &:nth-child(even) {
-        background: #f9f9f9;
+        background: var(--table-even, #1e2024);
       }
 
       &:hover,
       &:focus {
-        background-color: #fffbd1;
+        background-color: var(--hover-row, #fffce1);
       }
 
       .form-group {
@@ -84,7 +84,7 @@
       border: none;
 
       > .mce-row {
-        border: 1px solid #d0d0d2;
+        border: 1px solid var(--form-border, #aaa);
         display: block;
         padding: 0;
         margin-bottom: 2px;
