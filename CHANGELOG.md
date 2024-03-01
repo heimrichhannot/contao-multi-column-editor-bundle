@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.19.1] - 2024-03-01
+- Fixed: exception if multiple widgets used on same page
+
 ## [2.19.0] - 2024-02-29
 - Added: dark mode support for contao 5.2+ ([#27](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/27), [@ReneLuecking])
 - Changed: some small code adjustments

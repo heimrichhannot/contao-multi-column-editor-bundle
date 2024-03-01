@@ -178,7 +178,7 @@ class MultiColumnEditor extends Widget
             $data['sortable'] = false;
         }
 
-        function legacyLoader(string $template, array $data): ?string {
+         $legacyLoader = function (string $template, array $data): ?string {
             if (!System::getContainer()->has('huh.utils.template')) {
                 return null;
             }
@@ -191,10 +191,10 @@ class MultiColumnEditor extends Widget
             } catch (LoaderError $e) {
                 return null;
             }
-        }
+        };
 
         $twig = System::getContainer()->get('twig');
-        if ($buffer = legacyLoader($this->getEditorTemplate(), $data)) {
+        if ($buffer = $legacyLoader($this->getEditorTemplate(), $data)) {
             return $buffer;
         } elseif ($twig->getLoader()->exists('@Contao/'.$this->getEditorTemplate().'.html.twig')) {
             return $twig->render('@Contao/' . $this->getEditorTemplate() . '.html.twig', $data);
