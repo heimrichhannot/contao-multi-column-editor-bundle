@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.20.0] - 2024-03-11
+- Added: compact mode ([#31](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/31), [@OMOSde](https://github.com/OMOSde))
+
 ## [2.19.1] - 2024-03-01
 - Fixed: exception if multiple widgets used on same page
 
