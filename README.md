@@ -14,23 +14,51 @@ This module offers an input type for editing one or more records in backend and 
 * support for backend and frontend
 * [Encore bundle](https://github.com/heimrichhannot/contao-encore-bundle) support
 
-## Setup
-
-### Install 
+## Install 
 
 Install with composer: 
 
     composer require heimrichhannot/contao-multi-column-editor-bundle
 
-### Technical instructions
+## Technical instructions
 
 Use the inputType "multiColumnEditor" for your field.
+
+Minimal example:
+
+```php
+$GLOBALS['TL_DCA']['tl_my_table']['fields']['mce_field'] = [
+    'inputType' => 'multiColumnEditor',
+    'eval'      => [
+        'multiColumnEditor' => [
+            'fields' => [
+                'field1' => [
+                    'label' => &$GLOBALS['TL_LANG']['tl_my_table']['field1'],
+                    'inputType' => 'text',
+                    'eval' => ['groupStyle' => 'width:150px']
+                ],
+                'field2' => [
+                    'label' => &$GLOBALS['TL_LANG']['tl_my_table']['field2'],
+                    'inputType'               => 'select',
+                    'options'                 => ['option1', 'option2'],
+                    'eval' => ['groupStyle' => 'width:150px']
+                ],
+            ]
+        ]
+    ],
+    'sql'       => "blob NULL"
+];
+````
+
+### All available options
 
 ```php
 'someField' => [
     'label'     => &$GLOBALS['TL_LANG']['tl_my_table']['someField'],
     'inputType' => 'multiColumnEditor',
     'exclude'   => true,
+    // add 'compact' to tl_class if you want to display a reduced version of MCE
+    'tl_class'  => 'compact', 
     'eval'      => [
         'multiColumnEditor' => [
             // set to true if the rows should be sortable (backend only atm)
@@ -78,6 +106,11 @@ Use the inputType "multiColumnEditor" for your field.
     'sql'       => "blob NULL"
 ],
 ```
+
+| Option   | Values  | Description                       |
+|----------|---------|-----------------------------------|
+| tl_class | compact | Display a reduced version of MCE. |
+
 
 ### Add support for special fields (like fileTrees) in Rocksolid Custom Content Elements (RSCE)
 

@@ -118,3 +118,23 @@
     clear: left;
   }
 }
+
+.widget.compact .multi-column-editor {
+  .mce-row:not(:last-of-type) {
+    .form-group {
+      margin-bottom: 0.125rem;
+    }
+
+    .tl_help {
+      display: none;
+    }
+  }
+
+  .mce-row:not(:first-of-type) {
+    padding-top: 0.125rem;
+
+    h3 {
+      display: none;
+    }
+  }
+}
