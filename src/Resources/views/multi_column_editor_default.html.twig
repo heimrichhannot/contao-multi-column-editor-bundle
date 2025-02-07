@@ -9,6 +9,9 @@
     {% endif %}
 
     {% if(rows|length < 1) %}
+        {% if isBackend %}
+            <input type="hidden" name="{{ fieldName }}" value="">
+        {% endif %}
         {% if disableAdd|default(false) %}
             <button class="add first{% if isBackend %} tl_submit{% endif %}" disabled><span>{{ 'huh.multicolumneditor.add.default'|trans }}</span></button>
         {% else %}
