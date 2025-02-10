@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.20.1] - 2025-02-10
+- Fixed: issue with removing row when only one row in contao 5 ([@pressi](https://github.com/pressi), [#33](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/33))
+- Fixed: error with contao 5 js ([#32](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/32))
+- Fixed: some deprecations in js
+
 ## [2.20.0] - 2024-03-11
 - Added: compact mode ([#31](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/31), [@OMOSde](https://github.com/OMOSde))
 
