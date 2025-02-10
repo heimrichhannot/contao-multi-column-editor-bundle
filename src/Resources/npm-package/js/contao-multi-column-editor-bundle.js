@@ -167,10 +167,11 @@ class MultiColumnEditorBundle {
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 // dispatch custom event
-                let customEvent = document.createEvent('CustomEvent'),
-                    widget;
+                let customEvent = new CustomEvent('ajaxSuccess', {
+                    bubbles: true,
+                    cancelable: true
+                });
 
-                customEvent.initEvent('ajaxSuccess', true, true);
                 document.dispatchEvent(customEvent);
 
                 if (xhr.status === 200) {
@@ -189,7 +190,7 @@ class MultiColumnEditorBundle {
                         var scriptElements = response.getElementsByTagName('script'),
                             scriptHtml = [];
 
-                        widget = link.closest('.widget');
+                        let widget = link.closest('.widget');
 
                         // store the texts because after replacing the dom elements are gone
                         for (var m = 0; m < scriptElements.length; m++) {
@@ -202,7 +203,10 @@ class MultiColumnEditorBundle {
                         MultiColumnEditorBundle.initSortable(isBackend);
 
                         MultiColumnEditorBundle.hideInteractiveHelp();
-                        Backend.addInteractiveHelp();
+
+                        if (typeof Backend.addInteractiveHelp === 'function') {
+                            Backend.addInteractiveHelp();
+                        }
 
                         for (var n = 0; n < scriptHtml.length; n++) {
                             eval(scriptHtml[n]);
@@ -212,8 +216,11 @@ class MultiColumnEditorBundle {
                             callback.apply(this, Array.prototype.slice.call(arguments, 1));
                         }
 
-                        var e = document.createEvent('CustomEvent');
-                        e.initEvent('ajaxComplete', true, true);
+                        let e = new CustomEvent('ajaxComplete', {
+                            bubbles: true,
+                            cancelable: true
+                        });
+
                         document.dispatchEvent(e);
                     } else {
                         let data = JSON.parse(xhr.responseText);
@@ -229,8 +236,10 @@ class MultiColumnEditorBundle {
                             callback.apply(this, Array.prototype.slice.call(arguments, 1));
                         }
 
-                        customEvent = document.createEvent('CustomEvent');
-                        customEvent.initEvent('ajaxComplete', true, true);
+                        let customEvent = new CustomEvent('ajaxComplete', {
+                            bubbles: true,
+                            cancelable: true
+                        });
                         document.dispatchEvent(customEvent);
                     }
                 }
