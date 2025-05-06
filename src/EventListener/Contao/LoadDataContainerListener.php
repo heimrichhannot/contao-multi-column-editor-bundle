@@ -39,7 +39,8 @@ class LoadDataContainerListener
         }
 
         // ajax
-        if (!is_string($name = $request->request->get('name'))) {
+
+        if (!$request->request->has('name') || !is_string($name = $request->request->all()['name'])) {
             return;
         }
 

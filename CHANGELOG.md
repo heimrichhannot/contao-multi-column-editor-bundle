@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.20.2] - 2025-05-06
+- Fixed: edge case issue with symfony 6+ http foundation ([#35](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/35))
+
 ## [2.20.1] - 2025-02-10
 - Fixed: issue with removing row when only one row in contao 5 ([@pressi](https://github.com/pressi), [#33](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/pull/33))
 - Fixed: error with contao 5 js ([#32](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/32))
