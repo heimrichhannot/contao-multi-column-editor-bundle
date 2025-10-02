@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.20.3] - 2025-10-02
+- Fixed: fields do not show up if existing dataset does not contain it (when no palette is defined)
+
 ## [2.20.2] - 2025-05-06
 - Fixed: edge case issue with symfony 6+ http foundation ([#35](https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues/35))
 

@@ -381,7 +381,7 @@ class MultiColumnEditor extends Widget
                     $config = $this->arrDca['fields'][$field];
                     $id = $this->strName.'_'.$i.'_'.$field;
                     $name = $this->strName.'['.$i.']['.$field.']';
-                    $value = $existing[$field];
+                    $value = $existing[$field] ?? null;
                     $inputType = $config['inputType'] ?? null;
                     $multiple = $config['eval']['multiple'] ?? null;
                     $rgxp = $config['eval']['rgxp'] ?? null;
@@ -472,7 +472,7 @@ class MultiColumnEditor extends Widget
     protected function getRow(array $row, $palette = 'default')
     {
         if (!isset($this->arrDca['palettes']) || !\is_array($this->arrDca['palettes']) || !isset($this->arrDca['palettes'][$palette])) {
-            return ['existing' => $row, 'boxes' => [array_keys($row)], 'legends' => []];
+            return ['existing' => $row, 'boxes' => [array_keys($this->arrDca['fields'])], 'legends' => []];
         }
 
         $legends = [];
