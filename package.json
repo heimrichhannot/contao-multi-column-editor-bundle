@@ -9,9 +9,13 @@
     "formdata-polyfill": "^3.0"
   },
   "devDependencies": {
-    "@symfony/webpack-encore": "^1.0",
+    "@babel/core": "^7.28",
+    "@babel/preset-env": "^7.28.3",
+    "@symfony/webpack-encore": "^4.0",
     "sass": "^1.69.5",
-    "sass-loader": "^12.0"
+    "sass-loader": "^14.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^6.0.1"
   },
   "scripts": {
     "build-dev": "yarn encore dev",

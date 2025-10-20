@@ -51,13 +51,12 @@
         }
 
         input[type="text"], input[type="password"] {
-          width: 100% !important;
+          width: 100%;
         }
 
         &.wizard {
           input[type="text"], input[type="password"] {
-            margin-right: -26px;
-            padding-right: 26px;
+            width: calc(100% - 24px);
           }
         }
 
