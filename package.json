@@ -5,7 +5,8 @@
   "author": "Heimrich & Hannot GmbH <digitales@heimrich-hannot.de>",
   "license": "LGPL-3.0-or-later",
   "dependencies": {
-    "@hundh/contao-multi-column-editor-bundle": "^1.1",
+    "@hundh/contao-utils-bundle": "^1.6",
+    "sortablejs": "^1.7",
     "formdata-polyfill": "^3.0"
   },
   "devDependencies": {

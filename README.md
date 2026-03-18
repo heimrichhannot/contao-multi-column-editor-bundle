@@ -144,8 +144,3 @@ $element = [
                         ],
     // ...
 ```
-
-## Developers
-
-### Assets
-Bundle assets are provided as [yarn package](https://yarnpkg.com/en/package/@hundh/contao-multi-column-editor-bundle). Sources and Javascript documentation can be found in [`src/Resources/npm-package`](/tree/master/src/Resources/npm-package).
