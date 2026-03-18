@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.21.0] - 2026-03-18
+- Added: support for contao 5.7
+- Changed: raised minimum php version to 8.1
+- Changed: raised minimum contao version to 5.3
+- Changed: refactored code structure to current standards
+
 ## [2.20.3] - 2025-10-02
 - Fixed: fields do not show up if existing dataset does not contain it (when no palette is defined)
 

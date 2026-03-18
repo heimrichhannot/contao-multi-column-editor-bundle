@@ -6,7 +6,6 @@
   "license": "LGPL-3.0-or-later",
   "dependencies": {
     "@hundh/contao-utils-bundle": "^1.6",
-    "sortablejs": "^1.7",
     "formdata-polyfill": "^3.0"
   },
   "devDependencies": {
