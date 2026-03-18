@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.21.1] - 2026-03-18
+- Fixed: add missing yarn dependency
+
 ## [2.21.0] - 2026-03-18
 - Added: support for contao 5.7
 - Changed: raised minimum php version to 8.1

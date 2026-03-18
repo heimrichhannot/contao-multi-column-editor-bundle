@@ -8,3 +8,4 @@ composer.lock
 composer.json~
 yarn.lock
 /node_modules
+AGENTS.md

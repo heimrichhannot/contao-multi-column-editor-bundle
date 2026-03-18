@@ -6,7 +6,8 @@
   "license": "LGPL-3.0-or-later",
   "dependencies": {
     "@hundh/contao-utils-bundle": "^1.6",
-    "formdata-polyfill": "^3.0"
+    "formdata-polyfill": "^3.0",
+    "sortablejs": "^1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.28",
