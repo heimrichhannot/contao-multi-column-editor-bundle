@@ -8,8 +8,12 @@
 
 namespace HeimrichHannot\MultiColumnEditorBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class HeimrichHannotContaoMultiColumnEditorBundle extends Bundle
+class HeimrichHannotContaoMultiColumnEditorBundle extends AbstractBundle
 {
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
 }

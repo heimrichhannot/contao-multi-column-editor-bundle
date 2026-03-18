@@ -24,10 +24,10 @@
     "issues": "https://github.com/heimrichhannot/contao-multi-column-editor-bundle/issues"
   },
   "require": {
-    "php": "^7.4 || ^8.0",
-    "contao/core-bundle": "^4.9 || ^5.0",
+    "php": "^8.1",
+    "contao/core-bundle": "^5.3",
     "heimrichhannot-contao-components/sortablejs": "^1.8",
-    "heimrichhannot/contao-utils-bundle": "^2.225 || ^3.0",
+    "heimrichhannot/contao-utils-bundle": "^3.0",
     "heimrichhannot/contao-ajax-bundle": "^1.0",
     "heimrichhannot/contao-encore-contracts": "^1.0.2",
     "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0",

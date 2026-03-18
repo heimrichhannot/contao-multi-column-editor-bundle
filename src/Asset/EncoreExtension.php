@@ -28,7 +28,7 @@ class EncoreExtension implements EncoreExtensionInterface
     public function getEntries(): array
     {
         return [
-            EncoreEntry::create('contao-multi-column-editor-bundle', 'src/Resources/assets/js/contao-multi-column-editor-bundle.js')
+            EncoreEntry::create('contao-multi-column-editor-bundle', 'assets/js/contao-multi-column-editor-bundle.js')
                 ->addJsEntryToRemoveFromGlobals('sortablejs')
                 ->addJsEntryToRemoveFromGlobals('contao-multi-column-editor-bundle'),
         ];
