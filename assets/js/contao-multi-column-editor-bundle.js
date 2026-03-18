@@ -2,24 +2,28 @@ import 'formdata-polyfill'; // ie and edge
 import {EventUtil} from '@hundh/contao-utils-bundle';
 
 class MultiColumnEditorBundle {
-    static init() {
-        let mce = document.querySelectorAll('.multi-column-editor');
+    static sortableAttribute = 'data-mce-sortable-initialized';
+    static eventsBound = false;
 
-        if (mce.length < 1) {
+    static init(context = document) {
+        MultiColumnEditorBundle.bindGlobalEventsOnce();
+        MultiColumnEditorBundle.initSortable(context);
+    }
+
+    static bindGlobalEventsOnce() {
+        if (MultiColumnEditorBundle.eventsBound) {
             return;
         }
-
-        let isBackend = mce[0].dataset.env === 'backend';
 
         EventUtil.addDynamicEventListener('click', '.multi-column-editor .add', function(item, event) {
             event.preventDefault();
 
-            MultiColumnEditorBundle.triggerAction(isBackend, item, 'addRow', item.href);
+            MultiColumnEditorBundle.triggerAction(MultiColumnEditorBundle.isBackend(item), item, 'addRow', item.href);
         });
 
         EventUtil.addDynamicEventListener('click', '.multi-column-editor .delete', function(item, event) {
             event.preventDefault();
-            MultiColumnEditorBundle.triggerAction(isBackend, item, 'deleteRow', item.href);
+            MultiColumnEditorBundle.triggerAction(MultiColumnEditorBundle.isBackend(item), item, 'deleteRow', item.href);
         });
 
         // fix for firefox and IE
@@ -27,83 +31,140 @@ class MultiColumnEditorBundle {
             event.preventDefault();
         });
 
-        EventUtil.addDynamicEventListener('click', '[data-mce-click]', function(item, event) {
-            MultiColumnEditorBundle.triggerAction(isBackend, item, 'updateRows', item.getAttribute('data-mce-click'));
+        EventUtil.addDynamicEventListener('click', '[data-mce-click]', function(item) {
+            MultiColumnEditorBundle.triggerAction(MultiColumnEditorBundle.isBackend(item), item, 'updateRows', item.getAttribute('data-mce-click'));
         });
 
-        EventUtil.addDynamicEventListener('change', '[data-mce-change]', function(item, event) {
-            MultiColumnEditorBundle.triggerAction(isBackend, item, 'updateRows', item.getAttribute('data-mce-change'));
+        EventUtil.addDynamicEventListener('change', '[data-mce-change]', function(item) {
+            MultiColumnEditorBundle.triggerAction(MultiColumnEditorBundle.isBackend(item), item, 'updateRows', item.getAttribute('data-mce-change'));
         });
 
-        MultiColumnEditorBundle.initSortable(isBackend);
+        MultiColumnEditorBundle.eventsBound = true;
     }
 
-    static initSortable(isBackend) {
-        if (isBackend) {
-            new Sortables('.multi-column-editor-wrapper .sortable', {
-                constrain: true,
-                opacity: 0.6,
+    static initSortable(context = document) {
+        const scope = MultiColumnEditorBundle.getScope(context);
+        const sortables = MultiColumnEditorBundle.getSortables(scope);
+
+        if (sortables.length < 1) {
+            return;
+        }
+
+        sortables.forEach((sortable) => {
+            if (sortable.hasAttribute(MultiColumnEditorBundle.sortableAttribute)) {
+                return;
+            }
+
+            if (MultiColumnEditorBundle.isBackend(sortable)) {
+                MultiColumnEditorBundle.initBackendSortable(sortable);
+            } else {
+                MultiColumnEditorBundle.initFrontendSortable(sortable);
+            }
+
+            sortable.setAttribute(MultiColumnEditorBundle.sortableAttribute, 'true');
+        });
+    }
+
+    static initBackendSortable(sortable) {
+        sortable.mceSortable = new Sortables(sortable, {
+            constrain: true,
+            opacity: 0.6,
+            handle: '.drag-handle',
+            onComplete: function(row) {
+                const rows = Array.from(row.closest('.rows').querySelectorAll('.mce-row'));
+                const newIndices = rows.map((item) => item.dataset.index);
+
+                if (!MultiColumnEditorBundle.hasRowOrderChanged(rows)) {
+                    return;
+                }
+
+                MultiColumnEditorBundle.triggerAction(true, row.querySelector('.drag-handle'), 'sortRows', null, [
+                    {
+                        name: 'newIndices',
+                        value: newIndices.join(','),
+                    },
+                ]);
+            },
+        });
+    }
+
+    static initFrontendSortable(sortable) {
+        import(/* webpackChunkName: "sortablejs" */ 'sortablejs').then(function(Sortable) {
+            sortable.mceSortable = Sortable.create(sortable, {
                 handle: '.drag-handle',
-                onComplete: function(row) {
-                    var newIndices = [],
-                        doPost = false,
-                        rows = row.closest('.rows').querySelectorAll('.mce-row');
+                onEnd: function(event) {
+                    const rows = Array.from(event.item.closest('.rows').querySelectorAll('.mce-row'));
+                    const newIndices = rows.map((item) => item.dataset.index);
 
-                    for (var i = 0; i < rows.length; i++) {
-                        newIndices.push(rows[i].dataset.index);
-
-                        if (rows[i].dataset.index !== [].slice.call(rows).indexOf(this) + 1) {
-                            doPost = true;
-                        }
+                    if (!MultiColumnEditorBundle.hasRowOrderChanged(rows)) {
+                        return;
                     }
 
-                    let additionalData = [
+                    MultiColumnEditorBundle.triggerAction(false, event.item.querySelector('.drag-handle'), 'sortRows', null, [
                         {
-                            'name': 'newIndices',
-                            'value': newIndices.join(','),
+                            name: 'newIndices',
+                            value: newIndices.join(','),
                         },
-                    ];
-
-                    if (doPost) {
-                        MultiColumnEditorBundle.triggerAction(isBackend, row.querySelector('.drag-handle'), 'sortRows', null, additionalData);
-                    }
+                    ]);
                 },
             });
-        } else {
-            import(/* webpackChunkName: "sortablejs" */ 'sortablejs').then(function(Sortable) {
-                let sortables = document.querySelectorAll('.multi-column-editor-wrapper .sortable');
+        });
+    }
 
-                sortables.forEach(function(item) {
-                    Sortable.create(item, {
-                        'handle': '.drag-handle',
-                        onEnd: function(event) {
-                            let newIndices = [],
-                                doPost = false,
-                                rows = event.item.closest('.rows').querySelectorAll('.mce-row');
+    static beforeCache(context = document) {
+        MultiColumnEditorBundle.getSortables(MultiColumnEditorBundle.getScope(context)).forEach((sortable) => {
+            const instance = sortable.mceSortable;
 
-                            for (let i = 0; i < rows.length; i++) {
-                                newIndices.push(rows[i].dataset.index);
+            if (instance && typeof instance.detach === 'function') {
+                instance.detach();
+            }
 
-                                if (rows[i].dataset.index !== Array.prototype.indexOf.call(sortables, item) + 1) {
-                                    doPost = true;
-                                }
-                            }
+            if (instance && typeof instance.destroy === 'function') {
+                instance.destroy();
+            }
 
-                            let additionalData = [
-                                {
-                                    'name': 'newIndices',
-                                    'value': newIndices.join(','),
-                                },
-                            ];
+            delete sortable.mceSortable;
+            sortable.removeAttribute(MultiColumnEditorBundle.sortableAttribute);
+        });
+    }
 
-                            if (doPost) {
-                                MultiColumnEditorBundle.triggerAction(isBackend, event.item.querySelector('.drag-handle'), 'sortRows', null, additionalData);
-                            }
-                        },
-                    });
-                });
-            });
+    static getScope(context = document) {
+        if (context && typeof context.querySelectorAll === 'function') {
+            return context;
         }
+
+        return document;
+    }
+
+    static getSortables(context = document) {
+        const scope = MultiColumnEditorBundle.getScope(context);
+        const sortables = Array.from(scope.querySelectorAll('.multi-column-editor-wrapper .sortable'));
+
+        if (typeof scope.matches === 'function' && scope.matches('.multi-column-editor-wrapper .sortable')) {
+            sortables.unshift(scope);
+        }
+
+        return sortables;
+    }
+
+    static isBackend(element) {
+        const editor = element.closest('.multi-column-editor');
+
+        return editor ? editor.dataset.env === 'backend' : false;
+    }
+
+    static hasRowOrderChanged(rows) {
+        if (rows.length < 1) {
+            return false;
+        }
+
+        const firstIndex = Number.parseInt(rows[0].dataset.index, 10);
+
+        if (Number.isNaN(firstIndex)) {
+            return true;
+        }
+
+        return rows.some((row, index) => row.dataset.index !== String(firstIndex + index));
     }
 
     static triggerAction(isBackend, link, action, url, additionalFormData, callback) {
@@ -199,7 +260,7 @@ class MultiColumnEditorBundle {
                         link.closest('.multi-column-editor-wrapper').innerHTML = response.querySelector('.multi-column-editor-wrapper').innerHTML;
 
                         MultiColumnEditorBundle.initChosen(widget);
-                        MultiColumnEditorBundle.initSortable(isBackend);
+                        MultiColumnEditorBundle.init(link.closest('.multi-column-editor-wrapper'));
 
                         MultiColumnEditorBundle.hideInteractiveHelp();
 
@@ -229,7 +290,7 @@ class MultiColumnEditorBundle {
 
                         link.closest('.multi-column-editor-wrapper').innerHTML = response.querySelector('.multi-column-editor-wrapper').innerHTML;
 
-                        MultiColumnEditorBundle.initSortable(isBackend);
+                        MultiColumnEditorBundle.init(link.closest('.multi-column-editor-wrapper'));
 
                         if (typeof callback === 'function') {
                             callback.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -251,7 +312,21 @@ class MultiColumnEditorBundle {
     }
 }
 
-document.addEventListener('DOMContentLoaded', MultiColumnEditorBundle.init);
+document.addEventListener('DOMContentLoaded', function() {
+    MultiColumnEditorBundle.init();
+});
+
+document.documentElement.addEventListener('turbo:render', function() {
+    MultiColumnEditorBundle.init();
+});
+
+document.documentElement.addEventListener('turbo:frame-render', function(event) {
+    MultiColumnEditorBundle.init(event.target);
+});
+
+document.documentElement.addEventListener('turbo:before-cache', function() {
+    MultiColumnEditorBundle.beforeCache();
+});
 
 // backend only
 (function() {
