@@ -1,9 +1,9 @@
 var Encore = require('@symfony/webpack-encore');
 
 Encore
-    .setOutputPath('src/Resources/public/')
-    .addEntry('contao-multi-column-editor-bundle', './src/Resources/assets/js/contao-multi-column-editor-bundle.js')
-    .addEntry('contao-multi-column-editor-bundle-be', './src/Resources/assets/js/contao-multi-column-editor-bundle-be.js')
+    .setOutputPath('public/')
+    .addEntry('contao-multi-column-editor-bundle', './assets/js/contao-multi-column-editor-bundle.js')
+    .addEntry('contao-multi-column-editor-bundle-be', './assets/js/contao-multi-column-editor-bundle-be.js')
     .setPublicPath('/bundles/heimrichhannotcontaomulticolumneditor/')
     .setManifestKeyPrefix('bundles/heimrichhannotcontaomulticolumneditor')
     .enableSassLoader()
