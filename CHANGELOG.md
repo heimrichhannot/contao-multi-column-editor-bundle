@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.21.2] - 2026-03-23
+- Fixed: yarn dependency issue
+
 ## [2.21.1] - 2026-03-18
 - Fixed: add missing yarn dependency
 

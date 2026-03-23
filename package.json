@@ -16,7 +16,7 @@
     "sass": "^1.69.5",
     "sass-loader": "^14.0",
     "webpack": "^5.88.2",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^4 || ^5"
   },
   "scripts": {
     "build-dev": "yarn encore dev",
